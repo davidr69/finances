@@ -1,0 +1,16 @@
+target
+*.iml
+/.idea/
+/.settings/
+/.classpath
+/.factorypath
+/bin/
+.project
+/*/.classpath
+/*/.settings
+/.vscode/
+/deploy.sh
+/.gradle/
+/buildSrc/
+/build/
+/out/
