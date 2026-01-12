@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+	<meta charset="UTF-8">
+	<title>Financial system login</title>
+	<link rel="icon" type="image/png" href="./favicon.ico"/>
+
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700">
+	<link type="text/css" rel="stylesheet" href="css/login.css">
+
+	<script type="text/javascript">
+		function authenticate() {
+			const params = new URLSearchParams();
+			params.append('user', document.getElementById('user').value);
+			params.append('pass', document.getElementById('pass').value);
+
+			fetch('authenticate', {
+				method:		'POST',
+				body:		params.toString(),
+				headers:	{
+					'Content-Type': 'application/x-www-form-urlencoded'
+				}
+			}).then(resp => {
+				resp.json().then(data => {
+					if(data.code === 0) {
+						window.location = 'nav';
+					} else {
+						alert(data.message);
+					}
+				})
+			}).catch(() => {
+				alert(resp);
+			})
+			return true;
+		}
+
+		window.onload = function() {
+			if(window.frameElement != null) {
+				top.window.location = 'login.html';
+			}
+		};
+	</script>
+</head>
+<body>
+
+<div class="modal fade" id="login-modal" tabindex="-1" role="dialog">
+	<div class="modal-dialog">
+		<div class="loginmodal-container">
+			<h1>Restricted Access</h1><br>
+			<form>
+				<label for="user"></label><input type="text" id="user" placeholder="Username">
+				<label for="pass"></label><input type="password" id="pass" placeholder="Password">
+				<input type="button" onclick="authenticate()" id="login" name="login" class="login loginmodal-submit" value="Login">
+			</form>
+		</div>
+	</div>
+</div>
+
+</body>
+</html>

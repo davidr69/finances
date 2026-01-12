@@ -1,0 +1,14 @@
+.money {
+	text-align: right;
+}
+
+.year {
+	width: 75px;
+}
+
+.vert_year {
+	font-size: 14px;
+	font-weight: bold;
+	text-align: center;
+	background-color: #cbb9ae !important;
+}

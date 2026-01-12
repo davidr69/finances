@@ -1,0 +1,23 @@
+{{- if .Values.redis.enabled -}}
+apiVersion: v1
+kind: Pod
+metadata:
+  name: {{ .Chart.Name }}-redis
+  labels:
+    app: {{ .Chart.Name }}-redis
+spec:
+  containers:
+  - name: {{ .Chart.Name }}-redis
+    image: {{ .Values.redis.image.repository }}:{{ .Values.redis.image.tag }}
+    command:
+    - redis-server
+    ports:
+    - containerPort: {{ .Values.redis.service.port }}
+    resources:
+      requests:
+        cpu: {{ .Values.redis.resources.requests.cpu }}
+        memory: {{ .Values.redis.resources.requests.memory }}
+      limits:
+        cpu: {{ .Values.redis.resources.limits.cpu }}
+        memory: {{ .Values.redis.resources.limits.memory }}
+{{- end }}

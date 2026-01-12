@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8"/>
+	<title>Entities</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" type="text/css" th:href="@{css/common.css}" />
+	<link rel="stylesheet" type="text/css" th:href="@{css/table.css}" />
+	<style>
+	table {
+		border: 0;
+		border-spacing: 0;
+	}
+	</style>
+</head>
+<body>
+
+<form action="entities" method="POST">
+<table>
+	<caption style="display: none;">Entities</caption>
+	<thead>
+		<tr>
+			<th scope="col">Entity</th>
+			<th scope="col">Account number</th>
+			<th scope="col">Address</th>
+			<th scope="col">&nbsp;</th>
+		</tr>
+	</thead>
+	<tbody>
+	<tr th:each="entity:${entityList}">
+		<td th:text="${entity.description}"></td>
+		<td th:text="${entity.account}"></td>
+		<td th:text="${entity.address}"></td>
+		<td>&nbsp;</td>
+	</tr>
+		<tr>
+			<td><label>
+				<input type="text" size="32" maxlength="64" name="description" required="required"/>
+			</label></td>
+			<td><label>
+				<input type="text" size="25" maxlength="25" name="account"/>
+			</label></td>
+			<td><label>
+				<input type="text" size="32" maxlength="128" name="address"/>
+			</label></td>
+			<td><input type="submit" value=" add this "/></td>
+		</tr>
+	</tbody>
+</table>
+</form>
+
+</body>
+</html>

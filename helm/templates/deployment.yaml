@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Chart.Name }}-app
+  namespace: {{ .Release.namespace }}
+  labels:
+    app: {{ .Chart.Name }}
+    tier: web
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      tier: web
+  template:
+    metadata:
+      labels:
+        app: {{ .Chart.Name }}
+        tier: web
+    spec:
+      volumes:
+      - name: vault-token
+        emptyDir:
+          sizeLimit: 1Mi
+          medium: Memory
+      initContainers:
+      - name: vault-retrieve
+        image: "{{ .Values.vaultRetrieve.image.repository }}:{{ .Values.vaultRetrieve.image.tag }}"
+        imagePullPolicy: {{ .Values.vaultRetrieve.image.pullPolicy }}
+        envFrom:
+        - configMapRef:
+            name: {{ .Chart.Name }}-config-init
+        - secretRef:
+            name: {{ .Chart.Name }}-secrets
+        volumeMounts:
+        - name: vault-token
+          mountPath: "{{ .Values.vaultRetrieve.env.mountPath }}"
+      containers:
+      - name: {{ .Chart.Name }}
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        envFrom:
+        - configMapRef:
+            name: {{ .Chart.Name }}-config-app
+        volumeMounts:
+        - name: vault-token
+          mountPath: "{{ .Values.vaultRetrieve.env.mountPath }}"
+        resources:
+          requests:
+            memory: {{ .Values.app.resources.requests.memory }}
+            cpu: {{ .Values.app.resources.requests.cpu }}
+          limits:
+            memory: {{ .Values.app.resources.limits.memory }}
+            cpu: {{ .Values.app.resources.limits.cpu }}
+        readinessProbe:
+          httpGet:
+            path: {{ .Values.app.readinessProbe.httpGet.path }}
+            port: {{ .Values.app.readinessProbe.httpGet.port }}
+          timeoutSeconds: {{ .Values.app.readinessProbe.timeoutSeconds }}
+        livenessProbe:
+          httpGet:
+            path: {{ .Values.app.livenessProbe.httpGet.path }}
+            port: {{ .Values.app.livenessProbe.httpGet.port }}
+          timeoutSeconds: {{ .Values.app.livenessProbe.timeoutSeconds }}
+          initialDelaySeconds: {{ .Values.app.livenessProbe.initialDelaySeconds }}

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en-US" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title>Total by entity</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" type="text/css" th:href="@{../css/common.css}" />
+	<link rel="stylesheet" type="text/css" th:href="@{../css/table.css}"/>
+	<link rel="stylesheet" type="text/css" th:href="@{../css/reports.css}"/>
+
+	<script type="text/javascript">
+		function redraw() {
+			let node = document.getElementsByName('startYear')[0];
+			let year = node[node.selectedIndex].value;
+			let accountDD = parent.document.getElementById('account');
+			let account = accountDD[accountDD.selectedIndex].value;
+			window.location = `summaryByYear?startYear=${year}&account=${account}`;
+		}
+	</script>
+</head>
+<body>
+
+<label>
+	<select name="startYear" onchange="redraw()">
+		<option th:each="year:${allYears}" th:value="${year}" th:text="${year}" th:selected="${year} == ${startYear} ? 'selected' : false"></option>
+	</select>
+</label>
+
+<table>
+	<caption style="display: none">Summary</caption>
+	<thead>
+		<tr>
+			<th scope="col">Rank</th>
+			<th scope="col">Entity</th>
+			<th  scope="col" class="year" th:each="year:${filteredYears}" th:text="${year}"></th>
+			<th scope="col">Total</th>
+		</tr>
+	</thead>
+	<tr th:each="row:${summary}">
+		<td th:text="${row.rank}"></td>
+		<td th:text="${row.entity}"></td>
+		<div th:each="range:${filteredYears}" th:remove="tag">
+			<div th:switch="${row.columns.containsKey(range)}" th:remove="tag">
+				<td class="money" th:case="true" th:text="${row.columns.get(range)}"></td>
+				<td th:case="*">&nbsp;</td>
+			</div>
+		</div>
+		<td class="money" th:text="${row.formattedTotal}"></td>
+	</tr>
+</table>
+
+</body>
+</html>

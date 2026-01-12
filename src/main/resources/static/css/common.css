@@ -1,0 +1,56 @@
+@import url("https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,700,700i");
+
+.glyph, .glyph:visited {
+	font-size: 20px;
+	color:	#70b8e0;
+}
+
+.glyph:hover {
+	color:	#d0b070;
+}
+
+body {
+	margin-top: 0;
+	margin-left: 0;
+	margin-right: 0;
+	font-family: "Open Sans", sans-serif;
+	font-size: 14px;
+	font-weight: 400;
+	overflow-y: auto;
+}
+
+.status {
+	text-align: center;
+}
+
+.center {
+	text-align: center;
+}
+
+.small {
+	font-size: 10px;
+}
+
+.right {
+	text-align: right;
+}
+
+.middle {
+	vertical-align: middle;
+}
+
+.year {
+	font-weight: 700;
+	font-size: 16px;
+	text-align: center;
+}
+
+.scroll {
+	overflow-y: scroll;
+}
+
+select, input {
+	font-family: "Open Sans", sans-serif;
+	font-size: 12px;
+	font-weight: 400;
+}

@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Chart.Name }}-config-app
+  namespace: {{ .Release.namespace }}
+data:
+  SPRING_DATASOURCE_USERNAME: "{{ .Values.configMap.dbUser }}"
+  SPRING_DATASOURCE_URL: "{{ .Values.configMap.dbUrl }}"
+  SPRING_PROFILES_ACTIVE: "{{ .Values.configMap.profile }}"
+  SPRING_CONFIG_ADDITIONAL_LOCATION: "file:{{ .Values.configMap.propertiesFile }}"

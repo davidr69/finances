@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en-US" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title>Add Transaction</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" type="text/css" th:href="@{./font-awesome-4.7.0/css/font-awesome.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{./css/common.css}">
+
+	<script type="text/javascript" th:src="@{./js/common.js}"></script>
+
+	<script type="module">
+		const transactionJS = './js/transaction.js';
+		const { default: Transaction } = await import(transactionJS);
+		const txn = new Transaction();
+		window.txn = txn;
+	</script>
+
+</head>
+<body>
+
+	<form>
+<table>
+	<caption style="display: none">Transaction</caption>
+	<thead><tr><th scope="col" style="height: 0;"></th></tr></thead>
+	<tr>
+		<td>entity:</td>
+		<td>
+			<label for="entity"></label><select name="entity" id="entity">
+				<option th:each="merchant:${merchants}" th:value="${merchant.id}" th:text="${merchant.description}"></option>
+			</select>
+		</td>
+	</tr>
+	<tr>
+		<td>date:</td>
+		<td>
+			<label for="mm"></label><input id="mm" type="number" placeholder="mm" min="1" max="12" required="required" style="width:50px"/>
+			&nbsp;/&nbsp;
+			<label for="dd"></label><input id="dd" type="number" placeholder="dd" min="1" max="31" required="required" style="width:50px"/>
+			&nbsp;/&nbsp;
+			<span id="showYear"></span>
+		</td>
+	</tr>
+	<tr>
+		<td>amount:</td>
+		<td><label for="amount"></label><input type="text" class="" maxlength="10" size="10" name="amount" id="amount" placeholder="$0.00" required="required"/></td>
+	</tr>
+	<tr>
+		<td>reference:</td>
+		<td><label for="reference"></label><input type="text" class="" maxlength="64" size="32" name="reference" id="reference"/></td>
+	</tr>
+	<tr>
+		<td>transaction:</td>
+		<td>
+			<label for="method"></label><select name="method" id="method">
+				<option th:each="transaction:${transactions}" th:value="${transaction.id}" th:text="${transaction.description}"></option>
+			</select>
+		</td>
+	</tr>
+	<tr>
+		<td>category:</td>
+		<td>
+			<label for="category"></label><select name="category" id="category">
+				<option value="0"> </option>
+				<option th:each="category:${categories}" th:value="${category.id}" th:text="${category.description}"></option>
+			</select>
+		</td>
+	</tr>
+	<tr>
+		<td colspan="2" style="text-align: center">
+			<button type="button" onClick="txn.commit()">add this</button>
+		</td>
+	</tr>
+	<tr>
+		<td>&nbsp;</td>
+		<td id="status"></td>
+	</tr>
+</table>
+</form>
+
+</body>
+</html>

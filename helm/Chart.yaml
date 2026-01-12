@@ -1,0 +1,6 @@
+apiVersion: v2
+name: finances
+description: A Helm chart for Finances application
+type: application
+version: 1.0.0
+appVersion: "3.9.7"

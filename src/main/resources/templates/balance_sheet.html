@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en-US" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title>Balance sheet</title>
+	<link rel="stylesheet" type="text/css" th:href="@{../css/common.css}" />
+	<link rel="stylesheet" type="text/css" th:href="@{../css/table.css}"/>
+	<link rel="stylesheet" type="text/css" th:href="@{../css/spreadsheet.css}" />
+	<link rel="stylesheet" type="text/css" th:href="@{../css/reports.css}"/>
+
+	<style>
+	.balwidth {
+		width: 75px;
+	}
+	</style>
+
+	<script th:src="@{../js/common.js}"></script>
+
+    <script type="module">
+		const balanceSheetJS = '../js/balance_sheet.js';
+		const { default: BalanceSheet } = await import(balanceSheetJS);
+
+		let account = document.getElementById('account').value;
+		new BalanceSheet(account);
+	</script>
+</head>
+<body>
+
+<table id="content" style="display: none">
+	<caption style="display: none">Balance sheet</caption>
+	<tr>
+		<th scope="col">year</th>
+		<th scope="col" class="balwidth">month</th>
+		<th scope="col" class="balwidth">credits</th>
+		<th scope="col" class="balwidth">debits</th>
+		<th scope="col" class="balwidth">gain/loss</th>
+		<th scope="col" class="balwidth">balance</th>
+	</tr>
+</table>
+
+<input type="hidden" id="account" th:value="${account}"/>
+
+</body>
+</html>

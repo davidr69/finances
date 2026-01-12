@@ -1,0 +1,22 @@
+.positive {
+	text-align: right;
+	color: #000000;
+}
+
+.negative {
+	text-align: right;
+	color: #ff0000;
+}
+
+.editLine {
+	border-bottom: 1px solid #A0A0A0;
+}
+
+.editdel:hover {
+	text-decoration: underline;
+}
+
+.editdel {
+	text-decoration: none;
+	color: #2f4cb1;
+}

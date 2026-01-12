@@ -1,0 +1,31 @@
+---
+server:
+  port: 8443
+  error:
+    include-message: always
+    include-binding-errors: always
+  forward-headers-strategy: framework
+  tomcat:
+    remoteip:
+      protocol-header: X-Forwarded-Proto
+      remote-ip-header: X-Forwarded-For
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,mappings
+
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      pool-name: FinancesCP
+      connection-test-query: SELECT 1
+      minimum-idle: 3
+      maximum-pool-size: 10
+      idle-timeout: 10000
+  session:
+    timeout: 600s
+    redis:
+      namespace: "finances"

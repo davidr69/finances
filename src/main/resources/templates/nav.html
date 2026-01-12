@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en-US" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title>Financial System</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="icon" type="image/png" th:href="@{./favicon.ico}"/>
+
+	<link rel="stylesheet" type="text/css" th:href="@{./font-awesome-4.7.0/css/font-awesome.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{./css/common.css}">
+
+	<style>
+	.spacer {
+		width: 20px;
+	}
+
+	.icon {
+		height: 33px;
+		text-align: center;
+	}
+
+	table {
+		border: 0;
+		border-spacing: 0;
+		padding: 0;
+	}
+	</style>
+
+	<script type="module">
+		const navJS = './js/nav.js';
+		const { default: Nav } = await import(navJS);
+		const nav = new Nav();
+		window.nav = nav;
+	</script>
+</head>
+<body>
+
+<div class="nav">
+<table>
+	<caption style="display: none">nav</caption>
+	<thead><tr><th scope="col" style="height: 0;"> </th></tr></thead>
+	<tr>
+		<td class="spacer">&nbsp;</td>
+		<td class="icon">
+			<a href='#'><em class="fa fa-list-ul glyph" onclick="nav.entityReport()"></em></a>
+			<br/><span class="small">Entity totals</span>
+		</td>
+		<td class="spacer">&nbsp;</td>
+		<td class="icon">
+			<a href='#'><em class="fa fa-sort-amount-desc glyph" onclick="nav.entityByAmount()"></em></a>
+			<br/><span class="small">Entity rank</span>
+		</td>
+		<td class="spacer">&nbsp;</td>
+		<td class="icon">
+			<a href='#'><em class="fa fa-table glyph" onclick="nav.show('entities')"></em></a>
+			<br/><span class="small">Entities</span>
+		</td>
+
+		<td class="spacer">&nbsp;</td>
+		<td class="icon">
+			<a href='#'><em class="fa fa-balance-scale glyph" onclick="nav.balanceSheet()"></em></a>
+			<br/><span class="small">Balance Sheet</span>
+		</td>
+
+		<td class="spacer">&nbsp;</td>
+		<td class="icon">
+			<a href='#'><em class="fa fa-usd glyph" onclick="nav.budget()"></em></a>
+			<br/><span class="small">Budget</span>
+		</td>
+
+		<td class="spacer">&nbsp;</td>
+		<td class="icon">
+			<a href='#'><em class="fa fa-credit-card glyph" onclick="nav.show('transaction');"></em></a>
+			<br/><span class="small">Activity</span>
+		</td>
+		<td class="spacer">&nbsp;</td>
+		<td class="icon">
+			<a href='#'><em class="fa fa-line-chart glyph" onClick='nav.cashbook();'></em></a>
+			<br/><span class="small">Cashbook</span>
+		</td>
+		<td class="spacer">&nbsp;</td>
+		<td rowspan="2" class="middle">Account:
+			<label for="account"></label><select name="account" id="account" onchange="nav.updateAccount();">
+				<option th:each="account:${accounts}" th:value="${account.id}" th:text="${account.description}"></option>
+			</select>
+		</td>
+		<td class="spacer">&nbsp;</td>
+		<td style="width: 150px" rowspan="2" class="middle">
+			<form>Year:
+				<label for="year"></label><input type="text" maxlength="4" size="4" name="year" id="year" onChange='nav.updateYear();'/>
+			</form>
+		</td>
+	</tr>
+</table>
+<div class="icon" style="position: fixed; right: 50px; top: 0;">
+	<a href="#"><em class="fa fa-sign-out glyph" onclick="nav.logout();"></em></a>
+	<br/><span class="small">Log Out</span>
+</div>
+</div>
+
+<iframe title="content" id="content" style="border: 0;"></iframe>
+
+</body>
+</html>

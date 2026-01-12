@@ -1,0 +1,93 @@
+replicaCount: 2
+
+namespace: finances
+
+image:
+  repository: registry:5000/finances
+  tag: "3.9.7"
+  pullPolicy: IfNotPresent
+
+vaultRetrieve:
+  image:
+    repository: registry:5000/vault-retrieve
+    tag: "4.0.3"
+    pullPolicy: IfNotPresent
+  env:
+    mountPath: "/var/tmp/vault"
+    springCloudConfigLabel: "main"
+    springConfigImport: "configserver:http://configs.lavacro.net:9080/"
+    vaultRequest: |
+      {
+        "vault_request": [{
+          "path": "lavacro/data/prod/database/postgresql",
+          "items": [{
+            "key": "password",
+            "label": "spring.datasource.password"
+          }]
+        }],
+        "mount_path": "/var/tmp/vault/vault.properties"
+      }
+    springAppName: 'vault'
+    springProfile: 'prod'
+    vaultAuth: "APPROLE"
+    vaultUri: 'http://vault.lavacro.net:8201'
+
+app:
+  env:
+    profile: home
+    propertiesFile: "/var/tmp/vault/vault.properties"
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "250m"
+    limits:
+      memory: "384Mi"
+      cpu: "500m"
+  readinessProbe:
+    httpGet:
+      path: /actuator/health
+      port: 8443
+    timeoutSeconds: 60
+  livenessProbe:
+    httpGet:
+      path: /actuator/health
+      port: 8443
+    timeoutSeconds: 3
+    initialDelaySeconds: 60
+
+service:
+  type: LoadBalancer
+  port: 80
+  targetPort: 8443
+
+ingress:
+  enabled: true
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+  hosts:
+  - host: finances.cloud.lavacro.net
+    paths:
+    - path: "/"
+      pathType: Prefix
+
+redis:
+  enabled: true
+  image:
+    repository: redis
+    tag: "5.0.6"
+  resources:
+    requests:
+      cpu: "250m"
+      memory: "64Mi"
+    limits:
+      cpu: "500m"
+      memory: "128Mi"
+  service:
+    type: LoadBalancer
+    port: 6379
+
+configMap:
+  dbUser: "david"
+  dbUrl: "jdbc:postgresql://prod-db.lavacro.net:5432/finances"
+  profile: "home"
+  propertiesFile: "/var/tmp/vault/vault.properties"

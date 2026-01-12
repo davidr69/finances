@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en-US" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title>Financial System</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" type="text/css" th:href="@{./font-awesome-4.7.0/css/font-awesome.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{./css/common.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{./css/table.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{./css/spreadsheet.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{./css/modal.css}">
+	<style>
+	table {
+		border: 0;
+		border-spacing: 0;
+	}
+	</style>
+
+	<script type="text/javascript" th:src="@{./js/common.js}"></script>
+
+	<script type="module">
+		const cashbookJS = './js/cashbook.js';
+		const { default: Cashbook } = await import(cashbookJS);
+		window.cashbook = new Cashbook();
+	</script>
+</head>
+<body>
+
+<form>
+<table>
+	<caption style="display: none;">Cashbook</caption>
+	<tr>
+		<th scope="col">&nbsp;&nbsp;Date&nbsp;&nbsp;</th>
+		<th scope="col">&nbsp;&nbsp;Entity&nbsp;&nbsp;</th>
+		<th scope="col">&nbsp;&nbsp;Method / reference&nbsp;&nbsp;</th>
+		<th scope="col">&nbsp;&nbsp;Amount&nbsp;&nbsp;</th>
+		<th scope="col">&nbsp;&nbsp;Running total&nbsp;&nbsp;</th>
+		<th scope="col">&nbsp;&nbsp;Reconciled&nbsp;&nbsp;</th>
+		<th scope="col">&nbsp;&nbsp;Include?&nbsp;&nbsp;</th>
+		<th scope="col">&nbsp;&nbsp;Modify&nbsp;&nbsp;</th>
+	</tr>
+	<tr th:each="data:${transactions}">
+		<!-- date -->
+		<td th:text="${data.mydate}"></td>
+		<!-- entity -->
+		<td th:text="${data.entity}"></td>
+		<!-- description -->
+		<td th:text="'&nbsp;&nbsp;' + ${data.method} + (${data.reference} == null ? '' : ' - ' + ${data.reference})"></td>
+		<!-- amount -->
+		<td th:class="${data.amount} < 0 ? 'negative': 'positive'" th:text="${#numbers.formatDecimal(data.amount,1,2)}"></td>
+		<!-- running total -->
+		<td style="text-align: right" th:text="${data.runningTotal}"></td>
+		<!-- reconciled -->
+		<td th:switch="${data.reconciled}" style="text-align: center">
+			<span th:case="true" th:remove="tag"><em class="fa fa-check"></em></span>
+			<span th:case="*" th:remove="tag">
+				<label>
+					<input type='checkbox' th:name="|reconcile${data.sequence}|"/>
+				</label>
+			</span>
+		</td>
+		<!-- include in running total -->
+		<td th:switch="${data.reconciled}" style="text-align: center">
+			<span th:case="true" th:remove="tag">&nbsp;</span>
+			<span th:case="*" th:remove="tag">
+				<label>
+					<input type="checkbox" th:name="|visi${data.sequence}|" th:checked="${data.visible} == true ? 'checked' : 'false'"/>
+				</label>
+			</span>
+		</td>
+		<!-- edit -->
+		<td th:switch="${data.reconciled}" style="text-align: center">
+			<span th:case="true" th:remove="tag">&nbsp;</span>
+			<span th:case="*" th:remove="tag">
+				<a class="editdel" href="javascript:void(0);" th:onclick="|cashbook.modify(${data.sequence})|">edit/del</a>
+			</span>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<label>
+				<select name="month" onchange="cashbook.changeMonth(this[this.selectedIndex].value)" id="monthSelect">
+					<option th:each="monthNum,iter:${months}" th:text="${monthNum}" th:value="${iter.index}"></option>
+				</select>
+			</label>
+		</td>
+		<td>&nbsp;</td>
+		<td>&nbsp;</td>
+		<td th:text="${total}" style="text-align: right"></td>
+		<td class="center"><button type="button" class="btn btn-warning btn-sm" onClick='reset()'>clear everything</button></td>
+		<td class="center"><button type="button" class="btn btn-primary btn-sm" onClick='cashbook.reconcile()'>update</button></td>
+		<td class="center"><button type="button" class="btn btn-primary btn-sm" onClick='cashbook.include()'>update</button></td>
+		<td>&nbsp;</td>
+	</tr>
+</table>
+<input type="hidden" id="selectedMonth" th:value="${month}"/>
+</form>
+
+<div class="custom-modal" id="myModal">
+	<div class="custom-modal-dialog">
+
+		<!-- Modal content-->
+		<div class="custom-modal-content" id="modalBg">
+			<div class="custom-modal-header">
+				<button type="button" class="custom-close">&times;</button>
+				<h4 class="custom-modal-title">Edit record</h4>
+			</div>
+			<div class="custom-modal-body">
+				<table style="width: 100%; padding: 0; border-spacing: 0;">
+					<caption style="display: none;">popup</caption>
+					<tr><th scope="col" style="height: 0;"></th></tr>
+					<tr class="editLine">
+						<td>From/to:
+							<label for="editEntity"></label><select id="editEntity"></select>
+							on
+							<label for="editMonth"></label><input type="text" max="2" size="2" id="editMonth"/>/
+							<label for="editDay"></label><input type="text" max="2" size="2" id="editDay"/>/
+							<label for="editYear"></label><input type="text" max="4" size="4" id="editYear"/>
+						</td>
+					</tr>
+					<tr class="editLine">
+						<td>Transaction type:
+							<label for="editMethod"></label><select id="editMethod"></select>
+							for
+							<label for="editAmount"></label><input type="text" max="10" size="10" id="editAmount"/>
+						</td>
+					</tr>
+					<tr class="editLine">
+						<td>Account: <label for="editAccount"></label><select id="editAccount"></select></td>
+					</tr>
+					<tr class="editLine">
+						<td>Category: <label for="editCategory"></label><select id="editCategory"></select></td>
+					</tr>
+					<tr class="editLine">
+						<td>Reference: <label for="editReference"></label><input type="text" max="32" size="32" id="editReference"/></td>
+					</tr>
+				</table>
+				<br/><br/>
+				<button type="button" class="btn btn-warning btn-sm" onClick='cashbook.updateRecord()'>Make it so!</button>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				<button type="button" class="btn btn-danger btn-sm" onClick='cashbook.confirm_del()'>Delete this</button>
+			</div>
+			<div class="custom-modal-footer">
+				<button type="button" class="btn btn-default modal-close-btn">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+</body>
+</html>

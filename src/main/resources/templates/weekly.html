@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+	<meta charset="UTF-8">
+	<title>Weekly analysis</title>
+	<link rel="stylesheet" type="text/css" th:href="@{../css/common.css}"/>
+	<link rel="stylesheet" type="text/css" th:href="@{../css/weekly.css}"/>
+
+	<script th:src="@{../js/common.js}"></script>
+
+	<script type="module">
+		const weeklyJS = '../js/weekly.js';
+		const { default: Weekly } = await import(weeklyJS);
+		const wkly = new Weekly(new Date());
+		window.weeklyApi = wkly;
+	</script>
+</head>
+<body>
+
+<table>
+	<tr>
+		<td class="center">
+			<label for="month"></label><select id="month" name="month" onchange="weeklyApi.changeMonth(this);">
+				<option value="0">January</option>
+				<option value="1">February</option>
+				<option value="2">March</option>
+				<option value="3">April</option>
+				<option value="4">May</option>
+				<option value="5">June</option>
+				<option value="6">July</option>
+				<option value="7">August</option>
+				<option value="8">September</option>
+				<option value="9">October</option>
+				<option value="10">November</option>
+				<option value="11">December</option>
+			</select>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<table id="calendar">
+				<caption style="display: none">Calendar</caption>
+				<tr>
+					<th scope="col">&nbsp;</th>
+					<th scope="col">Sun</th>
+					<th scope="col" class="balwidth">Mon</th>
+					<th scope="col" class="balwidth">Tue</th>
+					<th scope="col" class="balwidth">Wed</th>
+					<th scope="col" class="balwidth">Thu</th>
+					<th scope="col" class="balwidth">Fri</th>
+					<th scope="col" class="balwidth">Sat</th>
+					<th scope="col" class="balwidth">Totals</th>
+				</tr>
+				<tr>
+					<td><label>
+						<input type="radio" name="week" value="0" onclick="weeklyApi.showTotals(this);"/>
+					</label></td>
+					<td id="row1col1" class="cell weekend"></td>
+					<td id="row1col2" class="cell"></td>
+					<td id="row1col3" class="cell"></td>
+					<td id="row1col4" class="cell"></td>
+					<td id="row1col5" class="cell"></td>
+					<td id="row1col6" class="cell"></td>
+					<td id="row1col7" class="cell weekend"></td>
+					<td id="totals" class="totals" rowspan="6"></td>
+				</tr>
+				<tr>
+					<td><label>
+						<input type="radio" name="week" value="1" onclick="weeklyApi.showTotals(this);"/>
+					</label></td>
+					<td id="row2col1" class="cell weekend"></td>
+					<td id="row2col2" class="cell"></td>
+					<td id="row2col3" class="cell"></td>
+					<td id="row2col4" class="cell"></td>
+					<td id="row2col5" class="cell"></td>
+					<td id="row2col6" class="cell"></td>
+					<td id="row2col7" class="cell weekend"></td>
+				</tr>
+				<tr>
+					<td><label>
+						<input type="radio" name="week" value="2" onclick="weeklyApi.showTotals(this);"/>
+					</label></td>
+					<td id="row3col1" class="cell weekend"></td>
+					<td id="row3col2" class="cell"></td>
+					<td id="row3col3" class="cell"></td>
+					<td id="row3col4" class="cell"></td>
+					<td id="row3col5" class="cell"></td>
+					<td id="row3col6" class="cell"></td>
+					<td id="row3col7" class="cell weekend"></td>
+				</tr>
+				<tr id="row4">
+					<td><label>
+						<input type="radio" name="week" value="3" onclick="weeklyApi.showTotals(this);"/>
+					</label></td>
+					<td id="row4col1" class="cell weekend"></td>
+					<td id="row4col2" class="cell"></td>
+					<td id="row4col3" class="cell"></td>
+					<td id="row4col4" class="cell"></td>
+					<td id="row4col5" class="cell"></td>
+					<td id="row4col6" class="cell"></td>
+					<td id="row4col7" class="cell weekend"></td>
+				</tr>
+				<tr id="row5">
+					<td><label>
+						<input type="radio" name="week" value="4" onclick="weeklyApi.showTotals(this);"/>
+					</label></td>
+					<td id="row5col1" class="cell weekend"></td>
+					<td id="row5col2" class="cell"></td>
+					<td id="row5col3" class="cell"></td>
+					<td id="row5col4" class="cell"></td>
+					<td id="row5col5" class="cell"></td>
+					<td id="row5col6" class="cell"></td>
+					<td id="row5col7" class="cell weekend"></td>
+				</tr>
+				<tr id="row6">
+					<td><label>
+						<input type="radio" name="week" value="5" onclick="weeklyApi.showTotals(this);"/>
+					</label></td>
+					<td id="row6col1" class="cell weekend"></td>
+					<td id="row6col2" class="cell"></td>
+					<td id="row6col3" class="cell"></td>
+					<td id="row6col4" class="cell"></td>
+					<td id="row6col5" class="cell"></td>
+					<td id="row6col6" class="cell"></td>
+					<td id="row6col7" class="cell weekend"></td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+</table>
+
+</body>
+</html>

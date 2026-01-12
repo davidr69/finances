@@ -1,0 +1,12 @@
+---
+spring:
+  data:
+    redis:
+      host: redis://pi4apps.lavacro.net:6379
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+#        dialect: org.hibernate.dialect.PostgreSQLDialect
+        ddl-auto: update
+        # Hibernate ddl auto (create, create-drop, validate, update)
