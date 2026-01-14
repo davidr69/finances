@@ -10,9 +10,8 @@ repositories {
 }
 
 group = 'com.lavacro'
-version = '3.9.7'
+version = '3.10.0'
 description = 'finances'
-//java.sourceCompatibility = JavaVersion.VERSION_21
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'

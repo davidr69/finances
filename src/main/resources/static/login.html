@@ -26,7 +26,7 @@
 					if(data.code === 0) {
 						window.location = 'nav';
 					} else {
-						alert(data.message);
+                        document.getElementById('message').innerHTML = data.message;
 					}
 				})
 			}).catch(() => {
@@ -53,6 +53,7 @@
 				<label for="pass"></label><input type="password" id="pass" placeholder="Password">
 				<input type="button" onclick="authenticate()" id="login" name="login" class="login loginmodal-submit" value="Login">
 			</form>
+			<div style="text-align: center; color: #f00000" id="message">&nbsp;</div>
 		</div>
 	</div>
 </div>

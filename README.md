@@ -6,6 +6,9 @@ purpose of this application is to perform data analytics over periods of
 time to make intelligent spending and saving decisions. This will
 aide in budgeting and financial planning.
 
+Given the long history of the application, there may be some legacy
+code that needs updating to modern standards.
+
 ---
 ### Requirements
 
