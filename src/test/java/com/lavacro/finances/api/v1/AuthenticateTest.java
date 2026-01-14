@@ -1,8 +1,12 @@
 package com.lavacro.finances.api.v1;
 
+import com.lavacro.finances.entities.AuthenticatedEntity;
 import com.lavacro.finances.entities.RbacUsersEntity;
 import com.lavacro.finances.repositories.AuthenticateRepository;
 
+import com.lavacro.finances.repositories.RbacUserRepository;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,8 +20,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Optional;
 
 import static org.mockito.Mockito.when;
 
@@ -25,6 +28,15 @@ import static org.mockito.Mockito.when;
 class AuthenticateTest {
 	@Mock
 	private AuthenticateRepository authenticateRepository;
+
+	@Mock
+	private RbacUserRepository rbacUserRepository;
+
+	@Mock
+	private HttpServletRequest httpServletRequest;
+
+	@Mock
+	private HttpSession httpSession;
 
 	@InjectMocks
 	private Authenticate authenticate;
@@ -38,13 +50,16 @@ class AuthenticateTest {
 
 	@Test
 	void testAuth() throws Exception {
+		AuthenticatedEntity authenticatedEntity = new AuthenticatedEntity();
+		authenticatedEntity.setId(1);
+		authenticatedEntity.setAuthenticated(true);
+		when(authenticateRepository.getUser("pass", "user")).thenReturn(authenticatedEntity);
 
-		List<RbacUsersEntity> results = new ArrayList<>();
 		RbacUsersEntity rbacUsersEntity = new RbacUsersEntity();
-		rbacUsersEntity.setAuthenticated(true);
-		results.add(rbacUsersEntity);
-
-		when(authenticateRepository.isAuthenticated("pass", "user")).thenReturn(results);
+		rbacUsersEntity.setId(1);
+		rbacUsersEntity.setName("user");
+		rbacUsersEntity.setPassword("pass");
+		when(rbacUserRepository.findById(1)).thenReturn(Optional.of(rbacUsersEntity));
 
 		// Act & Assert
 		MockHttpServletResponse resp = mockMvc.perform(
