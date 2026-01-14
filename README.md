@@ -142,7 +142,7 @@ java -Dspring.profiles.active=uat -jar build/libs/finances-${version}.jar
 # Future Enhancements
 
 - [ ] True RBAC
-- [ ] Disable account after 3 failed login attempts
+- [x] Disable account after 3 failed login attempts (v 3.10.0)
 - [ ] Import bank statements:
 - - [ ] Read PDF
 - - [ ] Consult Ollama Mistral LLM for vendor matching
