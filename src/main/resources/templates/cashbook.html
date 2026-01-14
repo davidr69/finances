@@ -20,7 +20,7 @@
 	<script type="module">
 		const cashbookJS = './js/cashbook.js';
 		const { default: Cashbook } = await import(cashbookJS);
-		window.cashbook = new Cashbook();
+		globalThis.cashbook = new Cashbook();
 	</script>
 </head>
 <body>
@@ -71,14 +71,14 @@
 		<td th:switch="${data.reconciled}" style="text-align: center">
 			<span th:case="true" th:remove="tag">&nbsp;</span>
 			<span th:case="*" th:remove="tag">
-				<a class="editdel" href="javascript:void(0);" th:onclick="|cashbook.modify(${data.sequence})|">edit/del</a>
+				<a class="editdel" href="javascript:void(0);" th:onclick="|globalThis.cashbook.modify(${data.sequence})|">edit/del</a>
 			</span>
 		</td>
 	</tr>
 	<tr>
 		<td>
 			<label>
-				<select name="month" onchange="cashbook.changeMonth(this[this.selectedIndex].value)" id="monthSelect">
+				<select name="month" onchange="globalThis.cashbook.changeMonth(this[this.selectedIndex].value)" id="monthSelect">
 					<option th:each="monthNum,iter:${months}" th:text="${monthNum}" th:value="${iter.index}"></option>
 				</select>
 			</label>
@@ -87,8 +87,8 @@
 		<td>&nbsp;</td>
 		<td th:text="${total}" style="text-align: right"></td>
 		<td class="center"><button type="button" class="btn btn-warning btn-sm" onClick='reset()'>clear everything</button></td>
-		<td class="center"><button type="button" class="btn btn-primary btn-sm" onClick='cashbook.reconcile()'>update</button></td>
-		<td class="center"><button type="button" class="btn btn-primary btn-sm" onClick='cashbook.include()'>update</button></td>
+		<td class="center"><button type="button" class="btn btn-primary btn-sm" onClick='globalThis.cashbook.reconcile()'>update</button></td>
+		<td class="center"><button type="button" class="btn btn-primary btn-sm" onClick='globalThis.cashbook.include()'>update</button></td>
 		<td>&nbsp;</td>
 	</tr>
 </table>
@@ -135,9 +135,9 @@
 					</tr>
 				</table>
 				<br/><br/>
-				<button type="button" class="btn btn-warning btn-sm" onClick='cashbook.updateRecord()'>Make it so!</button>
+				<button type="button" class="btn btn-warning btn-sm" onClick='globalThis.cashbook.updateRecord()'>Make it so!</button>
 				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				<button type="button" class="btn btn-danger btn-sm" onClick='cashbook.confirm_del()'>Delete this</button>
+				<button type="button" class="btn btn-danger btn-sm" onClick='globalThis.cashbook.confirm_del()'>Delete this</button>
 			</div>
 			<div class="custom-modal-footer">
 				<button type="button" class="btn btn-default modal-close-btn">Close</button>

@@ -6,6 +6,9 @@ purpose of this application is to perform data analytics over periods of
 time to make intelligent spending and saving decisions. This will
 aide in budgeting and financial planning.
 
+Given the long history of the application, there may be some legacy
+code that needs updating to modern standards.
+
 ---
 ### Requirements
 
@@ -139,7 +142,7 @@ java -Dspring.profiles.active=uat -jar build/libs/finances-${version}.jar
 # Future Enhancements
 
 - [ ] True RBAC
-- [ ] Disable account after 3 failed login attempts
+- [x] Disable account after 3 failed login attempts (v 3.10.0)
 - [ ] Import bank statements:
 - - [ ] Read PDF
 - - [ ] Consult Ollama Mistral LLM for vendor matching

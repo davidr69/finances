@@ -2,7 +2,7 @@
 spring:
   data:
     redis:
-      host: pi4apps.lavacro.net
+      host: redis.lavacro.net
       port: 6379
   jpa:
     show-sql: true

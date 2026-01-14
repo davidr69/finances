@@ -1,11 +1,10 @@
 package com.lavacro.finances.entities;
 
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
-import jakarta.persistence.Id;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -15,5 +14,18 @@ public class RbacUsersEntity {
 	@Id
 	private Integer id;
 
-	private boolean authenticated;
+	private String name;
+
+	private String password;
+
+	@Column(name = "login_attempts")
+	private Integer loginAttempts;
+
+	@Column(name = "last_login")
+	private LocalDateTime lastLogin;
+
+	private Boolean locked;
+
+	@Column(name = "locked_ip")
+	private String lockedIp;
 }
