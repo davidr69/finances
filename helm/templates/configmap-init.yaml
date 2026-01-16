@@ -6,9 +6,5 @@ metadata:
 data:
   VAULT_REQUEST: |{{ .Values.vaultRetrieve.env.vaultRequest | nindent 4 }}
   MOUNT_PATH: "{{ .Values.vaultRetrieve.env.mountPath }}"
-  SPRING_APPLICATION_NAME: "{{ .Values.vaultRetrieve.env.springAppName }}"
-  SPRING_PROFILES_ACTIVE: "{{ .Values.vaultRetrieve.env.springProfile }}"
-  SPRING_CLOUD_CONFIG_LABEL: "{{ .Values.vaultRetrieve.env.springCloudConfigLabel }}"
-  SPRING_CONFIG_IMPORT: "{{ .Values.vaultRetrieve.env.springConfigImport }}"
   SPRING_CLOUD_VAULT_AUTHENTICATION: "{{ .Values.vaultRetrieve.env.vaultAuth }}"
   SPRING_CLOUD_VAULT_URI: "{{ .Values.vaultRetrieve.env.vaultUri }}"

@@ -10,12 +10,10 @@ image:
 vaultRetrieve:
   image:
     repository: registry:5000/vault-retrieve
-    tag: "4.0.3"
+    tag: "4.0.4"
     pullPolicy: IfNotPresent
   env:
     mountPath: "/var/tmp/vault"
-    springCloudConfigLabel: "main"
-    springConfigImport: "configserver:http://configs.lavacro.net:9080/"
     vaultRequest: |
       {
         "vault_request": [{
@@ -27,8 +25,6 @@ vaultRetrieve:
         }],
         "mount_path": "/var/tmp/vault/vault.properties"
       }
-    springAppName: 'vault'
-    springProfile: 'prod'
     vaultAuth: "APPROLE"
     vaultUri: 'http://vault.lavacro.net:8201'
 
