@@ -9,21 +9,22 @@ image:
 
 vaultRetrieve:
   image:
-    repository: registry:5000/vault-retrieve
-    tag: "4.0.4"
+    repository: registry:5000/govault
+    tag: "1.0.0"
     pullPolicy: IfNotPresent
   env:
     mountPath: "/var/tmp/vault"
     vaultRequest: |
       {
         "vault_request": [{
-          "path": "lavacro/data/prod/database/postgresql",
+          "mount": "lavacro",
+          "path": "prod/database/postgresql",
           "items": [{
             "key": "password",
             "label": "spring.datasource.password"
           }]
         }],
-        "mount_path": "/var/tmp/vault/vault.properties"
+        "file_path": "/var/tmp/vault/vault.properties"
       }
     vaultAuth: "APPROLE"
     vaultUri: 'http://vault.lavacro.net:8201'
