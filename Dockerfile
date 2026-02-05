@@ -1,13 +1,3 @@
-#ARG APP_VERSION="3.9.1"
-#
-#FROM registry:5000/openjdk:21-ea-27-slim
-#
-#COPY build/libs/finances-${APP_VERSION}.jar /app/
-#WORKDIR /app
-#USER nobody
-#
-#ENTRYPOINT ["/bin/sh", "-c", "java -Dspring.profiles.active=${profile} -Dspring.config.additional-location=${additional_properties} -jar build/libs/finances-3.9.1.jar"]
-
 # Build stage
 ARG APP_VERSION="3.10.0"
 
