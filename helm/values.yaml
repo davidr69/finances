@@ -27,6 +27,8 @@ vaultRetrieve:
         }],
         "file_path": "/var/tmp/vault/vault.properties"
       }
+    vaultAuth: "APPROLE"
+    vaultUri: 'http://vault.lavacro.net:8201'
 
 app:
   env:
