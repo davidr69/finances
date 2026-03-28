@@ -23,6 +23,6 @@ public class ReportsAPI {
 	public ResponseEntity<BalanceSheet> balanceSheet(
 			@RequestParam("account") final Integer account
 	) {
-		return new ResponseEntity<>(reportsDao.balanceSheet(account), null, HttpStatus.OK);
+		return new ResponseEntity<>(reportsDao.balanceSheet(account), HttpStatus.OK);
 	}
 }

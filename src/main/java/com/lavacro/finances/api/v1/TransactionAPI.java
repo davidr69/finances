@@ -13,9 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.util.Locale;
 
 @RestController
 @RequestMapping(value = "/api/v1/transaction")
@@ -87,8 +85,6 @@ public class TransactionAPI {
 			@RequestParam("endDate") String endDate
 	) {
 		LOGGER.info("List transactions for account {} from {} to {}", account, beginDate, endDate);
-
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
 
 		TransactionList transactionList = new TransactionList();
 		try {

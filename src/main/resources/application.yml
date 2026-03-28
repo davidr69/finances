@@ -1,9 +1,6 @@
 ---
 server:
   port: 8443
-  error:
-    include-message: always
-    include-binding-errors: always
   forward-headers-strategy: framework
   tomcat:
     remoteip:
@@ -25,6 +22,10 @@ spring:
       minimum-idle: 3
       maximum-pool-size: 10
       idle-timeout: 10000
+  data:
+    redis:
+      repositories:
+        enabled: false
   session:
     timeout: 600s
     redis:
