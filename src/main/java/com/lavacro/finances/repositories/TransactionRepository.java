@@ -1,6 +1,6 @@
 package com.lavacro.finances.repositories;
 
-import com.lavacro.finances.entities.TransactionEntity;
+import com.lavacro.finances.entities.TransactionDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -16,13 +16,13 @@ public class TransactionRepository {
 	TransactionRepository(TransactionInterface transactionInterface) {
 		this.transactionInterface = transactionInterface;
 	}
-	public List<TransactionEntity> findForOneAccount(final Integer account, final LocalDate dateStart, final LocalDate dateEnd) {
+	public List<TransactionDTO> findForOneAccount(final Integer account, final LocalDate dateStart, final LocalDate dateEnd) {
 		return transactionInterface.findForOneAccount(account, dateStart, dateEnd);
 	}
 }
 
 @Repository
-interface TransactionInterface extends JpaRepository<TransactionEntity, Integer> {
+interface TransactionInterface extends JpaRepository<TransactionDTO, Integer> {
 	@Query(value = """
 			SELECT act.amount, act.mydate, act.reference, act.reconciled, act.visible,
 				e.description AS entity, trn.description AS method, act.sequence
@@ -32,5 +32,5 @@ interface TransactionInterface extends JpaRepository<TransactionEntity, Integer>
 			WHERE act.account = :account AND act.mydate BETWEEN :dateStart AND :dateEnd
 			ORDER BY mydate, amount DESC, e.description
 	""", nativeQuery = true)
-	List<TransactionEntity> findForOneAccount(final Integer account, final LocalDate dateStart, final LocalDate dateEnd);
+	List<TransactionDTO> findForOneAccount(final Integer account, final LocalDate dateStart, final LocalDate dateEnd);
 }

@@ -1,11 +1,11 @@
 package com.lavacro.finances.api.v1;
 
-import com.lavacro.finances.entities.AuthenticatedEntity;
+import com.lavacro.finances.entities.AuthenticatedDTO;
 import com.lavacro.finances.entities.RbacUsersEntity;
 import com.lavacro.finances.model.ActionResponse;
-import com.lavacro.finances.repositories.AuthenticateRepository;
 import com.lavacro.finances.repositories.RbacUserRepository;
 
+import com.lavacro.finances.services.AuthenticateService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
@@ -19,15 +19,15 @@ import java.util.Optional;
 @RestController
 @Slf4j
 public class Authenticate {
-	private final AuthenticateRepository authenticateRepository;
 	private final RbacUserRepository rbacUserRepository;
+	private final AuthenticateService authenticateService;
 
 	public Authenticate(
-			AuthenticateRepository authenticateRepository,
-			RbacUserRepository rbacUserRepository
+			RbacUserRepository rbacUserRepository,
+			AuthenticateService authenticateService
 	) {
-		this.authenticateRepository = authenticateRepository;
 		this.rbacUserRepository = rbacUserRepository;
+		this.authenticateService = authenticateService;
 	}
 
 	@PostMapping(value = "/authenticate")
@@ -40,7 +40,7 @@ public class Authenticate {
 		log.info("user: {}", user);
 		ActionResponse resp = new ActionResponse();
 
-		AuthenticatedEntity authenticated = authenticateRepository.getUser(pass, user);
+		AuthenticatedDTO authenticated = authenticateService.authenticate(user, pass);
 		if(authenticated == null) {
 			log.error("No results!");
 			resp.setCode(1);

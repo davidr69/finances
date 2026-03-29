@@ -1,8 +1,8 @@
 package com.lavacro.finances.services;
 
 import com.lavacro.finances.repositories.TransactionRepository;
-import com.lavacro.finances.entities.SumEntity;
-import com.lavacro.finances.entities.TransactionEntity;
+import com.lavacro.finances.entities.SumDTO;
+import com.lavacro.finances.entities.TransactionDTO;
 import com.lavacro.finances.entities.ActionEntity;
 import com.lavacro.finances.entities.TransactionTypeEntity;
 import com.lavacro.finances.model.*;
@@ -104,7 +104,7 @@ public class TransactionService {
 		}
 	}
 
-	public List<TransactionEntity> showItems(final Integer account, final Integer year, final Integer month) {
+	public List<TransactionDTO> showItems(final Integer account, final Integer year, final Integer month) {
 		log.info("showItems: {}, {}, {}", account, year, month);
 		LocalDate startDate;
 		LocalDate endDate;
@@ -116,8 +116,8 @@ public class TransactionService {
 			endDate = startDate.plusMonths(1).minusDays(1);
 		}
 
-		SumEntity sum = sumRepository.getSumUpToDate(account, startDate);
-		List<TransactionEntity> resp = null;
+		SumDTO sum = sumRepository.getSumUpToDate(account, startDate);
+		List<TransactionDTO> resp = null;
 
 		if(sum != null) {
 			BigDecimal tempBal = sum.getBalance();
@@ -126,25 +126,25 @@ public class TransactionService {
 		return resp;
 	}
 
-	public List<TransactionEntity> getEntries(final BigDecimal tempBal, final Integer account, final LocalDate startDate, final LocalDate endDate) {
+	public List<TransactionDTO> getEntries(final BigDecimal tempBal, final Integer account, final LocalDate startDate, final LocalDate endDate) {
 		log.info("getEntires: tempBal = {}, account = {}, dates: {} - {}", tempBal, account, startDate, endDate);
-		List<TransactionEntity> resp = transactionRepository.findForOneAccount(account, startDate, endDate);
+		List<TransactionDTO> resp = transactionRepository.findForOneAccount(account, startDate, endDate);
 
 		final NumberFormat nf = NumberFormat.getInstance();
 		nf.setMinimumFractionDigits(2);
 
 		BigDecimal runningTotal = (tempBal == null ? new BigDecimal(0) : tempBal);
-		for(TransactionEntity transactionEntity : resp) {
-			if(transactionEntity.isVisible()) {
-				runningTotal = runningTotal.add(transactionEntity.getAmount());
-				transactionEntity.setRunningTotal(nf.format(runningTotal));
+		for(TransactionDTO transactionDTO : resp) {
+			if(transactionDTO.isVisible()) {
+				runningTotal = runningTotal.add(transactionDTO.getAmount());
+				transactionDTO.setRunningTotal(nf.format(runningTotal));
 			}
 		}
 		return resp;
 	}
 
 	public BigDecimal getBalance(final Integer account) {
-		SumEntity sum = sumRepository.getSumForAccount(account);
+		SumDTO sum = sumRepository.getSumForAccount(account);
 		if(sum != null) {
 			return sum.getBalance();
 		} else {
@@ -173,13 +173,13 @@ interface TransactionTypeRepository extends JpaRepository<TransactionTypeEntity,
 }
 
 @Repository
-interface SumRepository extends JpaRepository<SumEntity, Integer> {
+interface SumRepository extends JpaRepository<SumDTO, Integer> {
 	@Query(value = """
 		SELECT 1 AS rownum, SUM(amount) AS balance
 		FROM action
 		WHERE account = :account AND visible = 't' AND mydate < :mydate
 	""", nativeQuery = true)
-	SumEntity getSumUpToDate(
+	SumDTO getSumUpToDate(
 			@Param("account") final Integer account,
 			@Param("mydate") final LocalDate mydate
 	);
@@ -189,7 +189,7 @@ interface SumRepository extends JpaRepository<SumEntity, Integer> {
 		FROM action
 		WHERE account = :account AND reconciled='t'
 	""", nativeQuery = true)
-	SumEntity getSumForAccount(
+	SumDTO getSumForAccount(
 			@Param("account") final Integer account
 	);
 }

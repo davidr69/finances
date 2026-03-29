@@ -14,7 +14,7 @@ import java.time.LocalDate;
 @Entity
 @Getter
 @Setter
-public class TransactionEntity {
+public class TransactionDTO {
 	@Id
 	private Integer sequence;
 
