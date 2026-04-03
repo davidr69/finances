@@ -31,7 +31,7 @@
 	<tr th:each="trans:${entity.entities}">
 		<td th:text="${trans.mydate}"></td>
 		<td th:text="${trans.amount}" class="right"></td>
-		<td class='desc' th:text="${trans.description}"></td>
+		<td class='desc' th:text="${trans.reference}"></td>
 	</tr>
 	<tr>
 		<td style='width: 75px'>&nbsp;</td>
