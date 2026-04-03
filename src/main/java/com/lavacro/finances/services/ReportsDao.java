@@ -1,16 +1,12 @@
-package com.lavacro.finances.dao;
+package com.lavacro.finances.services;
 
 import com.lavacro.finances.entities.BalanceSheetEntity;
-import com.lavacro.finances.entities.EntityByYear;
 import com.lavacro.finances.entities.EntitySummary;
-import com.lavacro.finances.model.reports.EntityObj;
-import com.lavacro.finances.model.reports.Transaction;
 import com.lavacro.finances.model.reports.SummaryRow;
 import com.lavacro.finances.model.reports.BalanceSheet;
 import com.lavacro.finances.model.reports.Balance;
 
 import com.lavacro.finances.repositories.BalanceSheetRepository;
-import com.lavacro.finances.repositories.EntityRepository;
 import com.lavacro.finances.repositories.SummaryRepository;
 import org.springframework.stereotype.Component;
 
@@ -27,60 +23,13 @@ public class ReportsDao {
 	private static final Logger logger = LoggerFactory.getLogger(ReportsDao.class);
 
 	private final BalanceSheetRepository balanceSheetRepository;
-	private final EntityRepository entityRepository;
 	private final SummaryRepository summaryRepository;
 
 	public ReportsDao(BalanceSheetRepository balanceSheetRepository,
-					  EntityRepository entityRepository,
 					  SummaryRepository summaryRepository
 	) {
 		this.balanceSheetRepository = balanceSheetRepository;
-		this.entityRepository = entityRepository;
 		this.summaryRepository = summaryRepository;
-	}
-
-	public List<EntityObj> byEntity(final Integer account, final Integer year) {
-		logger.info("byEntity: {}, {}", account, year);
-		List<EntityByYear> tuples = entityRepository.byEntity(year, account);
-
-		final List<EntityObj> resp = new ArrayList<>();
-		EntityObj entity = null;
-		BigDecimal total = new BigDecimal(0);
-		String prevEntity = "";
-
-		try {
-			for(EntityByYear tuple: tuples) {
-				String desc = tuple.getDescription();
-				if(!prevEntity.equals(desc)) {
-					if(!prevEntity.isEmpty()) {
-						entity.setTotal(total);
-						resp.add(entity);
-					}
-
-					entity = new EntityObj();
-					entity.setName(desc);
-					entity.setTransactions(new ArrayList<>());
-					prevEntity = desc;
-				}
-
-				String reference = tuple.getReference();
-				Transaction transaction = new Transaction(
-						tuple.getMydate(), tuple.getAmount(), reference == null ? "" : reference
-				);
-				assert entity != null;
-				entity.getTransactions().add(transaction);
-				total = tuple.getTotal();
-			}
-		} catch(Exception e) {
-			logger.error(e.getMessage());
-		}
-
-		if(entity == null) {
-			return resp;
-		}
-		entity.setTotal(total);
-		resp.add(entity);
-		return resp;
 	}
 
 	public List<SummaryRow> getSummary(final Integer startYear, final Integer account) {

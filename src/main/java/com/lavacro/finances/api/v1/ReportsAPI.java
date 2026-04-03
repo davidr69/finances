@@ -1,6 +1,6 @@
 package com.lavacro.finances.api.v1;
 
-import com.lavacro.finances.dao.ReportsDao;
+import com.lavacro.finances.services.ReportsDao;
 import com.lavacro.finances.model.reports.BalanceSheet;
 
 import org.springframework.http.HttpStatus;
