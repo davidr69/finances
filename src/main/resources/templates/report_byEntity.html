@@ -25,11 +25,11 @@
 <table aria-describedby="Entity totals">
 	<thead>
 		<tr>
-			<th colspan="3" style='text-align: center' th:text="${entity.name}" id="foo"></th>
+			<th colspan="3" style='text-align: center' th:text="${entity.entityName}" id="foo"></th>
 		</tr>
 	</thead>
-	<tr th:each="trans:${entity.transactions}">
-		<td th:text="${trans.date}"></td>
+	<tr th:each="trans:${entity.entities}">
+		<td th:text="${trans.mydate}"></td>
 		<td th:text="${trans.amount}" class="right"></td>
 		<td class='desc' th:text="${trans.description}"></td>
 	</tr>

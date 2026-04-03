@@ -1,6 +1,6 @@
 package com.lavacro.finances.api.v1;
 
-import com.lavacro.finances.entities.AuthenticatedDTO;
+import com.lavacro.finances.dto.AuthenticatedDTO;
 import com.lavacro.finances.entities.RbacUsersEntity;
 
 import com.lavacro.finances.repositories.RbacUserRepository;
@@ -50,9 +50,7 @@ class AuthenticateTest {
 
 	@Test
 	void testAuth() throws Exception {
-		AuthenticatedDTO authenticatedDTO = new AuthenticatedDTO();
-		authenticatedDTO.setId(1);
-		authenticatedDTO.setAuthenticated(true);
+		AuthenticatedDTO authenticatedDTO = new AuthenticatedDTO(1, true);
 //		when(authenticateRepository.getUser("pass", "user")).thenReturn(authenticatedDTO);
 
 		RbacUsersEntity rbacUsersEntity = new RbacUsersEntity();

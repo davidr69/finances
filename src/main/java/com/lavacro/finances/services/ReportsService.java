@@ -1,12 +1,16 @@
 package com.lavacro.finances.services;
 
+import com.lavacro.finances.dto.EntityDTO;
+import com.lavacro.finances.dto.EntityTotalsDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.intellij.lang.annotations.Language;
 import org.springframework.stereotype.Service;
 
 import javax.sql.DataSource;
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +34,16 @@ public class ReportsService {
 		FROM action
 		WHERE account = ? AND DATE_PART('year', mydate) >= ?
 		ORDER BY year
+	""";
+
+	@Language("SQL")
+	private static final String ENTITY_BY_YEAR = """
+		SELECT amount, mydate, description, reference,
+			SUM(amount) OVER(PARTITION BY entity ORDER BY description, mydate) AS total
+		FROM action a
+		JOIN entities e ON a.entity = e.id
+		WHERE date_part('year', mydate) = ? AND account = ?
+		ORDER BY description, mydate
 	""";
 
 	ReportsService(DataSource dataSource) {
@@ -73,5 +87,54 @@ public class ReportsService {
 			log.error("'getFilteredYears' error: {}", e.getMessage());
 		}
 		return years;
+	}
+
+	/*
+		This data is for the entity report, whereby transactions for the year are grouped by entity
+		with their amounts and eventually a total for the entity.
+	 */
+	public List<EntityTotalsDTO> byEntity(final Integer account, final Integer year) {
+		log.info("byEntity: {}, {}", account, year);
+		List<EntityDTO> tuples = new ArrayList<>();
+		List<EntityTotalsDTO> totals = new ArrayList<>();
+
+		try (
+			Connection conn = datasource.getConnection();
+			PreparedStatement stmt = conn.prepareStatement(ENTITY_BY_YEAR)
+		) {
+			String prevEntity = "";
+			BigDecimal oldTotal = new BigDecimal(0);
+
+			stmt.setInt(1, year);
+			stmt.setInt(2, account);
+			stmt.execute();
+			while(stmt.getResultSet().next()) {
+				ResultSet rs = stmt.getResultSet();
+
+				EntityDTO tuple = new EntityDTO(
+						rs.getBigDecimal("amount"),
+						rs.getDate("mydate").toLocalDate(),
+						rs.getString("description"),
+						rs.getString("reference")
+				);
+
+				BigDecimal total = rs.getBigDecimal("total");
+
+				if(!prevEntity.equals(tuple.description())) {
+					if(!prevEntity.isEmpty()) {
+						EntityTotalsDTO totalsDTO = new EntityTotalsDTO(prevEntity, oldTotal, tuples);
+						totals.add(totalsDTO);
+						tuples = new ArrayList<>();
+					}
+					prevEntity = tuple.description();
+				}
+
+				oldTotal = total;
+				tuples.add(tuple);
+			}
+		} catch(SQLException e) {
+			log.error("'byEntity' error: {}", e.getMessage());
+		}
+		return totals;
 	}
 }

@@ -1,6 +1,6 @@
 package com.lavacro.finances.controllers;
 
-import com.lavacro.finances.dao.ReportsDao;
+import com.lavacro.finances.services.ReportsDao;
 import com.lavacro.finances.model.reports.SummaryRow;
 
 import com.lavacro.finances.services.ReportsService;
@@ -29,7 +29,7 @@ public class Reports {
 			@RequestParam("account") final Integer account,
 			@RequestParam("year") final Integer year
 	) {
-		model.addAttribute("data", reportsDao.byEntity(account, year));
+		model.addAttribute("data", reportsService.byEntity(account, year));
 		return "report_byEntity";
 	}
 

@@ -1,9 +1,8 @@
 package com.lavacro.finances.api.v1;
 
-import com.lavacro.finances.entities.AuthenticatedDTO;
+import com.lavacro.finances.dto.AuthenticatedDTO;
 import com.lavacro.finances.entities.RbacUsersEntity;
 import com.lavacro.finances.model.ActionResponse;
-import com.lavacro.finances.repositories.RbacUserRepository;
 
 import com.lavacro.finances.services.AuthenticateService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,14 +18,9 @@ import java.util.Optional;
 @RestController
 @Slf4j
 public class Authenticate {
-	private final RbacUserRepository rbacUserRepository;
 	private final AuthenticateService authenticateService;
 
-	public Authenticate(
-			RbacUserRepository rbacUserRepository,
-			AuthenticateService authenticateService
-	) {
-		this.rbacUserRepository = rbacUserRepository;
+	public Authenticate(AuthenticateService authenticateService) {
 		this.authenticateService = authenticateService;
 	}
 
@@ -48,13 +42,13 @@ public class Authenticate {
 			return resp;
 		}
 
-		RbacUsersEntity userEntity = rbacUserRepository.findById(authenticated.getId()).orElse(new RbacUsersEntity());
+		RbacUsersEntity userEntity = authenticateService.findUser(authenticated.id());
 		if(userEntity.getLocked() != null && userEntity.getLocked()) {
 			resp.setCode(1);
 			resp.setMessage("User is locked");
 			log.error("Attempted login for {} while user is locked", user);
 		} else {
-			if (Boolean.TRUE.equals(authenticated.getAuthenticated())) {
+			if (Boolean.TRUE.equals(authenticated.authenticated())) {
 				userEntity.setLastLogin(LocalDateTime.now());
 				userEntity.setLoginAttempts(null);
 				resp.setCode(0);
@@ -77,7 +71,7 @@ public class Authenticate {
 					resp.setMessage("Authentication failed");
 				}
 			}
-			rbacUserRepository.save(userEntity);
+			authenticateService.updateUser(userEntity);
 		}
 		return resp;
 	}
