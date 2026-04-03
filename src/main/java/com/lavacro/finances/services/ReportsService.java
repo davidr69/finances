@@ -132,6 +132,9 @@ public class ReportsService {
 				oldTotal = total;
 				tuples.add(tuple);
 			}
+
+			totals.add(new EntityTotalsDTO(prevEntity, oldTotal, tuples));
+
 		} catch(SQLException e) {
 			log.error("'byEntity' error: {}", e.getMessage());
 		}
