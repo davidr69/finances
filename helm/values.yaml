@@ -5,13 +5,13 @@ namespace: finances
 image:
   registry: "registry:5000"
   repository: "finances"
-  tag: "3.10.0"
+  tag: "3.10.1"
   pullPolicy: IfNotPresent
 
 vaultRetrieve:
   image:
     repository: registry:5000/govault
-    tag: "1.0.1"
+    tag: "1.0.4"
     pullPolicy: IfNotPresent
   env:
     mountPath: "/var/tmp/vault"

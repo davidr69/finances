@@ -3,16 +3,15 @@ package com.lavacro.finances.controllers;
 import com.lavacro.finances.services.AccountsService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
+@Slf4j
 public class Home {
-	private static final Logger log = LoggerFactory.getLogger(Home.class);
-
 	private final AccountsService accountsService;
 	private final HttpSession session;
 

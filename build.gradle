@@ -10,7 +10,7 @@ repositories {
 }
 
 group = 'com.lavacro'
-version = '3.10.0'
+version = '3.10.1'
 description = 'finances'
 
 dependencies {

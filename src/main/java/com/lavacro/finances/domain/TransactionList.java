@@ -1,6 +1,6 @@
 package com.lavacro.finances.domain;
 
-import com.lavacro.finances.entities.TransactionDTO;
+import com.lavacro.finances.dto.TransactionDTO;
 import com.lavacro.finances.model.GenericResponse;
 import lombok.Getter;
 import lombok.Setter;
