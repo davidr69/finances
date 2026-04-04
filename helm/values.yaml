@@ -3,7 +3,8 @@ replicaCount: 2
 namespace: finances
 
 image:
-  repository: registry:5000/finances
+  registry: "registry:5000"
+  repository: "finances"
   tag: "3.10.0"
   pullPolicy: IfNotPresent
 

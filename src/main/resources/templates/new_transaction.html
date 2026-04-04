@@ -12,7 +12,7 @@
 		const transactionJS = './js/transaction.js';
 		const { default: Transaction } = await import(transactionJS);
 		const txn = new Transaction();
-		window.txn = txn;
+		globalThis.txn = txn;
 	</script>
 
 </head>
