@@ -6,6 +6,9 @@ server:
     remoteip:
       protocol-header: X-Forwarded-Proto
       remote-ip-header: X-Forwarded-For
+  servlet:
+    session:
+      timeout: 600
 
 management:
   endpoints:
@@ -26,8 +29,8 @@ spring:
     redis:
       repositories:
         enabled: false
-  session:
-    store-type: redis
-    timeout: 600s
-    redis:
-      namespace: "finances"
+#  session:
+#    store-type: redis
+#    redis:
+#      namespace: "finances"
+#      repository-type: default
