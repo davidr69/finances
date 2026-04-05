@@ -56,6 +56,7 @@ public class Authenticate {
 
 				session.setAttribute("user", user);
 				log.info("Authenticated successfully");
+				log.info("Session id: {}", session.getId());
 			} else {
 				log.error("Authentication failed for {}", user);
 				int attempts = Optional.ofNullable(userEntity.getLoginAttempts()).orElse(0);

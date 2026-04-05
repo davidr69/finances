@@ -27,6 +27,7 @@ spring:
       repositories:
         enabled: false
   session:
+    store-type: redis
     timeout: 600s
     redis:
       namespace: "finances"
