@@ -5,11 +5,13 @@ import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+
 @Getter
 @Setter
 @Entity
-public class AuthenticatedEntity {
+public class SumDTO {
 	@Id
-	private Integer id;
-	private Boolean authenticated;
+	private Integer rownum;
+	private BigDecimal balance;
 }

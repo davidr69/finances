@@ -1,10 +1,10 @@
 package com.lavacro.finances.api.v1;
 
-import com.lavacro.finances.entities.AuthenticatedEntity;
+import com.lavacro.finances.dto.AuthenticatedDTO;
 import com.lavacro.finances.entities.RbacUsersEntity;
-import com.lavacro.finances.repositories.AuthenticateRepository;
 
 import com.lavacro.finances.repositories.RbacUserRepository;
+import com.lavacro.finances.services.AuthenticateService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.junit.jupiter.api.Assertions;
@@ -27,7 +27,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class AuthenticateTest {
 	@Mock
-	private AuthenticateRepository authenticateRepository;
+	private AuthenticateService authenticateService;
 
 	@Mock
 	private RbacUserRepository rbacUserRepository;
@@ -50,10 +50,8 @@ class AuthenticateTest {
 
 	@Test
 	void testAuth() throws Exception {
-		AuthenticatedEntity authenticatedEntity = new AuthenticatedEntity();
-		authenticatedEntity.setId(1);
-		authenticatedEntity.setAuthenticated(true);
-		when(authenticateRepository.getUser("pass", "user")).thenReturn(authenticatedEntity);
+		AuthenticatedDTO authenticatedDTO = new AuthenticatedDTO(1, true);
+//		when(authenticateRepository.getUser("pass", "user")).thenReturn(authenticatedDTO);
 
 		RbacUsersEntity rbacUsersEntity = new RbacUsersEntity();
 		rbacUsersEntity.setId(1);

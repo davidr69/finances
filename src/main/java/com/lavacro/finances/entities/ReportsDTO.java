@@ -8,7 +8,7 @@ import jakarta.persistence.*;
 @Entity
 @Getter
 @Setter
-public class ReportsEntity {
+public class ReportsDTO {
 	@Id
 	@Column(name = "entity_id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

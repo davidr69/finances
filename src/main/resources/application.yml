@@ -1,14 +1,14 @@
 ---
 server:
   port: 8443
-  error:
-    include-message: always
-    include-binding-errors: always
   forward-headers-strategy: framework
   tomcat:
     remoteip:
       protocol-header: X-Forwarded-Proto
       remote-ip-header: X-Forwarded-For
+  servlet:
+    session:
+      timeout: 600
 
 management:
   endpoints:
@@ -25,7 +25,12 @@ spring:
       minimum-idle: 3
       maximum-pool-size: 10
       idle-timeout: 10000
-  session:
-    timeout: 600s
+  data:
     redis:
-      namespace: "finances"
+      repositories:
+        enabled: false
+#  session:
+#    store-type: redis
+#    redis:
+#      namespace: "finances"
+#      repository-type: default

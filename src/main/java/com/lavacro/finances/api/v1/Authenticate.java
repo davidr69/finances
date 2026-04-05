@@ -1,11 +1,10 @@
 package com.lavacro.finances.api.v1;
 
-import com.lavacro.finances.entities.AuthenticatedEntity;
+import com.lavacro.finances.dto.AuthenticatedDTO;
 import com.lavacro.finances.entities.RbacUsersEntity;
 import com.lavacro.finances.model.ActionResponse;
-import com.lavacro.finances.repositories.AuthenticateRepository;
-import com.lavacro.finances.repositories.RbacUserRepository;
 
+import com.lavacro.finances.services.AuthenticateService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
@@ -19,15 +18,10 @@ import java.util.Optional;
 @RestController
 @Slf4j
 public class Authenticate {
-	private final AuthenticateRepository authenticateRepository;
-	private final RbacUserRepository rbacUserRepository;
+	private final AuthenticateService authenticateService;
 
-	public Authenticate(
-			AuthenticateRepository authenticateRepository,
-			RbacUserRepository rbacUserRepository
-	) {
-		this.authenticateRepository = authenticateRepository;
-		this.rbacUserRepository = rbacUserRepository;
+	public Authenticate(AuthenticateService authenticateService) {
+		this.authenticateService = authenticateService;
 	}
 
 	@PostMapping(value = "/authenticate")
@@ -40,7 +34,7 @@ public class Authenticate {
 		log.info("user: {}", user);
 		ActionResponse resp = new ActionResponse();
 
-		AuthenticatedEntity authenticated = authenticateRepository.getUser(pass, user);
+		AuthenticatedDTO authenticated = authenticateService.authenticate(user, pass);
 		if(authenticated == null) {
 			log.error("No results!");
 			resp.setCode(1);
@@ -48,13 +42,13 @@ public class Authenticate {
 			return resp;
 		}
 
-		RbacUsersEntity userEntity = rbacUserRepository.findById(authenticated.getId()).orElse(new RbacUsersEntity());
+		RbacUsersEntity userEntity = authenticateService.findUser(authenticated.id());
 		if(userEntity.getLocked() != null && userEntity.getLocked()) {
 			resp.setCode(1);
 			resp.setMessage("User is locked");
 			log.error("Attempted login for {} while user is locked", user);
 		} else {
-			if (Boolean.TRUE.equals(authenticated.getAuthenticated())) {
+			if (Boolean.TRUE.equals(authenticated.authenticated())) {
 				userEntity.setLastLogin(LocalDateTime.now());
 				userEntity.setLoginAttempts(null);
 				resp.setCode(0);
@@ -62,6 +56,7 @@ public class Authenticate {
 
 				session.setAttribute("user", user);
 				log.info("Authenticated successfully");
+				log.info("Session id: {}", session.getId());
 			} else {
 				log.error("Authentication failed for {}", user);
 				int attempts = Optional.ofNullable(userEntity.getLoginAttempts()).orElse(0);
@@ -77,7 +72,7 @@ public class Authenticate {
 					resp.setMessage("Authentication failed");
 				}
 			}
-			rbacUserRepository.save(userEntity);
+			authenticateService.updateUser(userEntity);
 		}
 		return resp;
 	}

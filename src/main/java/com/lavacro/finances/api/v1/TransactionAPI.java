@@ -5,22 +5,19 @@ import com.lavacro.finances.entities.ActionEntity;
 import com.lavacro.finances.model.*;
 
 import com.lavacro.finances.services.TransactionService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
 
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.util.Locale;
 
 @RestController
 @RequestMapping(value = "/api/v1/transaction")
+@Slf4j
 public class TransactionAPI {
-	private static final Logger LOGGER = LoggerFactory.getLogger(TransactionAPI.class);
 	private static final String SUCCESS = "success";
 
 	private final TransactionService transactionService;
@@ -58,7 +55,7 @@ public class TransactionAPI {
 
 	@GetMapping(value = "/{sequence}")
 	public ActionEntity getOneTransaction(@PathVariable("sequence") final Integer sequence) {
-		LOGGER.info("getOneTransaction: {}", sequence);
+		log.info("getOneTransaction: {}", sequence);
 		return transactionService.findOne(sequence);
 	}
 
@@ -86,24 +83,22 @@ public class TransactionAPI {
 			@RequestParam("beginDate") String beginDate,
 			@RequestParam("endDate") String endDate
 	) {
-		LOGGER.info("List transactions for account {} from {} to {}", account, beginDate, endDate);
-
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+		log.info("List transactions for account {} from {} to {}", account, beginDate, endDate);
 
 		TransactionList transactionList = new TransactionList();
 		try {
 			LocalDate firstDate = LocalDate.parse(beginDate);
 			LocalDate lastDate = LocalDate.parse(endDate);
 
-			LOGGER.info("First date: {}", firstDate);
-			LOGGER.info("Last date: {}", lastDate);
+			log.info("First date: {}", firstDate);
+			log.info("Last date: {}", lastDate);
 			transactionList.setTransactions(transactionService.getEntries(new BigDecimal(0), account, firstDate, lastDate));
 			transactionList.setCode(0);
 			transactionList.setMessage(SUCCESS);
 		} catch(Exception e) {
 			transactionList.setCode(1);
 			transactionList.setMessage(e.getMessage());
-			LOGGER.error("listTransactions: {}", e.getMessage());
+			log.error("listTransactions: {}", e.getMessage());
 		}
 		return transactionList;
 	}

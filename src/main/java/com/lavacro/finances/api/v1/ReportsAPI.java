@@ -1,6 +1,6 @@
 package com.lavacro.finances.api.v1;
 
-import com.lavacro.finances.dao.ReportsDao;
+import com.lavacro.finances.services.ReportsDao;
 import com.lavacro.finances.model.reports.BalanceSheet;
 
 import org.springframework.http.HttpStatus;
@@ -23,6 +23,6 @@ public class ReportsAPI {
 	public ResponseEntity<BalanceSheet> balanceSheet(
 			@RequestParam("account") final Integer account
 	) {
-		return new ResponseEntity<>(reportsDao.balanceSheet(account), null, HttpStatus.OK);
+		return new ResponseEntity<>(reportsDao.balanceSheet(account), HttpStatus.OK);
 	}
 }

@@ -1,8 +1,7 @@
 package com.lavacro.finances.controllers;
 
 import com.lavacro.finances.services.TransactionService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,9 +11,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.Calendar;
 
 @Controller
+@Slf4j
 public class Cashbook {
-	private static final Logger logger = LoggerFactory.getLogger(Cashbook.class);
-
 	private final TransactionService transactionService;
 
 	public Cashbook(TransactionService transactionService) {
@@ -28,7 +26,7 @@ public class Cashbook {
 			@RequestParam("year") Integer year,
 			@RequestParam(value = "month", required = false) Integer month
 	) {
-		logger.info("Cashbook ...");
+		log.info("Cashbook ...");
 		if(month == null) {
 			month = Calendar.getInstance().get(Calendar.MONTH) + 1;
 		}

@@ -1,25 +1,26 @@
 package com.lavacro.finances.services;
 
-import com.lavacro.finances.repositories.TransactionRepository;
-import com.lavacro.finances.entities.SumEntity;
-import com.lavacro.finances.entities.TransactionEntity;
+import com.lavacro.finances.repositories.ActionRepository;
+import com.lavacro.finances.dto.TransactionDTO;
 import com.lavacro.finances.entities.ActionEntity;
 import com.lavacro.finances.entities.TransactionTypeEntity;
 import com.lavacro.finances.model.*;
 
+import com.lavacro.finances.repositories.TransactionTypeRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.intellij.lang.annotations.Language;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
+import javax.sql.DataSource;
 import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.text.NumberFormat;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -27,19 +28,43 @@ import java.util.List;
 public class TransactionService {
 	private final TransactionTypeRepository transactionTypeRepository;
 	private final ActionRepository actionRepository;
-	private final SumRepository sumRepository;
-	private final TransactionRepository transactionRepository;
+	private final DataSource dataSource;
+	private final NumberFormat nf = NumberFormat.getInstance();
+
+	@Language("SQL")
+	private static final String SUM_UP_TO_DATE = """
+		SELECT SUM(amount) AS balance
+		FROM action
+		WHERE account = ? AND visible = 't' AND mydate < ?
+	""";
+
+	@Language("SQL")
+	private static final String SUM_FOR_ACCOUNT = """
+		SELECT SUM(amount) AS balance
+		FROM action
+		WHERE account = ? AND reconciled='t'
+	""";
+
+	@Language("SQL")
+	private static final String ONE_ACCOUNT_WITHIN_DATE = """
+		SELECT act.sequence, act.amount, act.mydate, act.reference, act.reconciled, act.visible,
+			e.description AS entity, trn.description AS method
+		FROM action act
+		JOIN entities e ON act.entity = e.id
+		JOIN trans_type trn on act.method = trn.id
+		WHERE act.account = ? AND act.mydate BETWEEN ? AND ?
+		ORDER BY mydate, amount DESC, e.description
+	""";
 
 	TransactionService(
 			TransactionTypeRepository transactionTypeRepository,
 			ActionRepository actionRepository,
-			SumRepository sumRepository,
-			TransactionRepository transactionRepository
+			DataSource dataSource
 	) {
 		this.transactionTypeRepository = transactionTypeRepository;
 		this.actionRepository = actionRepository;
-		this.sumRepository = sumRepository;
-		this.transactionRepository = transactionRepository;
+		this.dataSource = dataSource;
+		nf.setMinimumFractionDigits(2);
 	}
 
 	public List<TransactionTypeEntity> findAllOrderByDescriptionAsc() {
@@ -104,7 +129,7 @@ public class TransactionService {
 		}
 	}
 
-	public List<TransactionEntity> showItems(final Integer account, final Integer year, final Integer month) {
+	public List<TransactionDTO> showItems(final Integer account, final Integer year, final Integer month) {
 		log.info("showItems: {}, {}, {}", account, year, month);
 		LocalDate startDate;
 		LocalDate endDate;
@@ -116,40 +141,73 @@ public class TransactionService {
 			endDate = startDate.plusMonths(1).minusDays(1);
 		}
 
-		SumEntity sum = sumRepository.getSumUpToDate(account, startDate);
-		List<TransactionEntity> resp = null;
-
-		if(sum != null) {
-			BigDecimal tempBal = sum.getBalance();
-			resp = getEntries(tempBal, account, startDate, endDate);
+		try (
+			Connection conn = dataSource.getConnection();
+			PreparedStatement stmt = conn.prepareStatement(SUM_UP_TO_DATE)
+		) {
+			stmt.setInt(1, account);
+			stmt.setDate(2, java.sql.Date.valueOf(endDate));
+			stmt.execute();
+			if(stmt.getResultSet().next()) {
+				return getEntries(stmt.getResultSet().getBigDecimal("balance"), account, startDate, endDate);
+			}
+		} catch(SQLException e) {
+			log.error(e.getMessage());
 		}
-		return resp;
+		return new ArrayList<>();
 	}
 
-	public List<TransactionEntity> getEntries(final BigDecimal tempBal, final Integer account, final LocalDate startDate, final LocalDate endDate) {
+	public List<TransactionDTO> getEntries(final BigDecimal tempBal, final Integer account, final LocalDate startDate, final LocalDate endDate) {
 		log.info("getEntires: tempBal = {}, account = {}, dates: {} - {}", tempBal, account, startDate, endDate);
-		List<TransactionEntity> resp = transactionRepository.findForOneAccount(account, startDate, endDate);
-
-		final NumberFormat nf = NumberFormat.getInstance();
-		nf.setMinimumFractionDigits(2);
 
 		BigDecimal runningTotal = (tempBal == null ? new BigDecimal(0) : tempBal);
-		for(TransactionEntity transactionEntity : resp) {
-			if(transactionEntity.isVisible()) {
-				runningTotal = runningTotal.add(transactionEntity.getAmount());
-				transactionEntity.setRunningTotal(nf.format(runningTotal));
+		List<TransactionDTO> entries = new ArrayList<>();
+
+		try (
+			Connection conn = dataSource.getConnection();
+			PreparedStatement stmt = conn.prepareStatement(ONE_ACCOUNT_WITHIN_DATE)
+		) {
+			stmt.setInt(1, account);
+			stmt.setDate(2, java.sql.Date.valueOf(startDate));
+			stmt.setDate(3, java.sql.Date.valueOf(endDate));
+			stmt.execute();
+			while(stmt.getResultSet().next()) {
+				ResultSet rs = stmt.getResultSet();
+				BigDecimal amount = rs.getBigDecimal("amount");
+				runningTotal = runningTotal.add(amount);
+
+				entries.add(new TransactionDTO(
+					rs.getInt("sequence"),
+					amount,
+					rs.getDate("mydate").toLocalDate(),
+					rs.getString("reference"),
+					rs.getBoolean("reconciled"),
+					rs.getBoolean("visible"),
+					rs.getString("entity"),
+					rs.getString("method"),
+					nf.format(runningTotal)
+				));
 			}
+		} catch(SQLException e) {
+			log.error(e.getMessage());
 		}
-		return resp;
+		return entries;
 	}
 
 	public BigDecimal getBalance(final Integer account) {
-		SumEntity sum = sumRepository.getSumForAccount(account);
-		if(sum != null) {
-			return sum.getBalance();
-		} else {
-			return null;
+		try (
+			Connection conn = dataSource.getConnection();
+			PreparedStatement stmt = conn.prepareStatement(SUM_FOR_ACCOUNT)
+		) {
+			stmt.setInt(1, account);
+			stmt.execute();
+			if(stmt.getResultSet().next()) {
+				return stmt.getResultSet().getBigDecimal("balance");
+			}
+		} catch(SQLException e) {
+			log.error(e.getMessage());
 		}
+		return null;
 	}
 
 	public void updateIncludes(final IncludesModifyRequest req) {
@@ -166,48 +224,4 @@ public class TransactionService {
 			actionRepository.reconcile(req.getEntries());
 		}
 	}
-}
-
-@Repository
-interface TransactionTypeRepository extends JpaRepository<TransactionTypeEntity, Integer> {
-}
-
-@Repository
-interface SumRepository extends JpaRepository<SumEntity, Integer> {
-	@Query(value = """
-		SELECT 1 AS rownum, SUM(amount) AS balance
-		FROM action
-		WHERE account = :account AND visible = 't' AND mydate < :mydate
-	""", nativeQuery = true)
-	SumEntity getSumUpToDate(
-			@Param("account") final Integer account,
-			@Param("mydate") final LocalDate mydate
-	);
-
-	@Query(value = """
-		SELECT 2 AS rownum, SUM(amount) AS balance
-		FROM action
-		WHERE account = :account AND reconciled='t'
-	""", nativeQuery = true)
-	SumEntity getSumForAccount(
-			@Param("account") final Integer account
-	);
-}
-
-@Repository
-interface ActionRepository extends JpaRepository<ActionEntity, Integer> {
-	@Modifying
-	@Transactional
-	@Query(value = "UPDATE action SET visible = 't' WHERE sequence IN :visible_list", nativeQuery = true)
-	void setVisibleTrue(@Param("visible_list") final List<Integer> visibleList);
-
-	@Modifying
-	@Transactional
-	@Query(value = "UPDATE action SET visible = 'f' WHERE sequence IN :visible_list", nativeQuery = true)
-	void removeVisibleTrue(@Param("visible_list") final List<Integer> visibleList);
-
-	@Modifying
-	@Transactional
-	@Query(value = "UPDATE action SET reconciled = 't', visible = 't' WHERE sequence IN :reconcile_list", nativeQuery = true)
-	void reconcile(@Param("reconcile_list") final List<Integer> reconcileList);
 }
