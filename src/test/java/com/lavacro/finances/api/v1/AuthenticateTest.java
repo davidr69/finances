@@ -3,7 +3,6 @@ package com.lavacro.finances.api.v1;
 import com.lavacro.finances.dto.AuthenticatedDTO;
 import com.lavacro.finances.entities.RbacUsersEntity;
 
-import com.lavacro.finances.repositories.RbacUserRepository;
 import com.lavacro.finances.services.AuthenticateService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -30,9 +29,6 @@ class AuthenticateTest {
 	private AuthenticateService authenticateService;
 
 	@Mock
-	private RbacUserRepository rbacUserRepository;
-
-	@Mock
 	private HttpServletRequest httpServletRequest;
 
 	@Mock
@@ -51,13 +47,13 @@ class AuthenticateTest {
 	@Test
 	void testAuth() throws Exception {
 		AuthenticatedDTO authenticatedDTO = new AuthenticatedDTO(1, true);
-//		when(authenticateRepository.getUser("pass", "user")).thenReturn(authenticatedDTO);
+		when(authenticateService.authenticate("user", "pass")).thenReturn(authenticatedDTO);
 
 		RbacUsersEntity rbacUsersEntity = new RbacUsersEntity();
 		rbacUsersEntity.setId(1);
 		rbacUsersEntity.setName("user");
 		rbacUsersEntity.setPassword("pass");
-		when(rbacUserRepository.findById(1)).thenReturn(Optional.of(rbacUsersEntity));
+		when(authenticateService.findUser(1)).thenReturn(rbacUsersEntity);
 
 		// Act & Assert
 		MockHttpServletResponse resp = mockMvc.perform(
