@@ -12,7 +12,7 @@
 		const weeklyJS = '../js/weekly.js';
 		const { default: Weekly } = await import(weeklyJS);
 		const wkly = new Weekly(new Date());
-		window.weeklyApi = wkly;
+		globalThis.weeklyApi = wkly;
 	</script>
 </head>
 <body>

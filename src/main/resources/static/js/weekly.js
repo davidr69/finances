@@ -14,15 +14,18 @@
 const oneDay = 1000 * 60 * 60 * 24;
 
 export default class Weekly {
-	constructor(date) {
-		this.totals = [];
-		this.totals.length = 6;
-		this.sum = 0;
+	totals;
+	sum;
 
+	constructor(date) {
 		this.init(date);
 	}
 
 	init = (date) => {
+		this.totals = [];
+		this.totals.length = 6;
+		this.sum = 0;
+
 		/*
             1. The following things need to be established:
             - the weekday of the 1st day
@@ -116,7 +119,7 @@ export default class Weekly {
 
 		let theId = `row${weekOffset + 1}col${dayOffset + 1}`;
 		let el = document.getElementById(theId);
-		el.innerHTML += `${item.entity}: ${item.amount}<br/>`;
+		el.innerHTML += `${item.entityName}: ${item.amount}<br/>`;
 		/*
             amount: "-35.62"
             method: "Debit card"
@@ -134,10 +137,10 @@ export default class Weekly {
 			this.totals[weekOffset] = {};
 		}
 		let current = 0;
-		if(item.entity in this.totals[weekOffset]) {
-			current = this.totals[weekOffset][item.entity];
+		if(item.entityName in this.totals[weekOffset]) {
+			current = this.totals[weekOffset][item.entityName];
 		}
-		this.totals[weekOffset][item.entity] = Math.round((item.amount + current) * 100) / 100;
+		this.totals[weekOffset][item.entityName] = Math.round((item.amount + current) * 100) / 100;
 	}
 
 	changeMonth = () => {
@@ -152,9 +155,8 @@ export default class Weekly {
 			}
 		}
 
-		this.totals = [];
-		this.totals.length = 6;
-		this.sum = 0;
+		document.getElementsByName('week').forEach(r => r.checked = false);
+		document.getElementById('totals').innerHTML = '';
 		this.init(newDate);
 	}
 
