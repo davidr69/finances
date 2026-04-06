@@ -146,7 +146,7 @@ public class TransactionService {
 			PreparedStatement stmt = conn.prepareStatement(SUM_UP_TO_DATE)
 		) {
 			stmt.setInt(1, account);
-			stmt.setDate(2, java.sql.Date.valueOf(endDate));
+			stmt.setDate(2, java.sql.Date.valueOf(startDate));
 			stmt.execute();
 			if(stmt.getResultSet().next()) {
 				return getEntries(stmt.getResultSet().getBigDecimal("balance"), account, startDate, endDate);
@@ -174,7 +174,10 @@ public class TransactionService {
 			while(stmt.getResultSet().next()) {
 				ResultSet rs = stmt.getResultSet();
 				BigDecimal amount = rs.getBigDecimal("amount");
-				runningTotal = runningTotal.add(amount);
+				Boolean visible = rs.getBoolean("visible");
+				if(visible) {
+					runningTotal = runningTotal.add(amount);
+				}
 
 				entries.add(new TransactionDTO(
 					rs.getInt("sequence"),
@@ -182,10 +185,10 @@ public class TransactionService {
 					rs.getDate("mydate").toLocalDate(),
 					rs.getString("reference"),
 					rs.getBoolean("reconciled"),
-					rs.getBoolean("visible"),
+					visible,
 					rs.getString("entity"),
 					rs.getString("method"),
-					nf.format(runningTotal)
+					visible ? nf.format(runningTotal) : ""
 				));
 			}
 		} catch(SQLException e) {
