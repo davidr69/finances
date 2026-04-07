@@ -8,8 +8,6 @@ import org.intellij.lang.annotations.Language;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Service;
 
-import javax.sql.DataSource;
-
 @Service
 @Slf4j
 public class AuthenticateService {

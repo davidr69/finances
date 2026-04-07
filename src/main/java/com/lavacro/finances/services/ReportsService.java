@@ -3,26 +3,22 @@ package com.lavacro.finances.services;
 import com.lavacro.finances.dto.BalanceDTO;
 import com.lavacro.finances.dto.EntityDTO;
 import com.lavacro.finances.dto.EntityTotalsDTO;
+import com.lavacro.finances.dto.EntitySummaryDTO;
 import com.lavacro.finances.model.reports.BalanceSheet;
+import com.lavacro.finances.model.reports.SummaryRow;
 import lombok.extern.slf4j.Slf4j;
 import org.intellij.lang.annotations.Language;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Service;
 
-import javax.sql.DataSource;
 import java.math.BigDecimal;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.text.NumberFormat;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Service
 @Slf4j
 public class ReportsService {
-	private final DataSource datasource;
 	private final JdbcClient jdbcClient;
 
 	@Language("SQL")
@@ -67,8 +63,18 @@ public class ReportsService {
 		ORDER BY yr, mo
 	""";
 
-	ReportsService(DataSource dataSource, JdbcClient jdbcClient) {
-		this.datasource = dataSource;
+	@Language(value = "SQL")
+	private static final String GET_SUMMARIES = """
+		SELECT e.description AS entity, SUM(a.amount) AS amount,
+			TO_CHAR(SUM(a.amount), '999,999,999D99') AS money,
+			CAST(DATE_PART('year', a.mydate) AS INTEGER) AS theyear
+		FROM action a
+		JOIN entities e ON a.entity = e.id
+		WHERE a.account = ? AND DATE_PART('year', a.mydate) >= ?
+		GROUP BY description, theyear
+	""";
+
+	ReportsService(JdbcClient jdbcClient) {
 		this.jdbcClient = jdbcClient;
 	}
 
@@ -159,5 +165,48 @@ public class ReportsService {
 		bs.setCode(0);
 
 		return bs;
+	}
+
+	public List<SummaryRow> getSummary(final Integer startYear, final Integer account) {
+		log.info("getSummary: {}, {}", startYear, account);
+
+		List<EntitySummaryDTO> entitySummaryDTOList = jdbcClient.sql(GET_SUMMARIES).params(account, startYear).query(EntitySummaryDTO.class).list();
+		List<SummaryRow> rows = new ArrayList<>();
+		String entity = "";
+		SummaryRow row = null;
+		BigDecimal total = new BigDecimal(0);
+		NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(Locale.US);
+
+		for(EntitySummaryDTO item: entitySummaryDTOList) {
+			String dbVendor = item.entity();
+			if(!dbVendor.equals(entity)) {
+				if(!entity.isEmpty()) {
+					row.setTotal(total);
+					row.setFormattedTotal(currencyFormatter.format(total.doubleValue()));
+					rows.add(row);
+				}
+
+				total = new BigDecimal(0);
+				entity = dbVendor;
+				row = new SummaryRow();
+				row.setEntity(entity);
+				row.setColumns(new HashMap<>());
+			}
+			assert row != null;
+			row.getColumns().put(item.theyear(), item.money().trim());
+			total = total.add(item.amount());
+		}
+
+		if(row == null) {
+			return rows;
+		}
+		row.setTotal(total);
+		row.setFormattedTotal(currencyFormatter.format(total.doubleValue()));
+		rows.add(row);
+
+		Collections.sort(rows);
+		AtomicReference<Integer> rank = new AtomicReference<>(1);
+		rows.forEach( unranked -> unranked.setRank(rank.getAndSet(rank.get() + 1)));
+		return rows;
 	}
 }
