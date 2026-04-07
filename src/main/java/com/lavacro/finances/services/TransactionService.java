@@ -10,17 +10,12 @@ import com.lavacro.finances.repositories.TransactionTypeRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.intellij.lang.annotations.Language;
 import org.springframework.data.domain.Sort;
+import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Service;
 
-import javax.sql.DataSource;
 import java.math.BigDecimal;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.text.NumberFormat;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -28,8 +23,10 @@ import java.util.List;
 public class TransactionService {
 	private final TransactionTypeRepository transactionTypeRepository;
 	private final ActionRepository actionRepository;
-	private final DataSource dataSource;
-	private final NumberFormat nf = NumberFormat.getInstance();
+
+	private final JdbcClient jdbcClient;
+
+	private static final NumberFormat nf = NumberFormat.getInstance();
 
 	@Language("SQL")
 	private static final String SUM_UP_TO_DATE = """
@@ -59,11 +56,11 @@ public class TransactionService {
 	TransactionService(
 			TransactionTypeRepository transactionTypeRepository,
 			ActionRepository actionRepository,
-			DataSource dataSource
+			JdbcClient jdbcClient
 	) {
 		this.transactionTypeRepository = transactionTypeRepository;
 		this.actionRepository = actionRepository;
-		this.dataSource = dataSource;
+		this.jdbcClient = jdbcClient;
 		nf.setMinimumFractionDigits(2);
 	}
 
@@ -141,76 +138,45 @@ public class TransactionService {
 			endDate = startDate.plusMonths(1).minusDays(1);
 		}
 
-		try (
-			Connection conn = dataSource.getConnection();
-			PreparedStatement stmt = conn.prepareStatement(SUM_UP_TO_DATE)
-		) {
-			stmt.setInt(1, account);
-			stmt.setDate(2, java.sql.Date.valueOf(startDate));
-			stmt.execute();
-			if(stmt.getResultSet().next()) {
-				return getEntries(stmt.getResultSet().getBigDecimal("balance"), account, startDate, endDate);
-			}
-		} catch(SQLException e) {
-			log.error(e.getMessage());
-		}
-		return new ArrayList<>();
+		BigDecimal bal = jdbcClient.sql(SUM_UP_TO_DATE).params(account, startDate).query(BigDecimal.class).single();
+
+		return getEntries(bal, account, startDate, endDate);
 	}
 
 	public List<TransactionDTO> getEntries(final BigDecimal tempBal, final Integer account, final LocalDate startDate, final LocalDate endDate) {
-		log.info("getEntires: tempBal = {}, account = {}, dates: {} - {}", tempBal, account, startDate, endDate);
+		log.info("getEntries: tempBal = {}, account = {}, dates: {} - {}", tempBal, account, startDate, endDate);
 
-		BigDecimal runningTotal = (tempBal == null ? new BigDecimal(0) : tempBal);
-		List<TransactionDTO> entries = new ArrayList<>();
+		// Using an array or an AtomicReference if you were in a true stream,
+		// but in a simple RowMapper, a local variable works fine.
+		final BigDecimal[] runningTotal = { (tempBal == null ? BigDecimal.ZERO : tempBal) };
 
-		try (
-			Connection conn = dataSource.getConnection();
-			PreparedStatement stmt = conn.prepareStatement(ONE_ACCOUNT_WITHIN_DATE)
-		) {
-			stmt.setInt(1, account);
-			stmt.setDate(2, java.sql.Date.valueOf(startDate));
-			stmt.setDate(3, java.sql.Date.valueOf(endDate));
-			stmt.execute();
-			while(stmt.getResultSet().next()) {
-				ResultSet rs = stmt.getResultSet();
-				BigDecimal amount = rs.getBigDecimal("amount");
-				Boolean visible = rs.getBoolean("visible");
-				if(visible) {
-					runningTotal = runningTotal.add(amount);
-				}
+		return jdbcClient.sql(ONE_ACCOUNT_WITHIN_DATE)
+				.params(List.of(account, java.sql.Date.valueOf(startDate), java.sql.Date.valueOf(endDate)))
+				.query((rs, rowNum) -> {
+					BigDecimal amount = rs.getBigDecimal("amount");
+					boolean visible = rs.getBoolean("visible");
 
-				entries.add(new TransactionDTO(
-					rs.getInt("sequence"),
-					amount,
-					rs.getDate("mydate").toLocalDate(),
-					rs.getString("reference"),
-					rs.getBoolean("reconciled"),
-					visible,
-					rs.getString("entity"),
-					rs.getString("method"),
-					visible ? nf.format(runningTotal) : ""
-				));
-			}
-		} catch(SQLException e) {
-			log.error(e.getMessage());
-		}
-		return entries;
+					if (visible) {
+						runningTotal[0] = runningTotal[0].add(amount);
+					}
+
+					return new TransactionDTO(
+							rs.getInt("sequence"),
+							amount,
+							rs.getDate("mydate").toLocalDate(),
+							rs.getString("reference"),
+							rs.getBoolean("reconciled"),
+							visible,
+							rs.getString("entity"),
+							rs.getString("method"),
+							visible ? nf.format(runningTotal[0]) : ""
+					);
+				})
+				.list();
 	}
 
 	public BigDecimal getBalance(final Integer account) {
-		try (
-			Connection conn = dataSource.getConnection();
-			PreparedStatement stmt = conn.prepareStatement(SUM_FOR_ACCOUNT)
-		) {
-			stmt.setInt(1, account);
-			stmt.execute();
-			if(stmt.getResultSet().next()) {
-				return stmt.getResultSet().getBigDecimal("balance");
-			}
-		} catch(SQLException e) {
-			log.error(e.getMessage());
-		}
-		return null;
+		return jdbcClient.sql(SUM_FOR_ACCOUNT).params(account).query(BigDecimal.class).single();
 	}
 
 	public void updateIncludes(final IncludesModifyRequest req) {

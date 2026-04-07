@@ -1,8 +1,8 @@
 package com.lavacro.finances.api.v1;
 
-import com.lavacro.finances.services.ReportsDao;
 import com.lavacro.finances.model.reports.BalanceSheet;
 
+import com.lavacro.finances.services.ReportsService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,16 +13,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(value = "/api/v1/reports")
 public class ReportsAPI {
-	private final ReportsDao reportsDao;
+	private final ReportsService reportsService;
 
-	public ReportsAPI(ReportsDao reportsDao) {
-		this.reportsDao = reportsDao;
+	public ReportsAPI(ReportsService reportsService) {
+		this.reportsService = reportsService;
 	}
 
 	@GetMapping(value = "/balanceSheet")
 	public ResponseEntity<BalanceSheet> balanceSheet(
 			@RequestParam("account") final Integer account
 	) {
-		return new ResponseEntity<>(reportsDao.balanceSheet(account), HttpStatus.OK);
+		return new ResponseEntity<>(reportsService.balanceSheet(account), HttpStatus.OK);
 	}
 }

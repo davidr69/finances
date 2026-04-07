@@ -1,6 +1,5 @@
 package com.lavacro.finances.controllers;
 
-import com.lavacro.finances.services.ReportsDao;
 import com.lavacro.finances.model.reports.SummaryRow;
 
 import com.lavacro.finances.services.ReportsService;
@@ -15,11 +14,9 @@ import java.util.List;
 @Controller
 @RequestMapping("reports")
 public class Reports {
-	private final ReportsDao reportsDao;
 	private final ReportsService reportsService;
 
-	public Reports(ReportsDao reportsDao, ReportsService reportsService) {
-		this.reportsDao = reportsDao;
+	public Reports(ReportsService reportsService) {
 		this.reportsService = reportsService;
 	}
 
@@ -43,7 +40,7 @@ public class Reports {
 		model.addAttribute("allYears", reportsService.getAllYears(account));
 		model.addAttribute("filteredYears", reportsService.getFilteredYears(account, startYear));
 
-		List<SummaryRow> rows = reportsDao.getSummary(startYear, account);
+		List<SummaryRow> rows = reportsService.getSummary(startYear, account);
 		model.addAttribute("summary", rows);
 		return "report_summary";
 	}
