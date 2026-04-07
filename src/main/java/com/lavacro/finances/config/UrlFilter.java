@@ -1,4 +1,4 @@
-package com.lavacro.finances;
+package com.lavacro.finances.config;
 
 import java.util.ArrayList;
 import java.util.Collection;

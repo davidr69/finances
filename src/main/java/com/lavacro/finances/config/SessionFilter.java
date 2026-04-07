@@ -1,4 +1,4 @@
-package com.lavacro.finances;
+package com.lavacro.finances.config;
 
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;

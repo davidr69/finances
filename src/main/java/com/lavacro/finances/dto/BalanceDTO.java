@@ -1,8 +1,8 @@
-package com.lavacro.finances.model.reports;
+package com.lavacro.finances.dto;
 
 import java.math.BigDecimal;
 
-public record Balance(
+public record BalanceDTO(
 	Integer month,
 	BigDecimal credits,
 	BigDecimal debits,

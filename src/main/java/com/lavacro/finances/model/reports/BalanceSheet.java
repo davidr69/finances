@@ -1,5 +1,6 @@
 package com.lavacro.finances.model.reports;
 
+import com.lavacro.finances.dto.BalanceDTO;
 import com.lavacro.finances.model.GenericResponse;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,5 +11,5 @@ import java.util.Map;
 @Getter
 @Setter
 public class BalanceSheet extends GenericResponse {
-	private Map<Integer, List<Balance>> balanceList;
+	private Map<Integer, List<BalanceDTO>> balanceList;
 }

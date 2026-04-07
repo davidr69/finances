@@ -1,17 +1,13 @@
 package com.lavacro.finances.services;
 
-import com.lavacro.finances.entities.BalanceSheetEntity;
 import com.lavacro.finances.entities.EntitySummary;
 import com.lavacro.finances.model.reports.SummaryRow;
-import com.lavacro.finances.model.reports.BalanceSheet;
-import com.lavacro.finances.model.reports.Balance;
 
-import com.lavacro.finances.repositories.BalanceSheetRepository;
 import com.lavacro.finances.repositories.SummaryRepository;
+import lombok.extern.slf4j.Slf4j;
+import org.intellij.lang.annotations.Language;
+import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Component;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.text.NumberFormat;
@@ -19,21 +15,21 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 @Component
+@Slf4j
 public class ReportsDao {
-	private static final Logger logger = LoggerFactory.getLogger(ReportsDao.class);
-
-	private final BalanceSheetRepository balanceSheetRepository;
 	private final SummaryRepository summaryRepository;
+	private final JdbcClient jdbcClient;
 
-	public ReportsDao(BalanceSheetRepository balanceSheetRepository,
-					  SummaryRepository summaryRepository
+	public ReportsDao(
+			SummaryRepository summaryRepository,
+			JdbcClient jdbcClient
 	) {
-		this.balanceSheetRepository = balanceSheetRepository;
 		this.summaryRepository = summaryRepository;
+		this.jdbcClient = jdbcClient;
 	}
 
 	public List<SummaryRow> getSummary(final Integer startYear, final Integer account) {
-		logger.info("getSummary: {}, {}", startYear, account);
+		log.info("getSummary: {}, {}", startYear, account);
 
 		final List<EntitySummary> entitySummaryList = summaryRepository.getSummaries(account, startYear);
 		final List<SummaryRow> rows = new ArrayList<>();
@@ -73,46 +69,5 @@ public class ReportsDao {
 		AtomicReference<Integer> rank = new AtomicReference<>(1);
 		rows.forEach( unranked -> unranked.setRank(rank.getAndSet(rank.get() + 1)));
 		return rows;
-	}
-
-	public BalanceSheet balanceSheet(final Integer account) {
-		logger.info("balance sheet");
-		BalanceSheet bs = new BalanceSheet();
-		bs.setBalanceList(new HashMap<>());
-
-		BigDecimal runningTotal = new BigDecimal(0);
-
-		int yr = 0;
-		List<Balance> yearList = new ArrayList<>();
-
-		try {
-			List<BalanceSheetEntity> balances = balanceSheetRepository.balanceSheet(account);
-
-			for(BalanceSheetEntity tuple: balances) {
-				if(tuple.getYear() != yr) {
-					if(yr != 0) {
-						bs.getBalanceList().put(yr, yearList);
-					}
-					yr = tuple.getYear();
-					yearList = new ArrayList<>();
-				}
-				BigDecimal surplusDeficit = tuple.getSurplusOrDeficit();
-				runningTotal = runningTotal.add(surplusDeficit);
-
-				Balance bal = new Balance(
-						tuple.getMonth(), tuple.getDeposits(), tuple.getWithdrawals(), surplusDeficit, runningTotal
-				);
-
-				yearList.add(bal);
-			}
-			bs.getBalanceList().put(yr, yearList);
-
-			bs.setCode(0);
-		} catch(Exception e) {
-			logger.error(e.getMessage());
-			bs.setCode(1);
-			bs.setMessage(e.getMessage());
-		}
-		return bs;
 	}
 }

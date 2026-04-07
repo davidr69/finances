@@ -5,6 +5,7 @@ import com.lavacro.finances.entities.RbacUsersEntity;
 import com.lavacro.finances.repositories.RbacUserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.intellij.lang.annotations.Language;
+import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Service;
 
 import javax.sql.DataSource;
@@ -12,7 +13,7 @@ import javax.sql.DataSource;
 @Service
 @Slf4j
 public class AuthenticateService {
-	private final DataSource datasource;
+	private final JdbcClient jdbcClient;
 	private final RbacUserRepository rbacUserRepository;
 
 	@Language("SQL")
@@ -22,35 +23,15 @@ public class AuthenticateService {
 		WHERE name = ?
 	""";
 
-	AuthenticateService(DataSource dataSource, RbacUserRepository rbacUserRepository) {
-		this.datasource = dataSource;
+	AuthenticateService(JdbcClient jdbcClient, RbacUserRepository rbacUserRepository) {
+		this.jdbcClient = jdbcClient;
 		this.rbacUserRepository = rbacUserRepository;
 	}
 
 	public AuthenticatedDTO authenticate(String name, String password) {
 		log.info("authenticate: {}", name);
 
-		AuthenticatedDTO authenticatedDTO = null;
-		try (
-			var conn = datasource.getConnection();
-			var stmt = conn.prepareStatement(USER_QUERY)
-		) {
-			stmt.setString(1, password);
-			stmt.setString(2, name);
-			stmt.execute();
-
-			if(stmt.getResultSet().next()) {
-				authenticatedDTO = new AuthenticatedDTO(
-					stmt.getResultSet().getInt("id"),
-					stmt.getResultSet().getBoolean("authenticated")
-				);
-			}
-
-		} catch(Exception e) {
-			log.error(e.getMessage());
-		}
-
-		return authenticatedDTO;
+		return jdbcClient.sql(USER_QUERY).params(password, name).query(AuthenticatedDTO.class).single();
 	}
 
 	public RbacUsersEntity findUser(Integer userId) {
