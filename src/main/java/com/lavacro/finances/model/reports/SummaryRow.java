@@ -15,6 +15,7 @@ public class SummaryRow implements Comparable<SummaryRow> {
 	private BigDecimal total;
 	private String formattedTotal;
 
+	@Override
 	public int compareTo(SummaryRow row) {
 		return total.compareTo(row.total);
 	}
