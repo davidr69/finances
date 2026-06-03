@@ -25,7 +25,7 @@
 	}
 	</style>
 
-	<script type="module">
+	<script th:fragment="required" type="module">
 		const navJS = './js/nav.js';
 		const { default: Nav } = await import(navJS);
 		const nav = new Nav();
@@ -34,7 +34,7 @@
 </head>
 <body>
 
-<div class="nav">
+<div th:fragment="menu" class="nav">
 <table>
 	<caption style="display: none">nav</caption>
 	<thead><tr><th scope="col" style="height: 0;"> </th></tr></thead>
@@ -105,8 +105,6 @@
 	<br/><span class="small">Log Out</span>
 </div>
 </div>
-
-<iframe title="content" id="content" style="border: 0;"></iframe>
 
 </body>
 </html>

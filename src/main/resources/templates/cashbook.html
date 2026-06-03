@@ -22,8 +22,11 @@
 		const { default: Cashbook } = await import(cashbookJS);
 		globalThis.cashbook = new Cashbook();
 	</script>
-</head>
+
+	<script th:insert="~{nav :: required}"></script>
 <body>
+
+<div th:insert="~{nav :: menu}"></div>
 
 <form>
 <table>
