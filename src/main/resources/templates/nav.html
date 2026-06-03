@@ -29,7 +29,7 @@
 		const navJS = './js/nav.js';
 		const { default: Nav } = await import(navJS);
 		const nav = new Nav();
-		window.nav = nav;
+		globalThis.nav = nav;
 	</script>
 </head>
 <body>
@@ -39,6 +39,10 @@
 	<caption style="display: none">nav</caption>
 	<thead><tr><th scope="col" style="height: 0;"> </th></tr></thead>
 	<tr>
+		<td class="spacer"> </td>
+		<td class="icon">
+			<i class="fa fa-navicon glyph" onclick="nav.navOpen()"></i>
+		</td>
 		<td class="spacer">&nbsp;</td>
 		<td class="icon">
 			<a href='#'><em class="fa fa-list-ul glyph" onclick="nav.entityReport()"></em></a>
@@ -76,6 +80,11 @@
 		<td class="icon">
 			<a href='#'><em class="fa fa-line-chart glyph" onClick='nav.cashbook();'></em></a>
 			<br/><span class="small">Cashbook</span>
+		</td>
+		<td class="spacer">&nbsp;</td>
+		<td class="icon">
+			<a href='#'><em class="fa fa-bank glyph" onClick='nav.cashbook();'></em></a>
+			<br/><span class="small">Import Statement</span>
 		</td>
 		<td class="spacer">&nbsp;</td>
 		<td rowspan="2" class="middle">Account:

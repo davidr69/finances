@@ -42,6 +42,10 @@ export default class Nav {
 		document.getElementById('content').src = dest;
 	}
 
+	navOpen = () => {
+		alert("open sesame!");
+	}
+
 	cashbook = () => {
 		let values = this.#getValues();
 		let url = `cashbook?account=${values.account}&year=${values.year}`;
