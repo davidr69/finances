@@ -3,8 +3,8 @@
 <head>
 	<title>Total by entity</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="stylesheet" type="text/css" th:href="@{../css/common.css}" />
-	<link rel="stylesheet" type="text/css" th:href="@{../css/table.css}"/>
+	<link rel="stylesheet" type="text/css" th:href="@{./css/common.css}" />
+	<link rel="stylesheet" type="text/css" th:href="@{./css/table.css}"/>
 	<style>
 		table {
 			border-spacing: 0;
@@ -18,8 +18,12 @@
 			padding-left: 5px;
 		}
 	</style>
+
+	<script th:insert="~{nav :: required}" th:remove="tag"></script>
 </head>
 <body>
+
+<div th:insert="~{nav :: menu}"></div>
 
 <div th:each="entity:${data}">
 <table aria-describedby="Entity totals">

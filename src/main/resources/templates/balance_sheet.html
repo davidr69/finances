@@ -2,10 +2,10 @@
 <html lang="en-US" xmlns:th="http://www.thymeleaf.org">
 <head>
 	<title>Balance sheet</title>
-	<link rel="stylesheet" type="text/css" th:href="@{../css/common.css}" />
-	<link rel="stylesheet" type="text/css" th:href="@{../css/table.css}"/>
-	<link rel="stylesheet" type="text/css" th:href="@{../css/spreadsheet.css}" />
-	<link rel="stylesheet" type="text/css" th:href="@{../css/reports.css}"/>
+	<link rel="stylesheet" type="text/css" th:href="@{./css/common.css}" />
+	<link rel="stylesheet" type="text/css" th:href="@{./css/table.css}"/>
+	<link rel="stylesheet" type="text/css" th:href="@{./css/spreadsheet.css}" />
+	<link rel="stylesheet" type="text/css" th:href="@{./css/reports.css}"/>
 
 	<style>
 	.balwidth {
@@ -13,7 +13,7 @@
 	}
 	</style>
 
-	<script th:src="@{../js/common.js}"></script>
+	<script th:src="@{./js/common.js}"></script>
 
     <script type="module">
 		const balanceSheetJS = '../js/balance_sheet.js';
@@ -22,8 +22,12 @@
 		let account = document.getElementById('account').value;
 		new BalanceSheet(account);
 	</script>
+
+	<script th:insert="~{nav :: required}" th:remove="tag"></script>
 </head>
 <body>
+
+<div th:insert="~{nav :: menu}"></div>
 
 <table id="content" style="display: none">
 	<caption style="display: none">Balance sheet</caption>

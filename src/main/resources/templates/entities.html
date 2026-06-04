@@ -4,16 +4,20 @@
 	<meta charset="UTF-8"/>
 	<title>Entities</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="stylesheet" type="text/css" th:href="@{css/common.css}" />
-	<link rel="stylesheet" type="text/css" th:href="@{css/table.css}" />
+	<link rel="stylesheet" type="text/css" th:href="@{./css/common.css}" />
+	<link rel="stylesheet" type="text/css" th:href="@{./css/table.css}" />
 	<style>
 	table {
 		border: 0;
 		border-spacing: 0;
 	}
 	</style>
+
+	<script th:insert="~{nav :: required}" th:remove="tag"></script>
 </head>
 <body>
+
+<div th:insert="~{nav :: menu}"></div>
 
 <form action="entities" method="POST">
 <table>

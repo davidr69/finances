@@ -73,7 +73,7 @@
 
 		<td class="spacer">&nbsp;</td>
 		<td class="icon">
-			<a href='#'><em class="fa fa-credit-card glyph" onclick="nav.show('transaction');"></em></a>
+			<a href='#'><em class="fa fa-credit-card glyph" onclick="nav.newTransaction();"></em></a>
 			<br/><span class="small">Activity</span>
 		</td>
 		<td class="spacer">&nbsp;</td>
@@ -89,7 +89,7 @@
 		<td class="spacer">&nbsp;</td>
 		<td rowspan="2" class="middle">Account:
 			<label for="account"></label><select name="account" id="account" onchange="nav.updateAccount();">
-				<option th:each="account:${accounts}" th:value="${account.id}" th:text="${account.description}"></option>
+				<option th:each="account : ${@navHelper.getAccounts()}" th:value="${account.id}" th:text="${account.description}"></option>
 			</select>
 		</td>
 		<td class="spacer">&nbsp;</td>

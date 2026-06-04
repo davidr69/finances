@@ -23,7 +23,7 @@
 		globalThis.cashbook = new Cashbook();
 	</script>
 
-	<script th:insert="~{nav :: required}"></script>
+	<script th:insert="~{nav :: required}" th:remove="tag"></script>
 <body>
 
 <div th:insert="~{nav :: menu}"></div>

@@ -1,49 +1,43 @@
 export default class Nav {
 	constructor() {
-		this.pathParams = new Map();
+		this.pathParams = [];
 		this.loc = null;
 		this.#init();
 	}
 
 	#init = () => {
-		let now = new Date();
-		document.getElementById('year').value = now.getFullYear();
-		this.#resize();
-		window.addEventListener("resize", this.#resize);
+		this.pathParams = Object.fromEntries(new URLSearchParams(window.location.search));
+
+		const yearEl = document.getElementById('year');
+		if(typeof(this.pathParams['year']) === 'undefined') {
+			let now = new Date();
+			yearEl.value = now.getFullYear();
+			this.pathParams['year'] = yearEl.value;
+		} else {
+			yearEl.value = this.pathParams['year'];
+		}
+
 		let opt = new Option('-- all --', '0');
 		let acct = document.getElementById('account');
 		acct.options.add(opt, 0);
-	}
 
-	#newUrl = (path) => {
-		this.pathParams.clear();
-		if(!(typeof(path) == 'undefined' || path === '')) {
-			let parts = path.split('?');
-			this.loc = parts[0];
-			if(parts.length > 1) {
-				let kvp = parts[1].split('&');
-				kvp.forEach(el => {
-					let arr = el.split('=');
-					this.pathParams.set(arr[0], arr[1]);
-				});
-			}
-		}
-	}
-
-	#resize = () => {
-		let frameHeight = window.innerHeight - 60;
-		let frameWidth = window.innerWidth - 20;
-		let e = document.getElementById('content');
-		e.setAttribute('style', `height: ${frameHeight}px; width: ${frameWidth}px`);
+		document.getElementById('account').value = this.pathParams['account'];
 	}
 
 	show = (dest) => {
-		this.#newUrl(dest);
-		document.getElementById('content').src = dest;
+		window.location = dest;
+//		this.#newUrl(dest);
+
+//		document.getElementById('content').src = dest;
 	}
 
 	navOpen = () => {
 		alert("open sesame!");
+	}
+
+	newTransaction = () => {
+		let values = this.#getValues();
+		window.location = `transaction?account=${values.account}&year=${values.year}`;
 	}
 
 	cashbook = () => {
@@ -84,19 +78,19 @@ export default class Nav {
 
 	entityReport = () => {
 		let values = this.#getValues();
-		let url = `reports/byEntity?year=${values.year}&account=${values.account}`;
+		let url = `reportByEntity?year=${values.year}&account=${values.account}`;
 		this.show(url);
 	}
 
 	entityByAmount = () => {
 		let values = this.#getValues();
-		let url = `reports/summaryByYear?startYear=${values.year}&account=${values.account}`;
+		let url = `reportSummaryByYear?startYear=${values.year}&account=${values.account}`;
 		this.show(url);
 	}
 
 	budget = () => {
 		let values = this.#getValues();
-		let url = `reports/weekly?year=${values.year}&account=${values.account}&month=6`;
+		let url = `reportWeekly?year=${values.year}&account=${values.account}&month=6`;
 		this.show(url);
 	}
 
