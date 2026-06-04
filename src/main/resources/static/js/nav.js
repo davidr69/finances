@@ -24,74 +24,50 @@ export default class Nav {
 		document.getElementById('account').value = this.pathParams['account'];
 	}
 
-	show = (dest) => {
-		window.location = dest;
-//		this.#newUrl(dest);
-
-//		document.getElementById('content').src = dest;
-	}
-
 	navOpen = () => {
 		alert("open sesame!");
 	}
 
 	newTransaction = () => {
 		let values = this.#getValues();
-		window.location = `transaction?account=${values.account}&year=${values.year}`;
+		window.location.href = `transaction?account=${values.account}&year=${values.year}`;
 	}
 
 	cashbook = () => {
 		let values = this.#getValues();
-		let url = `cashbook?account=${values.account}&year=${values.year}`;
-		this.show(url);
+		window.location.href = `cashbook?account=${values.account}&year=${values.year}`;
 	}
 
 	balanceSheet = () => {
 		let values = this.#getValues();
-		let url = `reports/balance_sheet?account=${values.account}`;
-		this.show(url);
+		window.location.href = `reportBalanceSheet?account=${values.account}`;
 	}
 
 	updateAccount = () => {
 		let values = this.#getValues();
 		this.pathParams.set('account', values.account);
-		this.#reloadFrame();
+//		this.#reloadFrame();
 	}
 
 	updateYear = () => {
 		let values = this.#getValues();
 		this.pathParams.set('year', values.year);
-		this.#reloadFrame();
-	}
-
-	#reloadFrame = () => {
-		// is the iFrame empty?
-		if(document.getElementById('content').src === '') {
-			return;
-		}
-		// reconstruct based on "loc" and "params"
-		let paramsList = [];
-		this.pathParams.forEach(function(v,k) { paramsList.push( k + '=' + v); });
-		let newUrl = this.loc + '?' + paramsList.join('&');
-		this.show(newUrl);
+//		this.#reloadFrame();
 	}
 
 	entityReport = () => {
 		let values = this.#getValues();
-		let url = `reportByEntity?year=${values.year}&account=${values.account}`;
-		this.show(url);
+		window.location.href = `reportByEntity?year=${values.year}&account=${values.account}`;
 	}
 
 	entityByAmount = () => {
 		let values = this.#getValues();
-		let url = `reportSummaryByYear?startYear=${values.year}&account=${values.account}`;
-		this.show(url);
+		window.location.href = `reportSummaryByYear?startYear=${values.year}&account=${values.account}`;
 	}
 
 	budget = () => {
 		let values = this.#getValues();
-		let url = `reportWeekly?year=${values.year}&account=${values.account}&month=6`;
-		this.show(url);
+		window.location.href = `reportWeekly?year=${values.year}&account=${values.account}&month=6`;
 	}
 
 	logout = () => {
