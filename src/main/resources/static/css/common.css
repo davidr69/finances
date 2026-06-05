@@ -9,6 +9,18 @@
 	color:	#d0b070;
 }
 
+.small-glyph, .small-glyph:visited {
+	font-size: 12px;
+	color: #296dff;
+	text-decoration: none;
+	cursor: default;
+}
+
+.small-glyph:hover {
+	color:	#d0b070;
+	cursor: pointer;
+}
+
 body {
 	margin-top: 0;
 	margin-left: 0;

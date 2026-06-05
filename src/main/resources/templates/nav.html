@@ -18,10 +18,16 @@
 		text-align: center;
 	}
 
-	table {
-		border: 0;
-		border-spacing: 0;
-		padding: 0;
+	.horiz {
+		display: grid;
+		grid-template-columns: 50px 400px;
+		width: 100%;
+		align-items: center;
+	}
+
+	.horiz > i {
+		text-align: center;
+		width: 50px;
 	}
 	</style>
 
@@ -35,6 +41,38 @@
 <body>
 
 <div th:fragment="menu" class="nav">
+
+<div class="small-glyph horiz" onclick="nav.entityReport()">
+	<i class="fa fa-list-ul"></i>  Entity totals
+</div>
+<div class="small-glyph horiz" onclick="nav.entityByAmount()">
+	<i class="fa fa-sort-amount-desc"></i>  Entity rank
+</div>
+<div class="small-glyph horiz" onclick="nav.entities()">
+	<i class="fa fa-table"></i>  Entities
+</div>
+	<div class="small-glyph horiz" onclick="nav.balanceSheet()">
+		<i class="fa fa-balance-scale"></i>  Balance sheet
+	</div>
+
+<table>
+		<tr>
+			<td class="small-icon"><a class="fa fa-usd small-glyph" onclick="nav.budget()" href="#">  Budget</a>
+			</td>
+		</tr>
+		<tr>
+			<td class="small-icon"><a class="fa fa-credit-card small-glyph" onclick="nav.newTransaction()" href="#">  Activity</a>
+			</td>
+		</tr>
+		<tr>
+			<td class="small-icon"><a class="fa fa-line-chart small-glyph" onclick="nav.cashbook()" href="#">  Cashbook</a>
+			</td>
+		</tr>
+		<tr>
+			<td class="small-icon"><a class="fa fa-bank small-glyph" onclick="nav.cashbook()" href="#">  Import Statement</a>
+			</td>
+		</tr>
+	</table>
 <table>
 	<caption style="display: none">nav</caption>
 	<thead><tr><th scope="col" style="height: 0;"> </th></tr></thead>
@@ -42,49 +80,6 @@
 		<td class="spacer"> </td>
 		<td class="icon">
 			<i class="fa fa-navicon glyph" onclick="nav.navOpen()"></i>
-		</td>
-		<td class="spacer">&nbsp;</td>
-		<td class="icon">
-			<a href='#'><em class="fa fa-list-ul glyph" onclick="nav.entityReport()"></em></a>
-			<br/><span class="small">Entity totals</span>
-		</td>
-		<td class="spacer">&nbsp;</td>
-		<td class="icon">
-			<a href='#'><em class="fa fa-sort-amount-desc glyph" onclick="nav.entityByAmount()"></em></a>
-			<br/><span class="small">Entity rank</span>
-		</td>
-		<td class="spacer">&nbsp;</td>
-		<td class="icon">
-			<a href='#'><em class="fa fa-table glyph" onclick="nav.entities()"></em></a>
-			<br/><span class="small">Entities</span>
-		</td>
-
-		<td class="spacer">&nbsp;</td>
-		<td class="icon">
-			<a href='#'><em class="fa fa-balance-scale glyph" onclick="nav.balanceSheet()"></em></a>
-			<br/><span class="small">Balance Sheet</span>
-		</td>
-
-		<td class="spacer">&nbsp;</td>
-		<td class="icon">
-			<a href='#'><em class="fa fa-usd glyph" onclick="nav.budget()"></em></a>
-			<br/><span class="small">Budget</span>
-		</td>
-
-		<td class="spacer">&nbsp;</td>
-		<td class="icon">
-			<a href='#'><em class="fa fa-credit-card glyph" onclick="nav.newTransaction();"></em></a>
-			<br/><span class="small">Activity</span>
-		</td>
-		<td class="spacer">&nbsp;</td>
-		<td class="icon">
-			<a href='#'><em class="fa fa-line-chart glyph" onClick='nav.cashbook();'></em></a>
-			<br/><span class="small">Cashbook</span>
-		</td>
-		<td class="spacer">&nbsp;</td>
-		<td class="icon">
-			<a href='#'><em class="fa fa-bank glyph" onClick='nav.cashbook();'></em></a>
-			<br/><span class="small">Import Statement</span>
 		</td>
 		<td class="spacer">&nbsp;</td>
 		<td rowspan="2" class="middle">Account:
