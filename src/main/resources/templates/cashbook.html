@@ -9,7 +9,7 @@
 	<link rel="stylesheet" type="text/css" th:href="@{./css/spreadsheet.css}">
 	<link rel="stylesheet" type="text/css" th:href="@{./css/modal.css}">
 	<style>
-	table {
+	.cashbook table {
 		border: 0;
 		border-spacing: 0;
 	}
@@ -29,7 +29,7 @@
 <div th:insert="~{nav :: menu}"></div>
 
 <form>
-<table class="mytable">
+<table class="mytable cashbook">
 	<caption style="display: none;">Cashbook</caption>
 	<tr>
 		<th scope="col">&nbsp;&nbsp;Date&nbsp;&nbsp;</th>

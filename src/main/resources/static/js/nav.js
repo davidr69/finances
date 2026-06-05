@@ -1,7 +1,6 @@
 export default class Nav {
 	constructor() {
 		this.pathParams = [];
-		this.loc = null;
 		this.#init();
 	}
 
@@ -38,6 +37,10 @@ export default class Nav {
 		window.location.href = `cashbook?account=${values.account}&year=${values.year}`;
 	}
 
+	entities = () => {
+		window.location.href = "./entities?" + Object.entries(this.pathParams).map(([k, v]) => `${k}=${v}`).join('&');
+	}
+
 	balanceSheet = () => {
 		let values = this.#getValues();
 		window.location.href = `reportBalanceSheet?account=${values.account}`;
@@ -45,14 +48,14 @@ export default class Nav {
 
 	updateAccount = () => {
 		let values = this.#getValues();
-		this.pathParams.set('account', values.account);
-//		this.#reloadFrame();
+		this.pathParams['account'] = values.account;
+		window.location.href = window.location.href.split('?')[0] + '?' + Object.entries(this.pathParams).map(([k, v]) => `${k}=${v}`).join('&');
 	}
 
 	updateYear = () => {
 		let values = this.#getValues();
-		this.pathParams.set('year', values.year);
-//		this.#reloadFrame();
+		this.pathParams['year'] = values.year;
+		window.location.href = window.location.href.split('?')[0] + '?' + Object.entries(this.pathParams).map(([k, v]) => `${k}=${v}`).join('&');
 	}
 
 	entityReport = () => {
