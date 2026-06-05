@@ -21,64 +21,63 @@
 <div th:fragment="menu" class="nav">
 
 <table class="popup" id="popup">
-	<tr class="small-glyph" onclick="nav.entityReport()">
+	<tr class="small-glyph" onMouseDown="nav.entityReport()">
 		<td class="small-icon"><i class="fa fa-list-ul"></i></td>
 		<td>  Entity totals</td>
 	</tr>
-	<tr class="small-glyph" onclick="nav.entityByAmount()">
+	<tr class="small-glyph" onMouseDown="nav.entityByAmount()">
 		<td class="small-icon"><i class="fa fa-sort-amount-desc"></i></td>
 		<td>  Entity rank</td>
 	</tr>
-	<tr class="small-glyph" onclick="nav.entities()">
+	<tr class="small-glyph" onMouseDown="nav.entities()">
 		<td class="small-icon"><i class="fa fa-table"></i></td>
 		<td>  Entities</td>
 	</tr>
-	<tr class="small-glyph" onclick="nav.balanceSheet()">
+	<tr class="small-glyph" onMouseDown="nav.balanceSheet()">
 		<td class="small-icon"><i class="fa fa-balance-scale"></i></td>
 		<td>  Balance sheet</td>
 	</tr>
-		<tr class="small-glyph" onclick="nav.budget()">
+		<tr class="small-glyph" onMouseDown="nav.budget()">
 			<td class="small-icon"><i class="fa fa-usd"></i></td>
 			<td>  Budget</td>
 		</tr>
-		<tr class="small-glyph" onclick="nav.newTransaction()">
+		<tr class="small-glyph" onMouseDown="nav.newTransaction()">
 			<td class="small-icon"><i class="fa fa-credit-card"></i></td>
 			<td>  Activity</td>
 		</tr>
-		<tr class="small-glyph" onclick="nav.cashbook()">
+		<tr class="small-glyph" onMouseDown="nav.cashbook()">
 			<td class="small-icon"><i class="fa fa-line-chart"></i></td>
 			<td>  Cashbook</td>
 		</tr>
-		<tr class="small-glyph" onclick="nav.cashbook()">
+		<tr class="small-glyph" onMouseDown="nav.cashbook()">
 			<td class="small-icon"><i class="fa fa-bank"></i></td>
 			<td>  Import Statement</td>
 		</tr>
-	<tr class="small-glyph" onclick="nav.logout()">
+	<tr class="small-glyph" onMouseDown="nav.logout()">
 		<td class="small-icon"><i class="fa fa-sign-out"></i></td>
 		<td>  Log out</td>
 	</tr>
 </table>
 
-<table style="background-color: #f0f0f0">
-	<caption style="display: none">nav</caption>
-	<thead><tr><th scope="col" style="height: 0;"> </th></tr></thead>
+<table style="background-color: #f0f0f0; border: 1px solid black; border-spacing: 2px; padding: 2px;">
 	<tr>
 		<td class="spacer"> </td>
-		<td class="icon">
+		<td class="icon glyph" style="white-space: nowrap;">
 			<i class="fa fa-navicon glyph" onclick="nav.navOpen()"></i>
 		</td>
 		<td class="spacer">&nbsp;</td>
-		<td rowspan="2" class="middle">Account:
+		<td style="white-space: nowrap;">Account:
 			<label for="account"></label><select name="account" id="account" onchange="nav.updateAccount();">
 				<option th:each="account : ${@navHelper.getAccounts()}" th:value="${account.id}" th:text="${account.description}"></option>
 			</select>
 		</td>
 		<td class="spacer">&nbsp;</td>
-		<td style="width: 150px" rowspan="2" class="middle">
+		<td style="white-space: nowrap;">
 			<form>Year:
 				<label for="year"></label><input type="text" maxlength="4" size="4" name="year" id="year" onChange='nav.updateYear();'/>
 			</form>
 		</td>
+		<td style="width: 100%">&nbsp;</td>
 	</tr>
 </table>
 </div>

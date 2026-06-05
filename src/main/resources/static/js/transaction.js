@@ -40,7 +40,7 @@ export default class Transaction {
 				}
 			})
 		}).catch(e => {
-			alert(`Coud not create list: ${e}`);
+			alert(`Could not create list: ${e}`);
 		});
 	}
 
@@ -83,6 +83,7 @@ export default class Transaction {
 				console.log(data);
 				if(data.code === 0) {
 					document.forms[0].reset();
+					document.getElementById('year').value = year;
 					document.getElementById('entity').focus();
 					document.getElementById('status').innerHTML = data.message;
 					fadeOut('status');
