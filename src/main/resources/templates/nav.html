@@ -18,17 +18,11 @@
 		text-align: center;
 	}
 
-	.horiz {
-		display: grid;
-		grid-template-columns: 50px 400px;
-		width: 100%;
-		align-items: center;
+	.small-icon {
+		width: 30px;
+		text-align: center;
 	}
 
-	.horiz > i {
-		text-align: center;
-		width: 50px;
-	}
 	</style>
 
 	<script th:fragment="required" type="module">
@@ -42,36 +36,44 @@
 
 <div th:fragment="menu" class="nav">
 
-<div class="small-glyph horiz" onclick="nav.entityReport()">
-	<i class="fa fa-list-ul"></i>  Entity totals
-</div>
-<div class="small-glyph horiz" onclick="nav.entityByAmount()">
-	<i class="fa fa-sort-amount-desc"></i>  Entity rank
-</div>
-<div class="small-glyph horiz" onclick="nav.entities()">
-	<i class="fa fa-table"></i>  Entities
-</div>
-	<div class="small-glyph horiz" onclick="nav.balanceSheet()">
-		<i class="fa fa-balance-scale"></i>  Balance sheet
-	</div>
-
 <table>
-		<tr>
-			<td class="small-icon"><a class="fa fa-usd small-glyph" onclick="nav.budget()" href="#">  Budget</a>
-			</td>
+	<tr class="small-glyph" onclick="nav.entityReport()">
+		<td class="small-icon"><i class="fa fa-list-ul"></i></td>
+		<td>  Entity totals</td>
+	</tr>
+	<tr class="small-glyph" onclick="nav.entityByAmount()">
+		<td class="small-icon"><i class="fa fa-sort-amount-desc"></i></td>
+		<td>  Entity rank</td>
+	</tr>
+	<tr class="small-glyph" onclick="nav.entities()">
+		<td class="small-icon"><i class="fa fa-table"></i></td>
+		<td>  Entities</td>
+	</tr>
+	<tr class="small-glyph" onclick="nav.balanceSheet()">
+		<td class="small-icon"><i class="fa fa-balance-scale"></i></td>
+		<td>  Balance sheet</td>
+	</tr>
+		<tr class="small-glyph" onclick="nav.budget()">
+			<td class="small-icon"><i class="fa fa-usd"></i></td>
+			<td>  Budget</td>
 		</tr>
-		<tr>
-			<td class="small-icon"><a class="fa fa-credit-card small-glyph" onclick="nav.newTransaction()" href="#">  Activity</a>
-			</td>
+		<tr class="small-glyph" onclick="nav.newTransaction()">
+			<td class="small-icon"><i class="fa fa-credit-card"></i></td>
+			<td>  Activity</td>
 		</tr>
-		<tr>
-			<td class="small-icon"><a class="fa fa-line-chart small-glyph" onclick="nav.cashbook()" href="#">  Cashbook</a>
-			</td>
+		<tr class="small-glyph" onclick="nav.cashbook()">
+			<td class="small-icon"><i class="fa fa-line-chart"></i></td>
+			<td>  Cashbook</td>
 		</tr>
-		<tr>
-			<td class="small-icon"><a class="fa fa-bank small-glyph" onclick="nav.cashbook()" href="#">  Import Statement</a>
-			</td>
+		<tr class="small-glyph" onclick="nav.cashbook()">
+			<td class="small-icon"><i class="fa fa-bank"></i></td>
+			<td>  Import Statement</td>
 		</tr>
+	<tr class="small-glyph" onclick="nav.logout()">
+		<td class="small-icon"><i class="fa fa-sign-out"></i></td>
+		<td>  Log out</td>
+	</tr>
+
 	</table>
 <table>
 	<caption style="display: none">nav</caption>
@@ -95,10 +97,6 @@
 		</td>
 	</tr>
 </table>
-<div class="icon" style="position: fixed; right: 50px; top: 0;">
-	<a href="#"><em class="fa fa-sign-out glyph" onclick="nav.logout();"></em></a>
-	<br/><span class="small">Log Out</span>
-</div>
 </div>
 
 </body>
