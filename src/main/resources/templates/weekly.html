@@ -3,6 +3,9 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Weekly analysis</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<link rel="stylesheet" type="text/css" th:href="@{./font-awesome-4.7.0/css/font-awesome.min.css}">
 	<link rel="stylesheet" type="text/css" th:href="@{./css/common.css}"/>
 	<link rel="stylesheet" type="text/css" th:href="@{./css/weekly.css}"/>
 
@@ -23,7 +26,7 @@
 
 <table>
 	<tr>
-		<td class="center">
+		<td class="center weekly">
 			<label for="month"></label><select id="month" name="month" onchange="weeklyApi.changeMonth(this);">
 				<option value="0">January</option>
 				<option value="1">February</option>
@@ -41,7 +44,7 @@
 		</td>
 	</tr>
 	<tr>
-		<td>
+		<td class="weekly">
 			<table id="calendar">
 				<caption style="display: none">Calendar</caption>
 				<tr>

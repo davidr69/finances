@@ -8,11 +8,11 @@
 	<link rel="stylesheet" type="text/css" th:href="@{./css/common.css}" />
 	<link rel="stylesheet" type="text/css" th:href="@{./css/table.css}"/>
 	<style>
-		table {
+		.report table {
 			border-spacing: 0;
 		}
 
-		td {
+		.report td {
 			padding:	2px;
 		}
 
@@ -28,7 +28,7 @@
 <div th:insert="~{nav :: menu}"></div>
 
 <div th:each="entity:${data}">
-<table aria-describedby="Entity totals">
+<table aria-describedby="Entity totals" class="mytable report">
 	<thead>
 		<tr>
 			<th colspan="3" style='text-align: center' th:text="${entity.entityName}" id="foo"></th>

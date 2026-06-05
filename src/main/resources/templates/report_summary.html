@@ -15,7 +15,7 @@
 			let year = node[node.selectedIndex].value;
 			let accountDD = parent.document.getElementById('account');
 			let account = accountDD[accountDD.selectedIndex].value;
-			window.location = `summaryByYear?startYear=${year}&account=${account}`;
+			window.location = `./reportSummaryByYear?startYear=${year}&account=${account}`;
 		}
 	</script>
 
@@ -31,13 +31,13 @@
 	</select>
 </label>
 
-<table>
+<table class="mytable">
 	<caption style="display: none">Summary</caption>
 	<thead>
 		<tr>
 			<th scope="col">Rank</th>
 			<th scope="col">Entity</th>
-			<th  scope="col" class="year" th:each="year:${filteredYears}" th:text="${year}"></th>
+			<th scope="col" class="year" th:each="year:${filteredYears}" th:text="${year}"></th>
 			<th scope="col">Total</th>
 		</tr>
 	</thead>
