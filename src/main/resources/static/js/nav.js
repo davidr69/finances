@@ -24,7 +24,12 @@ export default class Nav {
 	}
 
 	navOpen = () => {
-		alert("open sesame!");
+		const el = document.getElementById('popup');
+		el.style.display = 'block';
+
+		setTimeout(()=>{
+			el.style.display = 'none';
+		}, 5000);
 	}
 
 	newTransaction = () => {

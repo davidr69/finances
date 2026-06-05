@@ -7,23 +7,7 @@
 
 	<link rel="stylesheet" type="text/css" th:href="@{./font-awesome-4.7.0/css/font-awesome.min.css}">
 	<link rel="stylesheet" type="text/css" th:href="@{./css/common.css}">
-
-	<style>
-	.spacer {
-		width: 20px;
-	}
-
-	.icon {
-		height: 33px;
-		text-align: center;
-	}
-
-	.small-icon {
-		width: 30px;
-		text-align: center;
-	}
-
-	</style>
+	<script type="text/javascript" th:src="@{./js/common.js}"></script>
 
 	<script th:fragment="required" type="module">
 		const navJS = './js/nav.js';
@@ -36,7 +20,7 @@
 
 <div th:fragment="menu" class="nav">
 
-<table>
+<table class="popup" id="popup">
 	<tr class="small-glyph" onclick="nav.entityReport()">
 		<td class="small-icon"><i class="fa fa-list-ul"></i></td>
 		<td>  Entity totals</td>
@@ -73,9 +57,9 @@
 		<td class="small-icon"><i class="fa fa-sign-out"></i></td>
 		<td>  Log out</td>
 	</tr>
+</table>
 
-	</table>
-<table>
+<table style="background-color: #f0f0f0">
 	<caption style="display: none">nav</caption>
 	<thead><tr><th scope="col" style="height: 0;"> </th></tr></thead>
 	<tr>
