@@ -80,7 +80,12 @@ export default class Nav {
 
 	budget = () => {
 		let values = this.#getValues();
-		window.location.href = `reportWeekly?year=${values.year}&account=${values.account}&month=6`;
+		window.location.href = `reportWeekly?year=${values.year}&account=${values.account}`;
+	}
+
+	uploadStatement = () => {
+		let values = this.#getValues();
+		window.location.href = `upload?year=${values.year}&account=${values.account}`;
 	}
 
 	logout = () => {

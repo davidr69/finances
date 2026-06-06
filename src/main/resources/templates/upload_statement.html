@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en-US" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title>Upload Statement</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="icon" type="image/png" th:href="@{./favicon.ico}"/>
+	<link rel="stylesheet" type="text/css" th:href="@{./font-awesome-4.7.0/css/font-awesome.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{./css/common.css}">
+
+	<script type="text/javascript" th:src="@{./js/common.js}"></script>
+
+	<script type="text/javascript">
+		const upload = () => {
+			const formData = new FormData();
+			formData.append('file', document.getElementById('file').files[0]);
+
+			fetch('api/v1/upload_statement', {
+				method: 'POST',
+				body: formData
+			}).then(response => {
+				response.json().then(data => {
+					console.log(data);
+				})
+			});
+		};
+	</script>
+
+	<script th:insert="~{nav :: required}" th:remove="tag"></script>
+</head>
+<body>
+
+<div th:insert="~{nav :: menu}"></div>
+
+<form>
+	<div style="padding: 30px">
+		<input type="file" id="file" name="file"/><br/><br/>
+		<button onMouseDown="upload()"> Upload Statement </button>
+	</div>
+</form>
+
+
+</body>
+</html>
