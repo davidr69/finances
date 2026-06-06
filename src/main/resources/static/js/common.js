@@ -30,3 +30,10 @@ function fadeIn(obj) {
 		}
 	}, 25);
 }
+
+const getUrlParams = () => {
+	let params = {};
+	window.location.href.split('?')[1].split('&').
+		forEach((item, idx) => { let vals = item.split('='); params[vals[0]] = vals[1]; });
+	return params;
+}

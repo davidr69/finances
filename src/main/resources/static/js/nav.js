@@ -80,7 +80,8 @@ export default class Nav {
 
 	budget = () => {
 		let values = this.#getValues();
-		window.location.href = `reportWeekly?year=${values.year}&account=${values.account}`;
+		const month = (typeof(values.month) === 'undefined') ? new Date().getMonth() + 1 : values.month;
+		window.location.href = `reportWeekly?year=${values.year}&account=${values.account}&month=${month}`;
 	}
 
 	uploadStatement = () => {
@@ -100,5 +101,9 @@ export default class Nav {
 		let obj = document.getElementById('account');
 		let account = obj[obj.selectedIndex].value;
 		return {year:year, account:account};
+	}
+
+	getUrlParams = () => {
+		return window.location.href.split('?')[1].split('&').forEach((item, idx) => { item.split('=') });
 	}
 }

@@ -16,16 +16,20 @@
 	</style>
 
 	<script th:src="@{./js/common.js}"></script>
+	<script th:insert="~{nav :: required}" th:remove="tag"></script>
 
     <script type="module">
 		const balanceSheetJS = '../js/balance_sheet.js';
 		const { default: BalanceSheet } = await import(balanceSheetJS);
 
-		let account = document.getElementById('account').value;
-		new BalanceSheet(account);
+		let params = getUrlParams();
+		let account = params['account'];
+		if(typeof(account) === 'undefined') {
+			alert('Missing account');
+		} else {
+			new BalanceSheet(account);
+		}
 	</script>
-
-	<script th:insert="~{nav :: required}" th:remove="tag"></script>
 </head>
 <body>
 

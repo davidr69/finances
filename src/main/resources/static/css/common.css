@@ -92,4 +92,5 @@ select, input {
 	left: 10px;
 	top: 50px;
 	box-shadow: 5px 5px 5px #a0a0a0;
+	border: 1px solid #a0a0a0
 }
