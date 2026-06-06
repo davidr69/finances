@@ -15,9 +15,13 @@
 			const formData = new FormData();
 			formData.append('file', document.getElementById('file').files[0]);
 
+			let obj = document.getElementById('account');
+			let account = obj[obj.selectedIndex].value;
+
 			fetch('api/v1/upload_statement', {
 				method: 'POST',
-				body: formData
+				body: formData,
+				headers: {'Content-Type': 'multipart/form-data', 'accountId': account}
 			}).then(response => {
 				response.json().then(data => {
 					console.log(data);
