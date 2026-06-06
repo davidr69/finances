@@ -10,7 +10,8 @@
 	<script type="text/javascript" th:src="@{./js/common.js}"></script>
 
 	<script type="text/javascript">
-		const upload = () => {
+		const upload = (event) => {
+			event.preventDefault();
 			const formData = new FormData();
 			formData.append('file', document.getElementById('file').files[0]);
 
@@ -31,13 +32,12 @@
 
 <div th:insert="~{nav :: menu}"></div>
 
-<form>
+<form onSubmit="upload(event)">
 	<div style="padding: 30px">
 		<input type="file" id="file" name="file"/><br/><br/>
-		<button onMouseDown="upload()"> Upload Statement </button>
+		<button type="submit"> Upload Statement </button>
 	</div>
 </form>
-
 
 </body>
 </html>
