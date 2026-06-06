@@ -36,7 +36,7 @@ public class UploadAPI {
 		int accountId;
 
 		try {
-			accountId = Integer.parseInt(Objects.requireNonNull(request.getParameter("accountId")));
+			accountId = Integer.parseInt(request.getHeader("accountId"));
 		} catch (NumberFormatException e) {
 			log.error("Invalid accountId format", e);
 			return new ResponseEntity<>(Map.of("message", "Invalid accountId format", "code", "2"), HttpStatus.BAD_REQUEST);

@@ -21,7 +21,7 @@
 			fetch('api/v1/upload_statement', {
 				method: 'POST',
 				body: formData,
-				headers: {'Content-Type': 'multipart/form-data', 'accountId': account}
+				headers: {'accountId': account}
 			}).then(response => {
 				response.json().then(data => {
 					console.log(data);
