@@ -1,4 +1,4 @@
-package com.lavacro.finances.entities;
+package com.lavacro.finances.dto;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;

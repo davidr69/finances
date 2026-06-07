@@ -9,14 +9,14 @@
 	font-weight: 300;
 }
 
-th {
+.weekly th {
 	background-color:	#c0c0c0;
 	border-right:	1px solid #a0a0a0;
 	border-bottom:	1px solid #a0a0a0;
 }
 
-table {
-	border-spacing: 0px;
+.weekly table {
+	border-spacing: 0;
 }
 
 .weekend {

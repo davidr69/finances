@@ -15,7 +15,7 @@ export default class BalanceSheet {
 	}
 
 	#init = (account) => {
-		fetch(`../api/v1/reports/balanceSheet?account=${account}`).then(resp => {
+		fetch(`./api/v1/reports/balanceSheet?account=${account}`).then(resp => {
 			resp.json().then(data => {
 				if(data.code === 0) {
 					this.#render(data.balanceList);
