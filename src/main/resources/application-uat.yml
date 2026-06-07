@@ -12,16 +12,3 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         ddl-auto: update
         # Hibernate ddl auto (create, create-drop, validate, update)
-
-  kafka:
-    bootstrap-servers: kafka.lavacro.net:9092
-    producer:
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.apache.kafka.common.serialization.ByteArraySerializer
-      acks: all
-      retries: 3
-      client-id: finances-producer
-      properties:
-        spring.json.trusted.packages: com.lavacro.finances.kafka.model
-    template:
-      default-topic: finances-topic
