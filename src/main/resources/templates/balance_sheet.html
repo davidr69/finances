@@ -2,10 +2,12 @@
 <html lang="en-US" xmlns:th="http://www.thymeleaf.org">
 <head>
 	<title>Balance sheet</title>
-	<link rel="stylesheet" type="text/css" th:href="@{../css/common.css}" />
-	<link rel="stylesheet" type="text/css" th:href="@{../css/table.css}"/>
-	<link rel="stylesheet" type="text/css" th:href="@{../css/spreadsheet.css}" />
-	<link rel="stylesheet" type="text/css" th:href="@{../css/reports.css}"/>
+	<link rel="icon" type="image/png" th:href="@{./favicon.ico}"/>
+	<link rel="stylesheet" type="text/css" th:href="@{./font-awesome-4.7.0/css/font-awesome.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{./css/common.css}" />
+	<link rel="stylesheet" type="text/css" th:href="@{./css/table.css}"/>
+	<link rel="stylesheet" type="text/css" th:href="@{./css/spreadsheet.css}" />
+	<link rel="stylesheet" type="text/css" th:href="@{./css/reports.css}"/>
 
 	<style>
 	.balwidth {
@@ -13,19 +15,27 @@
 	}
 	</style>
 
-	<script th:src="@{../js/common.js}"></script>
+	<script th:src="@{./js/common.js}"></script>
+	<script th:insert="~{nav :: required}" th:remove="tag"></script>
 
     <script type="module">
 		const balanceSheetJS = '../js/balance_sheet.js';
 		const { default: BalanceSheet } = await import(balanceSheetJS);
 
-		let account = document.getElementById('account').value;
-		new BalanceSheet(account);
+		let params = getUrlParams();
+		let account = params['account'];
+		if(typeof(account) === 'undefined') {
+			alert('Missing account');
+		} else {
+			new BalanceSheet(account);
+		}
 	</script>
 </head>
 <body>
 
-<table id="content" style="display: none">
+<div th:insert="~{nav :: menu}"></div>
+
+<table id="content" style="display: none" class="mytable">
 	<caption style="display: none">Balance sheet</caption>
 	<tr>
 		<th scope="col">year</th>

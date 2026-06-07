@@ -1,99 +1,92 @@
 export default class Nav {
+	pathParams
+	popupVisible
+
 	constructor() {
-		this.pathParams = new Map();
-		this.loc = null;
+		this.pathParams = [];
+		this.popupVisible = false;
 		this.#init();
 	}
 
 	#init = () => {
-		let now = new Date();
-		document.getElementById('year').value = now.getFullYear();
-		this.#resize();
-		window.addEventListener("resize", this.#resize);
+		this.pathParams = Object.fromEntries(new URLSearchParams(window.location.search));
+
+		const yearEl = document.getElementById('year');
+		if(typeof(this.pathParams['year']) === 'undefined') {
+			let now = new Date();
+			yearEl.value = now.getFullYear();
+			this.pathParams['year'] = yearEl.value;
+		} else {
+			yearEl.value = this.pathParams['year'];
+		}
+
 		let opt = new Option('-- all --', '0');
 		let acct = document.getElementById('account');
 		acct.options.add(opt, 0);
+
+		document.getElementById('account').value = this.pathParams['account'];
 	}
 
-	#newUrl = (path) => {
-		this.pathParams.clear();
-		if(!(typeof(path) == 'undefined' || path === '')) {
-			let parts = path.split('?');
-			this.loc = parts[0];
-			if(parts.length > 1) {
-				let kvp = parts[1].split('&');
-				kvp.forEach(el => {
-					let arr = el.split('=');
-					this.pathParams.set(arr[0], arr[1]);
-				});
-			}
-		}
+	navOpen = () => {
+		const el = document.getElementById('popup');
+		el.style.display = 'block';
+
+		let interval = setTimeout(()=>{
+			el.style.display = 'none';
+			clearInterval(interval);
+		}, 5000);
 	}
 
-	#resize = () => {
-		let frameHeight = window.innerHeight - 60;
-		let frameWidth = window.innerWidth - 20;
-		let e = document.getElementById('content');
-		e.setAttribute('style', `height: ${frameHeight}px; width: ${frameWidth}px`);
-	}
-
-	show = (dest) => {
-		this.#newUrl(dest);
-		document.getElementById('content').src = dest;
+	newTransaction = () => {
+		let values = this.#getValues();
+		window.location.href = `transaction?account=${values.account}&year=${values.year}`;
 	}
 
 	cashbook = () => {
 		let values = this.#getValues();
-		let url = `cashbook?account=${values.account}&year=${values.year}`;
-		this.show(url);
+		window.location.href = `cashbook?account=${values.account}&year=${values.year}`;
+	}
+
+	entities = () => {
+		window.location.href = "./entities?" + Object.entries(this.pathParams).map(([k, v]) => `${k}=${v}`).join('&');
 	}
 
 	balanceSheet = () => {
 		let values = this.#getValues();
-		let url = `reports/balance_sheet?account=${values.account}`;
-		this.show(url);
+		window.location.href = `reportBalanceSheet?account=${values.account}`;
 	}
 
 	updateAccount = () => {
 		let values = this.#getValues();
-		this.pathParams.set('account', values.account);
-		this.#reloadFrame();
+		this.pathParams['account'] = values.account;
+		window.location.href = window.location.href.split('?')[0] + '?' + Object.entries(this.pathParams).map(([k, v]) => `${k}=${v}`).join('&');
 	}
 
 	updateYear = () => {
 		let values = this.#getValues();
-		this.pathParams.set('year', values.year);
-		this.#reloadFrame();
-	}
-
-	#reloadFrame = () => {
-		// is the iFrame empty?
-		if(document.getElementById('content').src === '') {
-			return;
-		}
-		// reconstruct based on "loc" and "params"
-		let paramsList = [];
-		this.pathParams.forEach(function(v,k) { paramsList.push( k + '=' + v); });
-		let newUrl = this.loc + '?' + paramsList.join('&');
-		this.show(newUrl);
+		this.pathParams['year'] = values.year;
+		window.location.href = window.location.href.split('?')[0] + '?' + Object.entries(this.pathParams).map(([k, v]) => `${k}=${v}`).join('&');
 	}
 
 	entityReport = () => {
 		let values = this.#getValues();
-		let url = `reports/byEntity?year=${values.year}&account=${values.account}`;
-		this.show(url);
+		window.location.href = `reportByEntity?year=${values.year}&account=${values.account}`;
 	}
 
 	entityByAmount = () => {
 		let values = this.#getValues();
-		let url = `reports/summaryByYear?startYear=${values.year}&account=${values.account}`;
-		this.show(url);
+		window.location.href = `reportSummaryByYear?startYear=${values.year}&account=${values.account}`;
 	}
 
 	budget = () => {
 		let values = this.#getValues();
-		let url = `reports/weekly?year=${values.year}&account=${values.account}&month=6`;
-		this.show(url);
+		const month = (typeof(values.month) === 'undefined') ? new Date().getMonth() + 1 : values.month;
+		window.location.href = `reportWeekly?year=${values.year}&account=${values.account}&month=${month}`;
+	}
+
+	uploadStatement = () => {
+		let values = this.#getValues();
+		window.location.href = `upload?year=${values.year}&account=${values.account}`;
 	}
 
 	logout = () => {
@@ -108,5 +101,9 @@ export default class Nav {
 		let obj = document.getElementById('account');
 		let account = obj[obj.selectedIndex].value;
 		return {year:year, account:account};
+	}
+
+	getUrlParams = () => {
+		return window.location.href.split('?')[1].split('&').forEach((item, idx) => { item.split('=') });
 	}
 }

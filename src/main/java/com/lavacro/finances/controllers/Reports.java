@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.List;
 
 @Controller
-@RequestMapping("reports")
 public class Reports {
 	private final ReportsService reportsService;
 
@@ -20,7 +19,7 @@ public class Reports {
 		this.reportsService = reportsService;
 	}
 
-	@GetMapping(value = "/byEntity")
+	@GetMapping(value = "/reportByEntity")
 	public String byEntity(
 			Model model,
 			@RequestParam("account") final Integer account,
@@ -30,7 +29,7 @@ public class Reports {
 		return "report_byEntity";
 	}
 
-	@GetMapping(value = "/summaryByYear")
+	@GetMapping(value = "/reportSummaryByYear")
 	public String summaryByYear(
 			Model model,
 			@RequestParam("account") final Integer account,
@@ -45,7 +44,7 @@ public class Reports {
 		return "report_summary";
 	}
 
-	@GetMapping(value = "/balance_sheet")
+	@GetMapping(value = "/reportBalanceSheet")
 	public String balanceSheet(
 		Model model,
 		@RequestParam("account") final Integer account
@@ -54,7 +53,7 @@ public class Reports {
 		return "balance_sheet";
 	}
 
-	@GetMapping(value = "/weekly")
+	@GetMapping(value = "/reportWeekly")
 	public String weekly(
 			Model model,
 			@RequestParam("account") final Integer account,

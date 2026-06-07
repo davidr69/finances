@@ -1,4 +1,4 @@
-td, select {
+.mytable td, .mytable select {
 	font-size: 11px;
 	font-family: 'Open Sans', sans-serif;
 	font-weight: 400;
@@ -6,15 +6,15 @@ td, select {
 	border-bottom: 1px solid #c0c0c0;
 }
 
-tr:nth-child(odd) td {
+.mytable tr:nth-child(odd) td {
 	background-color: #f2f2f2;
 }
 
-tr:nth-child(even) td {
+.mytable tr:nth-child(even) td {
 	background-color: #ffffff;
 }
 
-th {
+.mytable th {
 	background-color: #e0e0f0;
 	padding: 2px;
 	font-size: 13px;

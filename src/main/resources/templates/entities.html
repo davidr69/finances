@@ -4,10 +4,16 @@
 	<meta charset="UTF-8"/>
 	<title>Entities</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="stylesheet" type="text/css" th:href="@{css/common.css}" />
-	<link rel="stylesheet" type="text/css" th:href="@{css/table.css}" />
+	<link rel="icon" type="image/png" th:href="@{./favicon.ico}"/>
+	<link rel="stylesheet" type="text/css" th:href="@{./font-awesome-4.7.0/css/font-awesome.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{./css/common.css}" />
+	<link rel="stylesheet" type="text/css" th:href="@{./css/table.css}" />
+
+	<script type="text/javascript" th:src="@{./js/common.js}"></script>
+	<script th:insert="~{nav :: required}" th:remove="tag"></script>
+
 	<style>
-	table {
+	.entities {
 		border: 0;
 		border-spacing: 0;
 	}
@@ -15,8 +21,10 @@
 </head>
 <body>
 
+<div th:insert="~{nav :: menu}"></div>
+
 <form action="entities" method="POST">
-<table>
+<table class="mytable entities">
 	<caption style="display: none;">Entities</caption>
 	<thead>
 		<tr>

@@ -3,10 +3,12 @@
 <head>
 	<title>Add Transaction</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="icon" type="image/png" th:href="@{./favicon.ico}"/>
 	<link rel="stylesheet" type="text/css" th:href="@{./font-awesome-4.7.0/css/font-awesome.min.css}">
 	<link rel="stylesheet" type="text/css" th:href="@{./css/common.css}">
 
 	<script type="text/javascript" th:src="@{./js/common.js}"></script>
+	<script th:insert="~{nav :: required}" th:remove="tag"></script>
 
 	<script type="module">
 		const transactionJS = './js/transaction.js';
@@ -14,9 +16,10 @@
 		const txn = new Transaction();
 		globalThis.txn = txn;
 	</script>
-
 </head>
 <body>
+
+<div th:insert="~{nav :: menu}"></div>
 
 	<form>
 <table>

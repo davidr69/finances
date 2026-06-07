@@ -3,23 +3,30 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Weekly analysis</title>
-	<link rel="stylesheet" type="text/css" th:href="@{../css/common.css}"/>
-	<link rel="stylesheet" type="text/css" th:href="@{../css/weekly.css}"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-	<script th:src="@{../js/common.js}"></script>
+	<link rel="stylesheet" type="text/css" th:href="@{./font-awesome-4.7.0/css/font-awesome.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{./css/common.css}"/>
+	<link rel="stylesheet" type="text/css" th:href="@{./css/weekly.css}"/>
+
+	<script th:src="@{./js/common.js}"></script>
 
 	<script type="module">
-		const weeklyJS = '../js/weekly.js';
+		const weeklyJS = './js/weekly.js';
 		const { default: Weekly } = await import(weeklyJS);
 		const wkly = new Weekly(new Date());
 		globalThis.weeklyApi = wkly;
 	</script>
+
+	<script th:insert="~{nav :: required}" th:remove="tag"></script>
 </head>
 <body>
 
+<div th:insert="~{nav :: menu}"></div>
+
 <table>
 	<tr>
-		<td class="center">
+		<td class="center weekly">
 			<label for="month"></label><select id="month" name="month" onchange="weeklyApi.changeMonth(this);">
 				<option value="0">January</option>
 				<option value="1">February</option>
@@ -37,7 +44,7 @@
 		</td>
 	</tr>
 	<tr>
-		<td>
+		<td class="weekly">
 			<table id="calendar">
 				<caption style="display: none">Calendar</caption>
 				<tr>
