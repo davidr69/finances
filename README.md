@@ -62,7 +62,7 @@ Here we see some reconciled entries, some included, and the total at the bottom 
 ---
 ### Reports
 
-There are currently 4 reports: 
+There are currently 4 reports:
 - *Entity Totals*: displays all transactions for a given account and
 year, grouped and totaled by entity.
 
@@ -143,7 +143,8 @@ java -Dspring.profiles.active=uat -jar build/libs/finances-${version}.jar
 
 - [ ] True RBAC
 - [x] Disable account after 3 failed login attempts (v 3.10.0)
-- [ ] Import bank statements:
-- - [ ] Read PDF
-- - [ ] Consult Ollama Mistral LLM for vendor matching
-- - [ ] Create transactions
+- [x] Import bank statements:
+- - [x] Publish Kafka message with statement data
+- - [ ] New microservice to consume Kafka message and integrate with LLM
+- - [ ] Consult LLM for vendor matching
+- - [ ] Create transactions in staging table
