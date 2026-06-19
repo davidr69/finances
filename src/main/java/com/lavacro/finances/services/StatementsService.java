@@ -1,6 +1,7 @@
 package com.lavacro.finances.services;
 
 import com.lavacro.finances.dto.StatementDTO;
+import com.lavacro.finances.entities.ActionEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.intellij.lang.annotations.Language;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +27,13 @@ public class StatementsService {
 		ORDER BY a.statement_order
 	""";
 
+	@Language(value = "SQL")
+	private static final String GET_STAGING_RECORD = """
+		SELECT mydate, entity, amount
+		FROM staging.action
+		WHERE action_id = :action_id
+	""";
+
 	public List<StatementDTO> getStatement(Integer account) {
 		List<StatementDTO> statements = new ArrayList<>();
 		jdbcClient.sql(GET_STATEMENT_QUERY).param("account", account).query(rows -> {
@@ -38,5 +47,20 @@ public class StatementsService {
 			statements.add(row);
 		});
 		return statements;
+	}
+
+	public void mergeSelections(Map<Integer, Character> selections) {
+		for(Map.Entry<Integer, Character> entry : selections.entrySet()) {
+			Character selection = entry.getValue();
+			Integer action_id = entry.getKey();
+
+			if(selection == 'y') {
+				JdbcClient.ResultQuerySpec res = jdbcClient.sql(GET_STAGING_RECORD).param(action_id).query();
+//				ActionEntity actionEntity = new ActionEntity();
+//				actionEntity.
+			} else {
+
+			}
+		}
 	}
 }
