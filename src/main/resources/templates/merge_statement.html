@@ -11,27 +11,38 @@
 	<script type="text/javascript" th:src="@{./js/common.js}"></script>
 	<script th:insert="~{nav :: required}" th:remove="tag"></script>
 
-	<!--script type="module">
-		const cashbookJS = './js/cashbook.js';
-		const { default: Cashbook } = await import(cashbookJS);
-		globalThis.cashbook = new Cashbook();
-	</script-->
+	<script>
+		const mergeSelections = () => {
+			let selections = {};
+			document.querySelectorAll('input[type=radio][name^=item]:checked').forEach(el => {
+				let id = el.name.substring(4);
+				selections[id] = el.value;
+			})
+			console.log(selections);
+		};
+	</script>
 <body>
 
 <div th:insert="~{nav :: menu}"></div>
 
 <table class="mytable">
 	<tr>
+		<th scope="col">&nbsp;&nbsp;<i class="fa fa-thumbs-o-up"></i>&nbsp;&nbsp;</th>
+		<th scope="col">&nbsp;&nbsp;<i class="fa fa-thumbs-o-down"></i>&nbsp;&nbsp;</th>
 		<th scope="col">&nbsp;&nbsp;Date&nbsp;&nbsp;</th>
 		<th scope="col">&nbsp;&nbsp;Entity&nbsp;&nbsp;</th>
 		<th scope="col">&nbsp;&nbsp;Amount&nbsp;&nbsp;</th>
 	</tr>
 	<tr th:each="data:${statementData}">
+		<td><label><input type="radio" value="y" th:name="'item' + ${data.actionId()}"/></label></td>
+		<td><label><input type="radio" value="n" th:name="'item' + ${data.actionId()}"/></label></td>
 		<td th:text="${data.date()}"></td>
-		<td th:text="${data.entity()}"></td>
+		<td th:text="${data.entity()}" th:class="${data.isNewEntity()} ? 'new_vendor' : ''"></td>
 		<td th:class="${data.amount} < 0 ? 'negative': 'positive'" th:text="${#numbers.formatDecimal(data.amount,1,2)}"></td>
 	</tr>
 </table>
+
+<input type="button" value=" persist choices " onMouseDown="mergeSelections()"/>
 
 </body>
 </html>
