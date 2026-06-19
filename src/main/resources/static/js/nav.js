@@ -25,7 +25,7 @@ export default class Nav {
 		acct.options.add(opt, 0);
 
 		document.getElementById('account').value = this.pathParams['account'];
-	}
+	};
 
 	navOpen = () => {
 		const el = document.getElementById('popup');
@@ -35,59 +35,64 @@ export default class Nav {
 			el.style.display = 'none';
 			clearInterval(interval);
 		}, 5000);
-	}
+	};
 
 	newTransaction = () => {
 		let values = this.#getValues();
 		window.location.href = `transaction?account=${values.account}&year=${values.year}`;
-	}
+	};
 
 	cashbook = () => {
 		let values = this.#getValues();
 		window.location.href = `cashbook?account=${values.account}&year=${values.year}`;
-	}
+	};
 
 	entities = () => {
 		window.location.href = "./entities?" + Object.entries(this.pathParams).map(([k, v]) => `${k}=${v}`).join('&');
-	}
+	};
 
 	balanceSheet = () => {
 		let values = this.#getValues();
 		window.location.href = `reportBalanceSheet?account=${values.account}`;
-	}
+	};
 
 	updateAccount = () => {
 		let values = this.#getValues();
 		this.pathParams['account'] = values.account;
 		window.location.href = window.location.href.split('?')[0] + '?' + Object.entries(this.pathParams).map(([k, v]) => `${k}=${v}`).join('&');
-	}
+	};
 
 	updateYear = () => {
 		let values = this.#getValues();
 		this.pathParams['year'] = values.year;
 		window.location.href = window.location.href.split('?')[0] + '?' + Object.entries(this.pathParams).map(([k, v]) => `${k}=${v}`).join('&');
-	}
+	};
 
 	entityReport = () => {
 		let values = this.#getValues();
 		window.location.href = `reportByEntity?year=${values.year}&account=${values.account}`;
-	}
+	};
 
 	entityByAmount = () => {
 		let values = this.#getValues();
 		window.location.href = `reportSummaryByYear?startYear=${values.year}&account=${values.account}`;
-	}
+	};
 
 	budget = () => {
 		let values = this.#getValues();
 		const month = (typeof(values.month) === 'undefined') ? new Date().getMonth() + 1 : values.month;
 		window.location.href = `reportWeekly?year=${values.year}&account=${values.account}&month=${month}`;
-	}
+	};
 
 	uploadStatement = () => {
 		let values = this.#getValues();
 		window.location.href = `upload?year=${values.year}&account=${values.account}`;
-	}
+	};
+
+	mergeStatement = () => {
+		let values = this.#getValues();
+		window.location.href = `merge_statement?year=${values.year}&account=${values.account}`;
+	};
 
 	logout = () => {
 		window.location.href = 'logout';
