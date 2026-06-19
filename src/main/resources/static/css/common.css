@@ -94,3 +94,9 @@ select, input {
 	box-shadow: 5px 5px 5px #a0a0a0;
 	border: 1px solid #a0a0a0
 }
+
+.new_vendor {
+	font-style: oblique;
+	font-weight: 700;
+	color: #6d28cf;
+}
