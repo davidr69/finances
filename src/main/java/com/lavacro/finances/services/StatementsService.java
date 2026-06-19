@@ -77,10 +77,8 @@ public class StatementsService {
 				insertions.add(new Insert(
 					(Date) row.get("mydate"), (Integer) row.get("entity"), (BigDecimal) row.get("amount")
 				));
-				idsToDelete.add(action_id);
-			} else {
-
 			}
+			idsToDelete.add(action_id);
 		}
 
 		log.info("insertions: {}", insertions);
@@ -94,11 +92,14 @@ public class StatementsService {
 					ps.setDate(4, item.date());
 				}
 			);
+		}
 
+		if(!idsToDelete.isEmpty()) {
 			jdbcTemplate.batchUpdate(DELETE_FROM_STAGING, idsToDelete, idsToDelete.size(),
 				(ps, item) -> {
 					ps.setInt(1, item);
-				});
+				}
+			);
 		}
 		log.info("Merged transactions");
 	}
