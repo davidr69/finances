@@ -12,10 +12,8 @@ code that needs updating to modern standards.
 ---
 ### Requirements
 
-- **Java 25**: Since this is a Java 25 application, it will require JDK 25 or later.
-- **Gradle**: Gradle 9 is required to perform builds. A `gradlew` wrapper is included
-  for convenience. Building the image (e.g. `podman build . -t localhost/finances:x.y.z`)
-  will automatically retrieve the appropriate builder during phase 1 of the build.
+- **Java 25**: JDK 25 or later is required
+- **Gradle**: Gradle 9
 - **Redis**: The application uses Redis to persist session information, allowing
   the application scale horizontally without encountering session affinity problems.
   When deployed to Kubernetes, a Redis pod is created as part of the deployment
@@ -35,17 +33,7 @@ The navigation bar common to all pages is:
 
 ![nav](images/nav.png)
 
-From left to right:
-
-- **Entity Totals** (see [Reports](#reports) below)
-- **Entity Rank** (see [Reports](#reports) below)
-- **Entities**: these are merchants, payees, or any method of expense (e.g.: vending machine) or income. Entities are maintained on this page.
-- **Balance Sheet**: not in the sense of accounting; these are balances at the end of each month, demonstrating a profit or deficit
-- **Budget** (see "Monthly" in [Reports](#reports) below)
-- **Activity**: how all activity is entered
-- **Spreadsheet**: a monthly or annual spreadsheet-like view
-
-At present, there is no automatic import from bank statements. The `Activity` button presents an interface to enter any activity. The year must be specified in the navigation bar:
+The `Add activity` selection presents an interface to enter any activity. The year and account must be specified in the navigation bar:
 
 ![activity](images/activity.png)
 
@@ -144,7 +132,7 @@ java -Dspring.profiles.active=uat -jar build/libs/finances-${version}.jar
 - [ ] True RBAC
 - [x] Disable account after 3 failed login attempts (v 3.10.0)
 - [x] Import bank statements:
-- - [x] Publish Kafka message with statement data
-- - [ ] New microservice to consume Kafka message and integrate with LLM
-- - [ ] Consult LLM for vendor matching
-- - [ ] Create transactions in staging table
+  - [x] Publish Kafka message with statement data
+  - [X] New microservice to consume Kafka message and integrate with LLM
+  - [x] Consult LLM for vendor matching
+  - [x] Create transactions in staging table
