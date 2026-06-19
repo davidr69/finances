@@ -17,6 +17,7 @@ public class UrlFilter {
 		urls.add("/cashbook");
 		urls.add("/entities");
 		urls.add("/logout");
+		urls.add("/merge_statement");
 		urls.add("/nav");
 		urls.add("/reportBalanceSheet");
 		urls.add("/reportByEntity");

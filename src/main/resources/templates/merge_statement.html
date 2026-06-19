@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en-US" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title>Financial System</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" type="text/css" th:href="@{./font-awesome-4.7.0/css/font-awesome.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{./css/common.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{./css/table.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{./css/spreadsheet.css}">
+
+	<script type="text/javascript" th:src="@{./js/common.js}"></script>
+	<script th:insert="~{nav :: required}" th:remove="tag"></script>
+
+	<script>
+		const mergeSelections = () => {
+			let selections = {};
+			document.querySelectorAll('input[type=radio][name^=item]:checked').forEach(el => {
+				let id = el.name.substring(4);
+				selections[id] = el.value;
+			})
+
+			let params = getUrlParams();
+
+			fetch(`api/v1/statement_merge?account=${params.account}`, {
+				method: 'POST',
+				body: JSON.stringify(selections),
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			}).then(res =>
+				res.json().then(data => {
+					console.log(data);
+					window.location.reload();
+				})
+			);
+		};
+	</script>
+<body>
+
+<div th:insert="~{nav :: menu}"></div>
+
+<table class="mytable">
+	<tr>
+		<th scope="col">&nbsp;&nbsp;<i class="fa fa-thumbs-o-up"></i>&nbsp;&nbsp;</th>
+		<th scope="col">&nbsp;&nbsp;<i class="fa fa-thumbs-o-down"></i>&nbsp;&nbsp;</th>
+		<th scope="col">&nbsp;&nbsp;Date&nbsp;&nbsp;</th>
+		<th scope="col">&nbsp;&nbsp;Entity&nbsp;&nbsp;</th>
+		<th scope="col">&nbsp;&nbsp;Amount&nbsp;&nbsp;</th>
+	</tr>
+	<tr th:each="data:${statementData}">
+		<td><label><input type="radio" value="y" th:name="'item' + ${data.actionId()}"/></label></td>
+		<td><label><input type="radio" value="n" th:name="'item' + ${data.actionId()}"/></label></td>
+		<td th:text="${data.date()}"></td>
+		<td th:text="${data.entity()}" th:class="${data.isNewEntity()} ? 'new_vendor' : ''"></td>
+		<td th:class="${data.amount} < 0 ? 'negative': 'positive'" th:text="${#numbers.formatDecimal(data.amount,1,2)}"></td>
+	</tr>
+</table>
+
+<input type="button" value=" persist choices " onMouseDown="mergeSelections()"/>
+
+</body>
+</html>
