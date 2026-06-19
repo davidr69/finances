@@ -19,7 +19,9 @@
 				selections[id] = el.value;
 			})
 
-			fetch("api/v1/statement_merge", {
+			let params = getUrlParams();
+
+			fetch(`api/v1/statement_merge?account=${params.account}`, {
 				method: 'POST',
 				body: JSON.stringify(selections),
 				headers: {
