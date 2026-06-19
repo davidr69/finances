@@ -47,8 +47,10 @@ test {
 	useJUnitPlatform()
 }
 
+def javaVersion = System.getProperty('os.arch') == 'aarch64' ? 26 : 25
+
 java {
 	toolchain {
-		languageVersion = JavaLanguageVersion.of(25)
+		languageVersion = JavaLanguageVersion.of(javaVersion)
 	}
 }
