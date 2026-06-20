@@ -115,7 +115,7 @@ public class ReportsService {
 
 			if(!prevEntity[0].equals(tuple.description())) {
 				if(!prevEntity[0].isEmpty()) {
-					EntityTotalsDTO totalsDTO = new EntityTotalsDTO(prevEntity[0], oldTotal[0], tuples);
+					EntityTotalsDTO totalsDTO = new EntityTotalsDTO(prevEntity[0], oldTotal[0], new ArrayList<>(tuples));
 					totals.add(totalsDTO);
 					tuples.clear();
 				}
