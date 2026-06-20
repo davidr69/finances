@@ -7,6 +7,7 @@ public record StatementDTO(
 	Integer actionId,
 	LocalDate date,
 	boolean isNewEntity,
+	Integer entityId,
 	String entity,
 	BigDecimal amount
 ) { }

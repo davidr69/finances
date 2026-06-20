@@ -23,7 +23,7 @@ public class StatementsService {
 
 	@Language(value = "SQL")
 	private static final String GET_STATEMENT_QUERY = """
-		SELECT a.action_id, a.mydate, e.embedding IS NULL AS new_vendor, e.description AS vendor, a.amount
+		SELECT a.action_id, a.mydate, e.embedding IS NULL AS new_vendor, e.description AS vendor, a.amount, a.entity AS entity_id
 		FROM staging.action a
 		JOIN entities e ON a.entity = e.id
 		WHERE account = :account
@@ -48,6 +48,9 @@ public class StatementsService {
 		DELETE FROM staging.action WHERE action_id = ?
 	""";
 
+	@Language(value = "SQL")
+	private static final String UPDATE_ENTITY = "UPDATE staging.action SET entity = :entity WHERE action_id = :id";
+
 	public List<StatementDTO> getStatement(Integer account) {
 		List<StatementDTO> statements = new ArrayList<>();
 		jdbcClient.sql(GET_STATEMENT_QUERY).param("account", account).query(rows -> {
@@ -55,6 +58,7 @@ public class StatementsService {
 				rows.getInt("action_id"),
 				rows.getDate("mydate").toLocalDate(),
 				rows.getBoolean("new_vendor"),
+				rows.getInt("entity_id"),
 				rows.getString("vendor"),
 				rows.getBigDecimal("amount")
 			);
@@ -102,6 +106,10 @@ public class StatementsService {
 			);
 		}
 		log.info("Merged transactions");
+	}
+
+	public void updateEntity(Integer rowId, Integer entity) {
+		jdbcClient.sql(UPDATE_ENTITY).param("entity", entity).param("id", rowId).update();
 	}
 }
 

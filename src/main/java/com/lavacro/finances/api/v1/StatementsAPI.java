@@ -3,10 +3,7 @@ package com.lavacro.finances.api.v1;
 import com.lavacro.finances.services.StatementsService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -20,6 +17,12 @@ public class StatementsAPI {
 	public String statementMerge(@RequestBody Map<Integer, Character> selections, @RequestParam("account") Integer account) {
 		log.info("merge: {}", selections);
 		statementsService.mergeSelections(selections, account);
+		return "{\"status\":\"OK\"}";
+	}
+
+	@PutMapping(value = "/api/v1/update_staging_vendor")
+	public String updateEntity(@RequestParam("entity") Integer entity, @RequestParam("id") Integer id) {
+		statementsService.updateEntity(id, entity);
 		return "{\"status\":\"OK\"}";
 	}
 }

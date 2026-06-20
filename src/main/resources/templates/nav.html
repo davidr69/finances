@@ -21,6 +21,20 @@
 <div th:fragment="menu" class="nav">
 
 <table class="popup" id="popup">
+	<tr><td colspan="2" class="menu-group">&nbsp;&nbsp;-- Activity --</td></tr>
+	<tr class="small-glyph" onMouseDown="nav.newTransaction()">
+		<td class="small-icon"><i class="fa fa-credit-card"></i></td>
+		<td>  Add activity</td>
+	</tr>
+	<tr class="small-glyph" onMouseDown="nav.cashbook()">
+		<td class="small-icon"><i class="fa fa-line-chart"></i></td>
+		<td>  Cashbook</td>
+	</tr>
+	<tr class="small-glyph" onMouseDown="nav.entities()">
+		<td class="small-icon"><i class="fa fa-table"></i></td>
+		<td>  Entities</td>
+	</tr>
+	<tr><td colspan="2" class="menu-group">&nbsp;&nbsp;-- Reports --</td></tr>
 	<tr class="small-glyph" onMouseDown="nav.entityReport()">
 		<td class="small-icon"><i class="fa fa-list-ul"></i></td>
 		<td>  Entity totals</td>
@@ -28,10 +42,6 @@
 	<tr class="small-glyph" onMouseDown="nav.entityByAmount()">
 		<td class="small-icon"><i class="fa fa-sort-amount-desc"></i></td>
 		<td>  Entity rank</td>
-	</tr>
-	<tr class="small-glyph" onMouseDown="nav.entities()">
-		<td class="small-icon"><i class="fa fa-table"></i></td>
-		<td>  Entities</td>
 	</tr>
 	<tr class="small-glyph" onMouseDown="nav.balanceSheet()">
 		<td class="small-icon"><i class="fa fa-balance-scale"></i></td>
@@ -41,14 +51,7 @@
 		<td class="small-icon"><i class="fa fa-usd"></i></td>
 		<td>  Budget</td>
 	</tr>
-	<tr class="small-glyph" onMouseDown="nav.newTransaction()">
-		<td class="small-icon"><i class="fa fa-credit-card"></i></td>
-		<td>  Activity</td>
-	</tr>
-	<tr class="small-glyph" onMouseDown="nav.cashbook()">
-		<td class="small-icon"><i class="fa fa-line-chart"></i></td>
-		<td>  Cashbook</td>
-	</tr>
+	<tr><td colspan="2" class="menu-group">&nbsp;&nbsp;-- Statements --</td></tr>
 	<tr class="small-glyph" onMouseDown="nav.uploadStatement()">
 		<td class="small-icon"><i class="fa fa-bank"></i></td>
 		<td>  Import Statement</td>
@@ -57,6 +60,7 @@
 		<td class="small-icon"><i class="fa fa-thumbs-o-up"></i></td>
 		<td>  Merge Statement</td>
 	</tr>
+	<tr><td colspan="2" class="menu-group">&nbsp;&nbsp;-- User --</td></tr>
 	<tr class="small-glyph" onMouseDown="nav.logout()">
 		<td class="small-icon"><i class="fa fa-sign-out"></i></td>
 		<td>  Log out</td>
