@@ -23,7 +23,7 @@ public class StatementsService {
 
 	@Language(value = "SQL")
 	private static final String GET_STATEMENT_QUERY = """
-		SELECT a.action_id, a.mydate, e.embedding IS NULL AS new_vendor, e.description AS vendor, a.amount
+		SELECT a.action_id, a.mydate, e.embedding IS NULL AS new_vendor, e.description AS vendor, a.amount, a.entity AS entity_id
 		FROM staging.action a
 		JOIN entities e ON a.entity = e.id
 		WHERE account = :account
@@ -55,6 +55,7 @@ public class StatementsService {
 				rows.getInt("action_id"),
 				rows.getDate("mydate").toLocalDate(),
 				rows.getBoolean("new_vendor"),
+				rows.getInt("entity_id"),
 				rows.getString("vendor"),
 				rows.getBigDecimal("amount")
 			);

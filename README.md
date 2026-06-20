@@ -99,7 +99,7 @@ You can also use the `gradlew` wrapper.
 To prepare a deployment image:
 
 ```shell
-podman build . -t localhost/finances:x.y.z
+podman build . -t pi4apps:5000/finances:x.y.z
 ```
 
 Ensure the image release name matches in `Dockerfile` and `helm/values.yaml`.

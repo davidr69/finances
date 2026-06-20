@@ -12,6 +12,8 @@
 	<script th:insert="~{nav :: required}" th:remove="tag"></script>
 
 	<script>
+		let haveEntities = false;
+
 		const mergeSelections = () => {
 			let selections = {};
 			document.querySelectorAll('input[type=radio][name^=item]:checked').forEach(el => {
@@ -34,12 +36,62 @@
 				})
 			);
 		};
+
+		const hiliteSelection = (selectedId) => {
+			const sel = document.getElementById('editEntity');
+			for(let option of sel.options) {
+				if(option.value === String(selectedId)) {
+					option.selected = true;
+					break;
+				}
+			}
+		};
+
+		const edit = (entryId, selectedId) => {
+			const modal = document.getElementById('myModal');
+			modal.style.display = 'grid';
+
+			if(haveEntities === true) {
+				hiliteSelection(selectedId);
+				return;
+			}
+
+			const sel = document.getElementById('editEntity');
+			fetch('api/v1/select/merchants').then(resp => {
+				resp.json().then(data => {
+					for(let item of data) {
+						sel.options[sel.options.length++] = new Option(item.description, item.id);
+					}
+					haveEntities = true;
+					hiliteSelection(selectedId);
+				})
+			}).catch(e => {
+				alert(e);
+			});
+		};
+
+		const cancel = () => {
+			document.getElementById('myModal').style.display = 'none';
+		}
 	</script>
+
+	<style>
+		.myModal {
+			position: fixed;
+			top: 40%;
+			left: 40%;
+			border: 1px solid #e0e0ff;
+			width: 400px;
+			box-shadow: 5px 5px 5px #a0a0a0;
+			margin: auto;
+			display: none;
+		}
+	</style>
 <body>
 
 <div th:insert="~{nav :: menu}"></div>
 
-<table class="mytable">
+<table class="mytable" style="padding-left: 15px; padding-top: 10px">
 	<tr>
 		<th scope="col">&nbsp;&nbsp;<i class="fa fa-thumbs-o-up"></i>&nbsp;&nbsp;</th>
 		<th scope="col">&nbsp;&nbsp;<i class="fa fa-thumbs-o-down"></i>&nbsp;&nbsp;</th>
@@ -51,12 +103,30 @@
 		<td><label><input type="radio" value="y" th:name="'item' + ${data.actionId()}"/></label></td>
 		<td><label><input type="radio" value="n" th:name="'item' + ${data.actionId()}"/></label></td>
 		<td th:text="${data.date()}"></td>
-		<td th:text="${data.entity()}" th:class="${data.isNewEntity()} ? 'new_vendor' : ''"></td>
+		<div th:switch="${data.isNewEntity()}" th:remove="tag">
+			<td th:case="true"><a href='#' th:onMouseDown="'edit(' + ${data.actionId()} + ',' + ${data.entityId()} + ')'" th:text="${data.entity()}" class="editdel"></a></td>
+			<td th:case="false" th:text="${data.entity()}"></td>
+		</div>
 		<td th:class="${data.amount} < 0 ? 'negative': 'positive'" th:text="${#numbers.formatDecimal(data.amount,1,2)}"></td>
 	</tr>
 </table>
 
+<br/>
 <input type="button" value=" persist choices " onMouseDown="mergeSelections()"/>
+
+<div class="myModal" id="myModal">
+	<div style="margin: auto">
+		<br/><br/>
+		<div>Edit entity: <select id="editEntity"></select></div>
+		<br/><br/>
+		<div>
+			<button type="button" onClick='updateRecord()'>update</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			<button type="button" onClick='cancel()'>cancel</button>
+		</div>
+		<br/><br/>
+	</div>
+</div>
+
 
 </body>
 </html>
