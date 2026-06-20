@@ -48,6 +48,9 @@ public class StatementsService {
 		DELETE FROM staging.action WHERE action_id = ?
 	""";
 
+	@Language(value = "SQL")
+	private static final String UPDATE_ENTITY = "UPDATE staging.action SET entity = :entity WHERE action_id = :id";
+
 	public List<StatementDTO> getStatement(Integer account) {
 		List<StatementDTO> statements = new ArrayList<>();
 		jdbcClient.sql(GET_STATEMENT_QUERY).param("account", account).query(rows -> {
@@ -103,6 +106,10 @@ public class StatementsService {
 			);
 		}
 		log.info("Merged transactions");
+	}
+
+	public void updateEntity(Integer rowId, Integer entity) {
+		jdbcClient.sql(UPDATE_ENTITY).param("entity", entity).param("id", rowId).update();
 	}
 }
 

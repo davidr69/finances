@@ -13,6 +13,7 @@
 
 	<script>
 		let haveEntities = false;
+		let stagedEntry;
 
 		const mergeSelections = () => {
 			let selections = {};
@@ -50,6 +51,7 @@
 		const edit = (entryId, selectedId) => {
 			const modal = document.getElementById('myModal');
 			modal.style.display = 'grid';
+			stagedEntry = entryId;
 
 			if(haveEntities === true) {
 				hiliteSelection(selectedId);
@@ -73,6 +75,23 @@
 		const cancel = () => {
 			document.getElementById('myModal').style.display = 'none';
 		}
+
+		const updateRecord = () => {
+			let newValue = document.getElementById('editEntity').value;
+			console.log(`Update id ${stagedEntry} to entity ${newValue}`);
+
+			fetch(`api/v1/update_staging_vendor?entity=${newValue}&id=${stagedEntry}`, {
+				method: 'PUT'
+			}).then(resp => {
+				resp.json().then(data => {
+					console.log(data);
+					window.location.reload();
+				})
+			}).catch(e => {
+				alert(e);
+			});
+
+		};
 	</script>
 
 	<style>
