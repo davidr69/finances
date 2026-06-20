@@ -78,13 +78,16 @@
 	<style>
 		.myModal {
 			position: fixed;
-			top: 40%;
-			left: 40%;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
 			border: 1px solid #e0e0ff;
 			width: 400px;
 			box-shadow: 5px 5px 5px #a0a0a0;
-			margin: auto;
+			margin: 0;
 			display: none;
+			z-index: 1000;
+			background: #fff;
 		}
 	</style>
 <body>
@@ -103,10 +106,10 @@
 		<td><label><input type="radio" value="y" th:name="'item' + ${data.actionId()}"/></label></td>
 		<td><label><input type="radio" value="n" th:name="'item' + ${data.actionId()}"/></label></td>
 		<td th:text="${data.date()}"></td>
-		<div th:switch="${data.isNewEntity()}" th:remove="tag">
-			<td th:case="true"><a href='#' th:onMouseDown="'edit(' + ${data.actionId()} + ',' + ${data.entityId()} + ')'" th:text="${data.entity()}" class="editdel"></a></td>
-			<td th:case="false" th:text="${data.entity()}"></td>
-		</div>
+ 		<div th:switch="${data.isNewEntity()}" th:remove="tag">
+ 			<td th:case="true"><a href='javascript:void(0)' th:onMouseDown="'edit(' + ${data.actionId()} + ',' + ${data.entityId()} + ')'" th:text="${data.entity()}" class="editdel"></a></td>
+ 			<td th:case="false" th:text="${data.entity()}"></td>
+ 		</div>
 		<td th:class="${data.amount} < 0 ? 'negative': 'positive'" th:text="${#numbers.formatDecimal(data.amount,1,2)}"></td>
 	</tr>
 </table>
