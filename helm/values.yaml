@@ -5,7 +5,7 @@ namespace: finances
 image:
   registry: "registry:5000"
   repository: "finances"
-  tag: "4.0.0"
+  tag: "4.1.0"
   pullPolicy: IfNotPresent
 
 vaultRetrieve:
