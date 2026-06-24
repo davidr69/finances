@@ -2,12 +2,12 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Chart.Name }}-app
-  namespace: {{ .Release.namespace }}
+  namespace: {{ .Values.namespace }}
   labels:
     app: {{ .Chart.Name }}
     tier: web
 spec:
-  replicas: {{ .Values.replicaCount }}
+  replicas: {{ .Values.webapp.replicaCount }}
   selector:
     matchLabels:
       tier: web
@@ -36,8 +36,8 @@ spec:
           mountPath: "{{ .Values.vaultRetrieve.env.mountPath }}"
       containers:
       - name: {{ .Chart.Name }}
-        image: "{{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        image: "{{ .Values.webapp.image.registry }}/{{ .Values.webapp.image.repository }}:{{ .Values.webapp.image.tag }}"
+        imagePullPolicy: {{ .Values.webapp.image.pullPolicy }}
         envFrom:
         - configMapRef:
             name: {{ .Chart.Name }}-config-app

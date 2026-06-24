@@ -1,12 +1,12 @@
-replicaCount: 2
-
 namespace: finances
 
-image:
-  registry: "registry:5000"
-  repository: "finances"
-  tag: "4.1.0"
-  pullPolicy: IfNotPresent
+webapp:
+  replicaCount: 2
+  image:
+    registry: "registry:5000"
+    repository: "finances"
+    tag: "4.1.0"
+    pullPolicy: IfNotPresent
 
 vaultRetrieve:
   image:
@@ -15,7 +15,7 @@ vaultRetrieve:
     pullPolicy: IfNotPresent
   env:
     mountPath: "/var/tmp/vault"
-    vaultUri: 'http://vault.lavacro.net:8201'
+    vaultUri: 'http://vault:8201'
     vaultRequest: |
       {
         "vault_request": [{
@@ -29,6 +29,26 @@ vaultRetrieve:
         "file_path": "/var/tmp/vault/vault.properties"
       }
 
+agentVaultRetrieve:
+  image:
+    repository: registry:5000/govault
+    tag: "1.0.4"
+    pullPolicy: IfNotPresent
+  env:
+    mountPath: "/var/tmp/vault"
+    vaultUri: 'http://vault.lavacro.net:8201'
+    vaultRequest: |
+      {
+        "vault_request": [{
+          "mount": "lavacro",
+          "path": "prod/llm/anthropic",
+          "items": [{
+            "key": "api_key",
+            "label": "anthropic.api.key"
+          }]
+        }],
+        "file_path": "/var/tmp/vault/vault.properties"
+      }
 app:
   env:
     profile: home
@@ -56,6 +76,29 @@ service:
   type: LoadBalancer
   port: 80
   targetPort: 8443
+
+agentPod:
+  replicas: 1
+  env:
+    propertiesFile: "/var/tmp/vault/vault.properties"
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "250m"
+    limits:
+      memory: "384Mi"
+      cpu: "500m"
+  readinessProbe:
+    httpGet:
+      path: /actuator/health/readiness
+      port: 8080
+    timeoutSeconds: 60
+  livenessProbe:
+    httpGet:
+      path: /actuator/health/liveness
+      port: 8080
+    timeoutSeconds: 3
+    initialDelaySeconds: 60
 
 ingress:
   enabled: true

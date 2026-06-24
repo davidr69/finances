@@ -14,3 +14,5 @@ target
 /buildSrc/
 /build/
 /out/
+/.env
+/run.sh
