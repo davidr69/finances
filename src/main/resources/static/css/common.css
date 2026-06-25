@@ -13,7 +13,7 @@
 
 .small-glyph, .small-glyph:visited {
 	font-size: 12px;
-	color: #296dff;
+	color: #023dcd;
 	text-decoration: none;
 	cursor: default;
 }
@@ -102,6 +102,6 @@ select, input {
 }
 
 .menu-group {
-	color: #296dff;
+	color: #023dcd;
 	font-weight: 700;
 }
