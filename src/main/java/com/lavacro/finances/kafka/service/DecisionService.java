@@ -17,9 +17,8 @@ public class DecisionService {
 		this.kafkaTemplate = kafkaTemplate;
 	}
 
-	public void send(String filename, Integer accountId, byte[] content) {
-		DecisionModel decision = new DecisionModel();
-		ProducerRecord<String, DecisionModel> rekord = new ProducerRecord<>("finances-decision", null, decision);
+	public void send(DecisionModel model) {
+		ProducerRecord<String, DecisionModel> rekord = new ProducerRecord<>("finances-decision", null, model);
 
 		kafkaTemplate.send(rekord)
 			.whenComplete((result, ex) -> {
@@ -30,7 +29,7 @@ public class DecisionService {
 						result.getRecordMetadata().partition(),
 						result.getRecordMetadata().offset());
 				}
-			})
-		;
+			}
+		);
 	}
 }

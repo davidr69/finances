@@ -31,7 +31,7 @@ public class NotifyAgent {
 						result.getRecordMetadata().partition(),
 						result.getRecordMetadata().offset());
 				}
-			})
-		;
+			}
+		);
 	}
 }
