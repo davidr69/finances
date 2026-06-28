@@ -1,6 +1,6 @@
 package com.lavacro.finances.kafka.config;
 
-import com.lavacro.finances.kafka.model.DecisionModel;
+import com.lavacro.finances.shared.proto.DecisionProto;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.ByteArraySerializer;
 import org.springframework.boot.kafka.autoconfigure.KafkaProperties;
@@ -30,15 +30,15 @@ public class KafkaConfig {
     }
 
     @Bean
-    ProducerFactory<String, DecisionModel> jsonProducerFactory(KafkaProperties props) {
+    ProducerFactory<String, DecisionProto.DecisionMessage> jsonProducerFactory(KafkaProperties props) {
         Map<String, Object> config = props.buildProducerProperties();
         config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JacksonJsonSerializer.class);
         return new DefaultKafkaProducerFactory<>(config);
     }
 
     @Bean
-    KafkaTemplate<String, DecisionModel> jsonKafkaTemplate(
-            ProducerFactory<String, DecisionModel> jsonProducerFactory) {
+    KafkaTemplate<String, DecisionProto.DecisionMessage> jsonKafkaTemplate(
+            ProducerFactory<String, DecisionProto.DecisionMessage> jsonProducerFactory) {
         return new KafkaTemplate<>(jsonProducerFactory);
     }
 }

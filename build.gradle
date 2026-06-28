@@ -2,6 +2,21 @@ plugins {
 	id 'org.springframework.boot' version "${springBootVersion}"
 	id 'java'
 	id 'io.spring.dependency-management' version '1.1.7'
+	id 'com.google.protobuf' version '0.9.5'
+}
+
+def javaVersion = System.getProperty('os.arch') == 'aarch64' ? 26 : 25
+
+java {
+  toolchain {
+    languageVersion = JavaLanguageVersion.of(javaVersion)
+  }
+}
+
+protobuf {
+	protoc {
+		artifact = 'com.google.protobuf:protoc:4.28.2'
+	}
 }
 
 repositories {
@@ -26,6 +41,9 @@ dependencies {
 	implementation 'jakarta.validation:jakarta.validation-api'
 	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
 	implementation 'org.postgresql:postgresql:42.7.7'
+
+	implementation 'com.google.protobuf:protobuf-java:4.28.2'
+
 	testImplementation 'org.springframework.kafka:spring-kafka-test'
 
 	compileOnly 'org.projectlombok:lombok:1.18.42'
@@ -45,12 +63,4 @@ tasks.withType(JavaCompile).configureEach {
 
 test {
 	useJUnitPlatform()
-}
-
-def javaVersion = System.getProperty('os.arch') == 'aarch64' ? 26 : 25
-
-java {
-	toolchain {
-		languageVersion = JavaLanguageVersion.of(javaVersion)
-	}
 }
