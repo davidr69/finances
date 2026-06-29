@@ -122,6 +122,8 @@ public class StatementsService {
 					DecisionProto.DecisionMessage message = DecisionProto.DecisionMessage.newBuilder()
 						.setDecision(DecisionProto.DecisionMessage.Decision.USE_LLM)
 						.setTransactionId(actionId)
+						.setOriginalVendorId((Integer) row.get("entity"))
+						.setNewVendorId((Integer) row.get("llm_entity"))
 						.build();
 					// right now, don't need the other fields in the protobuf message
 					decisionService.send(message);
