@@ -1,6 +1,8 @@
 package com.lavacro.finances.services;
 
 import com.lavacro.finances.dto.StatementDTO;
+import com.lavacro.finances.kafka.service.DecisionService;
+import com.lavacro.finances.shared.proto.DecisionProto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.intellij.lang.annotations.Language;
@@ -20,6 +22,11 @@ import java.util.Map;
 public class StatementsService {
 	private final JdbcClient jdbcClient;
 	private final JdbcTemplate jdbcTemplate; // for bulk writes
+	private final DecisionService decisionService;
+
+	private static final String USE_VECTOR = "vector";
+	private static final String USE_LLM = "llm";
+	private static final String REJECT = "reject";
 
 	@Language(value = "SQL")
 	private static final String GET_STATEMENT_QUERY = """
@@ -38,7 +45,7 @@ public class StatementsService {
 				THEN NULL
 				ELSE l.description
 			END AS llm_vendor,
-			(a.llm_entity IS NOT NULL AND l.embedding IS NULL) AS new_vendor
+			(a.llm_entity IS NOT NULL AND l.embedding IS NULL) AS new_entity
 		FROM staging.action a
 		JOIN entities e ON a.entity = e.id
 		LEFT JOIN entities l ON a.llm_entity = l.id
@@ -48,8 +55,14 @@ public class StatementsService {
 
 	@Language(value = "SQL")
 	private static final String GET_STAGING_RECORD = """
-		SELECT mydate, entity, amount
-		FROM staging.action
+		SELECT a.mydate, a.entity, a.llm_entity, a.amount,
+			CASE
+				WHEN a.llm_entity IS NOT NULL
+					THEN e.embedding IS NULL
+				END
+			AS new_entity
+		FROM staging.action a
+		LEFT JOIN entities e ON a.llm_entity = e.id
 		WHERE action_id = ?
 	""";
 
@@ -81,30 +94,41 @@ public class StatementsService {
 				vectorId == llmId ? null : llmId,
 				rows.getString("vector_vendor"),
 				vectorId == llmId ? null : rows.getString("llm_vendor"),
-				rows.getBoolean("new_vendor")
+				rows.getBoolean("new_entity")
 			);
 			statements.add(row);
 		});
 		return statements;
 	}
 
-	// this has to move to the agent
-	public void mergeSelections(Map<Integer, Character> selections, int account) {
-		// TODO: if transaction with new vendor is accepted, calculate the vectors
+	public void mergeSelections(Map<Integer, String> selections, int account) {
 		List<Insert> insertions = new ArrayList<>();
 		List<Integer> idsToDelete = new ArrayList<>();
 
-		for(Map.Entry<Integer, Character> entry : selections.entrySet()) {
-			Character selection = entry.getValue();
-			Integer action_id = entry.getKey();
+		for(Map.Entry<Integer, String> entry : selections.entrySet()) {
+			String selection = entry.getValue();
+			Integer actionId = entry.getKey();
 
-			if(selection == 'y') {
-				Map<String, Object> row = jdbcClient.sql(GET_STAGING_RECORD).param(action_id).query().singleRow();
+			if(USE_VECTOR.equals(selection) || USE_LLM.equals(selection)) {
+				Map<String, Object> row = jdbcClient.sql(GET_STAGING_RECORD).param(actionId).query().singleRow();
 				insertions.add(new Insert(
-					(Date) row.get("mydate"), (Integer) row.get("entity"), (BigDecimal) row.get("amount")
+					(Date) row.get("mydate"),
+					USE_VECTOR.equals(selection) ? (Integer) row.get("entity") : (Integer) row.get("llm_entity"),
+					(BigDecimal) row.get("amount")
 				));
+
+				if(USE_LLM.equals(selection) && (boolean) row.get("new_entity")) {
+					// calculate the vector
+					DecisionProto.DecisionMessage message = DecisionProto.DecisionMessage.newBuilder()
+						.setDecision(DecisionProto.DecisionMessage.Decision.USE_LLM)
+						.setTransactionId(actionId)
+						.build();
+					// right now, don't need the other fields in the protobuf message
+					decisionService.send(message);
+				}
 			}
-			idsToDelete.add(action_id);
+			// implicitly reject
+			idsToDelete.add(actionId);
 		}
 
 		log.info("insertions: {}", insertions);
