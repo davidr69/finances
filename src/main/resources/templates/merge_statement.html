@@ -8,133 +8,48 @@
 	<link rel="stylesheet" type="text/css" th:href="@{./css/table.css}">
 	<link rel="stylesheet" type="text/css" th:href="@{./css/spreadsheet.css}">
 
+	<link rel="stylesheet" type="text/css" th:href="@{./css/merge_statement.css}">
+
 	<script type="text/javascript" th:src="@{./js/common.js}"></script>
 	<script th:insert="~{nav :: required}" th:remove="tag"></script>
 
-	<script>
-		let haveEntities = false;
-		let stagedEntry;
-
-		const mergeSelections = () => {
-			let selections = {};
-			document.querySelectorAll('input[type=radio][name^=item]:checked').forEach(el => {
-				let id = el.name.substring(4);
-				selections[id] = el.value;
-			})
-
-			let params = getUrlParams();
-
-			fetch(`api/v1/statement_merge?account=${params.account}`, {
-				method: 'POST',
-				body: JSON.stringify(selections),
-				headers: {
-					'Content-Type': 'application/json'
-				}
-			}).then(res =>
-				res.json().then(data => {
-					console.log(data);
-					window.location.reload();
-				})
-			);
-		};
-
-		const hiliteSelection = (selectedId) => {
-			const sel = document.getElementById('editEntity');
-			for(let option of sel.options) {
-				if(option.value === String(selectedId)) {
-					option.selected = true;
-					break;
-				}
-			}
-		};
-
-		const edit = (entryId, selectedId) => {
-			const modal = document.getElementById('myModal');
-			modal.style.display = 'grid';
-			stagedEntry = entryId;
-
-			if(haveEntities === true) {
-				hiliteSelection(selectedId);
-				return;
-			}
-
-			const sel = document.getElementById('editEntity');
-			fetch('api/v1/select/merchants').then(resp => {
-				resp.json().then(data => {
-					for(let item of data) {
-						sel.options[sel.options.length++] = new Option(item.description, item.id);
-					}
-					haveEntities = true;
-					hiliteSelection(selectedId);
-				})
-			}).catch(e => {
-				alert(e);
-			});
-		};
-
-		const cancel = () => {
-			document.getElementById('myModal').style.display = 'none';
-		}
-
-		const updateRecord = () => {
-			let newValue = document.getElementById('editEntity').value;
-			console.log(`Update id ${stagedEntry} to entity ${newValue}`);
-
-			fetch(`api/v1/update_staging_vendor?entity=${newValue}&id=${stagedEntry}`, {
-				method: 'PUT'
-			}).then(resp => {
-				resp.json().then(data => {
-					console.log(data);
-					window.location.reload();
-				})
-			}).catch(e => {
-				alert(e);
-			});
-
-		};
+	<script type="module">
+		const mergeJS = './js/merge_statement.js';
+		const { default: MergeStatement } = await import(mergeJS);
+		const merge = new MergeStatement();
+		globalThis.merge = merge;
 	</script>
-
-	<style>
-		.myModal {
-			position: fixed;
-			top: 50%;
-			left: 50%;
-			transform: translate(-50%, -50%);
-			border: 1px solid #e0e0ff;
-			width: 400px;
-			box-shadow: 5px 5px 5px #a0a0a0;
-			margin: 0;
-			display: none;
-			z-index: 1000;
-			background: #fff;
-		}
-	</style>
 <body>
 
 <div th:insert="~{nav :: menu}"></div>
 
 <table class="mytable" style="padding-left: 15px; padding-top: 10px">
 	<tr>
-		<th scope="col">&nbsp;&nbsp;<i class="fa fa-thumbs-o-up"></i>&nbsp;&nbsp;</th>
-		<th scope="col">&nbsp;&nbsp;<i class="fa fa-thumbs-o-down"></i>&nbsp;&nbsp;</th>
 		<th scope="col">&nbsp;&nbsp;Date&nbsp;&nbsp;</th>
-		<th scope="col">&nbsp;&nbsp;Entity&nbsp;&nbsp;</th>
 		<th scope="col">&nbsp;&nbsp;Amount&nbsp;&nbsp;</th>
+		<th scope="col">&nbsp;&nbsp;Statement entity</th>
+		<th scope="col">&nbsp;&nbsp;<i class="fa fa-thumbs-o-up"></i> Vector entity</th>
+		<th scope="col">&nbsp;&nbsp;<i class="fa fa-thumbs-o-up"></i> LLM entity</th>
+		<th scope="col">&nbsp;&nbsp;<i class="fa fa-thumbs-o-down"></i> Reject</th>
 	</tr>
 	<tr th:each="data:${statementData}">
-		<td><label><input type="radio" value="y" th:name="'item' + ${data.actionId()}"/></label></td>
-		<td><label><input type="radio" value="n" th:name="'item' + ${data.actionId()}"/></label></td>
-		<td th:text="${data.date()}"></td>
- 		<div th:switch="${data.isNewEntity()}" th:remove="tag">
- 			<td th:case="true"><a href='javascript:void(0)' th:onMouseDown="'edit(' + ${data.actionId()} + ',' + ${data.entityId()} + ')'" th:text="${data.entity()}" class="editdel"></a></td>
- 			<td th:case="false" th:text="${data.entity()}"></td>
- 		</div>
+		<td th:text="${data.date}"></td>
 		<td th:class="${data.amount} < 0 ? 'negative': 'positive'" th:text="${#numbers.formatDecimal(data.amount,1,2)}"></td>
+		<td th:text="${data.statementVendor}"></td>
+		<td><input type="radio" th:name="'item' + ${data.actionId}" value="vector"> <span th:text="${data.vectorVendor}" th:remove="tag"></span></td>
+		<td th:switch="${data.llmVendor} == null">
+			<div th:case="true" th:utext="'&nbsp;'" th:remove="tag"></div>
+			<div th:case="*" th:remove="tag">
+				<input type="radio" th:name="'item' + ${data.actionId}" value="llm">
+				<a href='javascript:void(0)' th:onMouseDown="'merge.edit(' + ${data.actionId} + ',' + ${data.llmId} + ')'" th:text="${data.llmVendor}" class="editdel"></a>
+			</div>
+		</td>
+		<td class="center"><input type="radio" value="reject" th:name="'item' + ${data.actionId()}"/></td>
 	</tr>
 </table>
 
 <br/>
-<input type="button" value=" persist choices " onMouseDown="mergeSelections()"/>
+<input type="button" value=" persist choices " onMouseDown="merge.mergeSelections()"/>
 
 <div class="myModal" id="myModal">
 	<div style="margin: auto">
@@ -142,8 +57,8 @@
 		<div>Edit entity: <select id="editEntity"></select></div>
 		<br/><br/>
 		<div>
-			<button type="button" onClick='updateRecord()'>update</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-			<button type="button" onClick='cancel()'>cancel</button>
+			<button type="button" onClick='merge.updateRecord()'>update</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			<button type="button" onClick='merge.cancel()'>cancel</button>
 		</div>
 		<br/><br/>
 	</div>

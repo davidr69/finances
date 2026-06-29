@@ -20,7 +20,7 @@ public class StatementsAPI {
 """;
 
 	@PostMapping(value = "/api/v1/statement_merge")
-	public String statementMerge(@RequestBody Map<Integer, Character> selections, @RequestParam("account") Integer account) {
+	public String statementMerge(@RequestBody Map<Integer, String> selections, @RequestParam("account") Integer account) {
 		log.info("merge: {}", selections);
 		try {
 			statementsService.mergeSelections(selections, account);
