@@ -23,11 +23,27 @@ public class StatementsService {
 
 	@Language(value = "SQL")
 	private static final String GET_STATEMENT_QUERY = """
-		SELECT a.action_id, a.mydate, e.embedding IS NULL AS new_vendor, e.description AS vendor, a.amount, a.entity AS entity_id
+		SELECT
+			a.action_id,
+			a.mydate,
+			a.amount,
+			a.description AS statement_vendor,
+			a.entity AS vector_id,
+			CASE WHEN a.entity = a.llm_entity
+				THEN NULL
+				ELSE a.llm_entity
+			END AS llm_id,
+			e.description AS vector_vendor,
+			CASE WHEN a.entity = a.llm_entity
+				THEN NULL
+				ELSE l.description
+			END AS llm_vendor,
+			(a.llm_entity IS NOT NULL AND l.embedding IS NULL) AS new_vendor
 		FROM staging.action a
 		JOIN entities e ON a.entity = e.id
+		LEFT JOIN entities l ON a.llm_entity = l.id
 		WHERE account = :account
-		ORDER BY a.statement_order
+		ORDER BY a.statement_order;
 	""";
 
 	@Language(value = "SQL")
@@ -49,24 +65,30 @@ public class StatementsService {
 	""";
 
 	@Language(value = "SQL")
-	private static final String UPDATE_ENTITY = "UPDATE staging.action SET entity = :entity WHERE action_id = :id";
+	private static final String UPDATE_ENTITY = "UPDATE staging.action SET llm_entity = :entity WHERE action_id = :id";
 
 	public List<StatementDTO> getStatement(Integer account) {
 		List<StatementDTO> statements = new ArrayList<>();
 		jdbcClient.sql(GET_STATEMENT_QUERY).param("account", account).query(rows -> {
+			int vectorId = rows.getInt("vector_id");
+			int llmId = rows.getInt("llm_id");
 			StatementDTO row = new StatementDTO(
 				rows.getInt("action_id"),
 				rows.getDate("mydate").toLocalDate(),
-				rows.getBoolean("new_vendor"),
-				rows.getInt("entity_id"),
-				rows.getString("vendor"),
-				rows.getBigDecimal("amount")
+				rows.getBigDecimal("amount"),
+				rows.getString("statement_vendor"),
+				vectorId,
+				vectorId == llmId ? null : llmId,
+				rows.getString("vector_vendor"),
+				vectorId == llmId ? null : rows.getString("llm_vendor"),
+				rows.getBoolean("new_vendor")
 			);
 			statements.add(row);
 		});
 		return statements;
 	}
 
+	// this has to move to the agent
 	public void mergeSelections(Map<Integer, Character> selections, int account) {
 		// TODO: if transaction with new vendor is accepted, calculate the vectors
 		List<Insert> insertions = new ArrayList<>();

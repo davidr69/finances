@@ -25,21 +25,26 @@
 
 <table class="mytable" style="padding-left: 15px; padding-top: 10px">
 	<tr>
-		<th scope="col">&nbsp;&nbsp;<i class="fa fa-thumbs-o-up"></i>&nbsp;&nbsp;</th>
-		<th scope="col">&nbsp;&nbsp;<i class="fa fa-thumbs-o-down"></i>&nbsp;&nbsp;</th>
 		<th scope="col">&nbsp;&nbsp;Date&nbsp;&nbsp;</th>
-		<th scope="col">&nbsp;&nbsp;Entity&nbsp;&nbsp;</th>
 		<th scope="col">&nbsp;&nbsp;Amount&nbsp;&nbsp;</th>
+		<th scope="col">&nbsp;&nbsp;Statement entity</th>
+		<th scope="col">&nbsp;&nbsp;<i class="fa fa-thumbs-o-up"></i> Vector entity</th>
+		<th scope="col">&nbsp;&nbsp;<i class="fa fa-thumbs-o-up"></i> LLM entity</th>
+		<th scope="col">&nbsp;&nbsp;<i class="fa fa-thumbs-o-down"></i> Reject</th>
 	</tr>
 	<tr th:each="data:${statementData}">
-		<td><label><input type="radio" value="y" th:name="'item' + ${data.actionId()}"/></label></td>
-		<td><label><input type="radio" value="n" th:name="'item' + ${data.actionId()}"/></label></td>
-		<td th:text="${data.date()}"></td>
- 		<div th:switch="${data.isNewEntity()}" th:remove="tag">
- 			<td th:case="true"><a href='javascript:void(0)' th:onMouseDown="'merge.edit(' + ${data.actionId()} + ',' + ${data.entityId()} + ')'" th:text="${data.entity()}" class="editdel"></a></td>
- 			<td th:case="false" th:text="${data.entity()}"></td>
- 		</div>
+		<td th:text="${data.date}"></td>
 		<td th:class="${data.amount} < 0 ? 'negative': 'positive'" th:text="${#numbers.formatDecimal(data.amount,1,2)}"></td>
+		<td th:text="${data.statementVendor}"></td>
+		<td><input type="radio" th:name="'item' + ${data.actionId}" value="vector"> <span th:text="${data.vectorVendor}" th:remove="tag"></span></td>
+		<td th:switch="${data.llmVendor} == null">
+			<div th:case="true" th:utext="'&nbsp;'" th:remove="tag"></div>
+			<div th:case="*" th:remove="tag">
+				<input type="radio" th:name="'item' + ${data.actionId}" value="llm">
+				<a href='javascript:void(0)' th:onMouseDown="'merge.edit(' + ${data.actionId} + ',' + ${data.llmId} + ')'" th:text="${data.llmVendor}" class="editdel"></a>
+			</div>
+		</td>
+		<td class="center"><input type="radio" value="reject" th:name="'item' + ${data.actionId()}"/></td>
 	</tr>
 </table>
 

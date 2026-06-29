@@ -44,8 +44,8 @@ export default class MergeStatement {
 		modal.style.display = 'grid';
 		this.stagedEntry = entryId;
 
-		if (haveEntities === true) {
-			hiliteSelection(selectedId);
+		if (this.haveEntities === true) {
+			this.#hiliteSelection(selectedId);
 			return;
 		}
 
@@ -69,9 +69,9 @@ export default class MergeStatement {
 
 	updateRecord = () => {
 		let newValue = document.getElementById('editEntity').value;
-		console.log(`Update id ${stagedEntry} to entity ${newValue}`);
+		console.log(`Update id ${this.stagedEntry} to entity ${newValue}`);
 
-		fetch(`api/v1/update_staging_vendor?entity=${newValue}&id=${stagedEntry}`, {
+		fetch(`api/v1/update_staging_vendor?entity=${newValue}&id=${this.stagedEntry}`, {
 			method: 'PUT'
 		}).then(resp => {
 			resp.json().then(data => {
