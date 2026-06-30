@@ -5,5 +5,5 @@ metadata:
   namespace: {{ .Release.namespace }}
 data:
   VAULT_REQUEST: |{{ .Values.agentVaultRetrieve.env.vaultRequest | nindent 4 }}
-  MOUNT_PATH: "{{ .Values.vaultRetrieve.env.mountPath }}"
-  VAULT_ADDR: "{{ .Values.vaultRetrieve.env.vaultUri }}"
+  MOUNT_PATH: "{{ .Values.agentVaultRetrieve.env.mountPath }}"
+  VAULT_ADDR: "{{ .Values.agentVaultRetrieve.env.vaultUri }}"
