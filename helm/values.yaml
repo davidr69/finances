@@ -45,7 +45,18 @@ agentVaultRetrieve:
           "items": [{
             "key": "api_key",
             "label": "anthropic.api.key"
-          }]
+        },{
+          "mount": "lavacro",
+          "path": "prod/llm/anthropic",
+          "items": [{
+            "key": "api_key",
+            "label": "anthropic.api.key"
+        },{
+          "mount": "lavacro",
+          "path": "prod/llm/gemini",
+          "items": [{
+            "key": "api_key",
+            "label": "gemini.api.key"
         }],
         "file_path": "/var/tmp/vault/vault.properties"
       }
