@@ -24,8 +24,8 @@ spec:
             medium: Memory
       initContainers:
         - name: vault-retrieve
-          image: "{{ .Values.vaultRetrieve.image.repository }}:{{ .Values.vaultRetrieve.image.tag }}"
-          imagePullPolicy: {{ .Values.vaultRetrieve.image.pullPolicy }}
+          image: "{{ .Values.agentVaultRetrieve.image.repository }}:{{ .Values.agentVaultRetrieve.image.tag }}"
+          imagePullPolicy: {{ .Values.agentVaultRetrieve.image.pullPolicy }}
           envFrom:
             - configMapRef:
                 name: {{ .Chart.Name }}-config-init
@@ -33,7 +33,7 @@ spec:
                 name: {{ .Chart.Name }}-secrets
           volumeMounts:
             - name: vault-token
-              mountPath: "{{ .Values.vaultRetrieve.env.mountPath }}"
+              mountPath: "{{ .Values.agentVaultRetrieve.env.mountPath }}"
       containers:
         - name: {{ .Chart.Name }}-agent
           image: "{{ .Values.agentPod.image.registry }}/{{ .Values.agentPod.image.repository }}:{{ .Values.agentPod.image.tag }}"
@@ -43,22 +43,22 @@ spec:
                 name: {{ .Chart.Name }}-config-app
           volumeMounts:
             - name: vault-token
-              mountPath: "{{ .Values.vaultRetrieve.env.mountPath }}"
+              mountPath: "{{ .Values.agentVaultRetrieve.env.mountPath }}"
           resources:
             requests:
-              memory: {{ .Values.app.resources.requests.memory }}
-              cpu: {{ .Values.app.resources.requests.cpu }}
+              memory: {{ .Values.agentPod.resources.requests.memory }}
+              cpu: {{ .Values.agentPod.resources.requests.cpu }}
             limits:
-              memory: {{ .Values.app.resources.limits.memory }}
-              cpu: {{ .Values.app.resources.limits.cpu }}
+              memory: {{ .Values.agentPod.resources.limits.memory }}
+              cpu: {{ .Values.agentPod.resources.limits.cpu }}
           readinessProbe:
             httpGet:
-              path: {{ .Values.app.readinessProbe.httpGet.path }}
-              port: {{ .Values.app.readinessProbe.httpGet.port }}
-            timeoutSeconds: {{ .Values.app.readinessProbe.timeoutSeconds }}
+              path: {{ .Values.agentPod.readinessProbe.httpGet.path }}
+              port: {{ .Values.agentPod.readinessProbe.httpGet.port }}
+            timeoutSeconds: {{ .Values.agentPod.readinessProbe.timeoutSeconds }}
           livenessProbe:
             httpGet:
-              path: {{ .Values.app.livenessProbe.httpGet.path }}
-              port: {{ .Values.app.livenessProbe.httpGet.port }}
-            timeoutSeconds: {{ .Values.app.livenessProbe.timeoutSeconds }}
-            initialDelaySeconds: {{ .Values.app.livenessProbe.initialDelaySeconds }}
+              path: {{ .Values.agentPod.livenessProbe.httpGet.path }}
+              port: {{ .Values.agentPod.livenessProbe.httpGet.port }}
+            timeoutSeconds: {{ .Values.agentPod.livenessProbe.timeoutSeconds }}
+            initialDelaySeconds: {{ .Values.agentPod.livenessProbe.initialDelaySeconds }}

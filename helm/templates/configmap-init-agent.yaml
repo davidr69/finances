@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Chart.Name }}-config-init-agent
+  namespace: {{ .Release.namespace }}
+data:
+  VAULT_REQUEST: |{{ .Values.agentVaultRetrieve.env.vaultRequest | nindent 4 }}
+  MOUNT_PATH: "{{ .Values.vaultRetrieve.env.mountPath }}"
+  VAULT_ADDR: "{{ .Values.vaultRetrieve.env.vaultUri }}"
