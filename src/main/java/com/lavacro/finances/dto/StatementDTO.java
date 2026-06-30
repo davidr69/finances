@@ -6,8 +6,11 @@ import java.time.LocalDate;
 public record StatementDTO(
 	Integer actionId,
 	LocalDate date,
-	boolean isNewEntity,
-	Integer entityId,
-	String entity,
-	BigDecimal amount
+	BigDecimal amount,
+	String statementVendor,
+	Integer vectorId,
+	Integer llmId,
+	String vectorVendor,
+	String llmVendor,
+	boolean newVendor
 ) { }

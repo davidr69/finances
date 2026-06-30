@@ -1,26 +1,22 @@
 package com.lavacro.finances.kafka.service;
 
+import com.lavacro.finances.shared.proto.DecisionProto;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
-import java.nio.charset.StandardCharsets;
-
 @Service
 @Slf4j
-public class NotifyAgent {
-	private final KafkaTemplate<String, byte[]> kafkaTemplate;
+public class DecisionService {
+	private final KafkaTemplate<String, DecisionProto.DecisionMessage> kafkaTemplate;
 
-	public NotifyAgent(KafkaTemplate<String, byte[]> kafkaTemplate) {
+	public DecisionService(KafkaTemplate<String, DecisionProto.DecisionMessage> kafkaTemplate) {
 		this.kafkaTemplate = kafkaTemplate;
 	}
 
-	public void send(String filename, Integer accountId, byte[] content) {
-		ProducerRecord<String, byte[]> rekord = new ProducerRecord<>("finances-topic", null, content);
-		rekord.headers()
-			.add("filename", filename.getBytes(StandardCharsets.UTF_8))
-			.add("accountId", accountId.toString().getBytes(StandardCharsets.UTF_8));
+	public void send(DecisionProto.DecisionMessage model) {
+		ProducerRecord<String, DecisionProto.DecisionMessage> rekord = new ProducerRecord<>("finances-decision", null, model);
 
 		kafkaTemplate.send(rekord)
 			.whenComplete((result, ex) -> {

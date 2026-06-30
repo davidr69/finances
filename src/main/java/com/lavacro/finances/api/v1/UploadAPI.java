@@ -24,7 +24,7 @@ public class UploadAPI {
 	}
 
 	@PostMapping("/api/v1/upload_statement")
-	public ResponseEntity<Map> uploadStatement(
+	public ResponseEntity<Map<String,Object>> uploadStatement(
 		HttpServletRequest request,
 		@RequestParam("file") MultipartFile file
 	) {

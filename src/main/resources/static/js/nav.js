@@ -37,6 +37,11 @@ export default class Nav {
 		}, 5000);
 	};
 
+	closePopup = () => {
+		const el = document.getElementById('popup');
+		el.style.display = 'none';
+	}
+
 	newTransaction = () => {
 		let values = this.#getValues();
 		window.location.href = `transaction?account=${values.account}&year=${values.year}`;
