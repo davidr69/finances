@@ -1,6 +1,7 @@
 export default class Nav {
 	pathParams
 	popupVisible
+	popupInterval
 
 	constructor() {
 		this.pathParams = [];
@@ -29,18 +30,20 @@ export default class Nav {
 
 	navOpen = () => {
 		const el = document.getElementById('popup');
-		el.style.display = 'block';
-
-		let interval = setTimeout(()=>{
+		if(this.popupVisible) {
 			el.style.display = 'none';
-			clearInterval(interval);
-		}, 5000);
-	};
+			clearInterval(this.popupInterval);
+			this.popupVisible = false;
+		} else {
+			el.style.display = 'block';
+			this.popupVisible = true;
 
-	closePopup = () => {
-		const el = document.getElementById('popup');
-		el.style.display = 'none';
-	}
+			this.popupInterval = setTimeout(() => {
+				el.style.display = 'none';
+				clearInterval(this.popupInterval);
+			}, 5000);
+		}
+	};
 
 	newTransaction = () => {
 		let values = this.#getValues();
