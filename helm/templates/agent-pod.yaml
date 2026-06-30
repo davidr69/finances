@@ -35,9 +35,9 @@ spec:
             - name: vault-token
               mountPath: "{{ .Values.vaultRetrieve.env.mountPath }}"
       containers:
-        - name: {{ .Chart.Name }}
-          image: "{{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+        - name: {{ .Chart.Name }}-agent
+          image: "{{ .Values.agentPod.image.registry }}/{{ .Values.agentPod.image.repository }}:{{ .Values.agentPod.image.tag }}"
+          imagePullPolicy: {{ .Values.agentPod.image.pullPolicy }}
           envFrom:
             - configMapRef:
                 name: {{ .Chart.Name }}-config-app

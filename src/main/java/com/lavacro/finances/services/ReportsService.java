@@ -72,6 +72,7 @@ public class ReportsService {
 		JOIN entities e ON a.entity = e.id
 		WHERE a.account = ? AND DATE_PART('year', a.mydate) >= ?
 		GROUP BY description, theyear
+		ORDER BY e.description
 	""";
 
 	ReportsService(JdbcClient jdbcClient) {

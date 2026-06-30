@@ -81,6 +81,11 @@ agentPod:
   replicas: 1
   env:
     propertiesFile: "/var/tmp/vault/vault.properties"
+  image:
+    registry: "registry:5000"
+    repository: "finances-agent"
+    tag: "0.1.0"
+    pullPolicy: IfNotPresent
   resources:
     requests:
       memory: "256Mi"
