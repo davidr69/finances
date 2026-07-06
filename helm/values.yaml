@@ -41,10 +41,10 @@ agentVaultRetrieve:
       {
         "vault_request": [{
           "mount": "lavacro",
-          "path": "prod/llm/anthropic",
+          "path": "prod/database/postgresql",
           "items": [{
-            "key": "api_key",
-            "label": "anthropic.api.key"
+            "key": "password",
+            "label": "spring.datasource.password"
         },{
           "mount": "lavacro",
           "path": "prod/llm/anthropic",
