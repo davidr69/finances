@@ -5,7 +5,7 @@ webapp:
   image:
     registry: "registry:5000"
     repository: "finances"
-    tag: "4.1.1"
+    tag: "4.1.2"
     pullPolicy: IfNotPresent
 
 vaultRetrieve:
@@ -95,26 +95,26 @@ agentPod:
   image:
     registry: "registry:5000"
     repository: "finances-agent"
-    tag: "0.1.0"
+    tag: "1.0.0"
     pullPolicy: IfNotPresent
   resources:
     requests:
-      memory: "256Mi"
+      memory: "128Mi"
       cpu: "250m"
     limits:
-      memory: "384Mi"
+      memory: "256Mi"
       cpu: "500m"
   readinessProbe:
     httpGet:
       path: /actuator/health/readiness
       port: 8080
-    timeoutSeconds: 60
+    timeoutSeconds: 120
   livenessProbe:
     httpGet:
       path: /actuator/health/liveness
       port: 8080
     timeoutSeconds: 3
-    initialDelaySeconds: 60
+    initialDelaySeconds: 120
 
 ingress:
   enabled: true
