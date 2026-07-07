@@ -30,4 +30,11 @@ public class DecisionService {
 			}
 		);
 	}
+
+	public void refreshVectors() {
+		DecisionProto.DecisionMessage message = DecisionProto.DecisionMessage.newBuilder()
+			.setDecision(DecisionProto.DecisionMessage.Decision.REFRESH)
+			.build();
+		send(message);
+	}
 }

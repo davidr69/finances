@@ -5,7 +5,7 @@ webapp:
   image:
     registry: "registry:5000"
     repository: "finances"
-    tag: "4.1.1"
+    tag: "4.1.2"
     pullPolicy: IfNotPresent
 
 vaultRetrieve:
@@ -41,22 +41,25 @@ agentVaultRetrieve:
       {
         "vault_request": [{
           "mount": "lavacro",
-          "path": "prod/llm/anthropic",
+          "path": "prod/database/postgresql",
           "items": [{
-            "key": "api_key",
-            "label": "anthropic.api.key"
+            "key": "password",
+            "label": "spring.datasource.password"
+          }]
         },{
           "mount": "lavacro",
           "path": "prod/llm/anthropic",
           "items": [{
             "key": "api_key",
             "label": "anthropic.api.key"
+          }]
         },{
           "mount": "lavacro",
           "path": "prod/llm/gemini",
           "items": [{
             "key": "api_key",
             "label": "gemini.api.key"
+          }]
         }],
         "file_path": "/var/tmp/vault/vault.properties"
       }
@@ -95,7 +98,7 @@ agentPod:
   image:
     registry: "registry:5000"
     repository: "finances-agent"
-    tag: "0.1.0"
+    tag: "1.0.1"
     pullPolicy: IfNotPresent
   resources:
     requests:
@@ -108,13 +111,13 @@ agentPod:
     httpGet:
       path: /actuator/health/readiness
       port: 8080
-    timeoutSeconds: 60
+    timeoutSeconds: 120
   livenessProbe:
     httpGet:
       path: /actuator/health/liveness
       port: 8080
-    timeoutSeconds: 3
-    initialDelaySeconds: 60
+    timeoutSeconds: 5
+    initialDelaySeconds: 120
 
 ingress:
   enabled: true

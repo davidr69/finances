@@ -102,6 +102,28 @@ export default class Nav {
 		window.location.href = `merge_statement?year=${values.year}&account=${values.account}`;
 	};
 
+	refreshVectors = () => {
+		// close popup immediately
+		this.navOpen();
+		fetch('api/v1/refresh_vectors', {
+			method: 'PUT',
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		}).then(response => {
+			if(response.ok) {
+				console.log('Message sent successfully');
+				alert('Message sent successfully');
+			} else {
+				console.error('Failed to send message');
+				alert('Failed to send message');
+			}
+		}).catch(error => {
+			console.error('Error sending message:', error);
+			alert('Error sending message');
+		});
+	}
+
 	logout = () => {
 		window.location.href = 'logout';
 	};
@@ -114,9 +136,5 @@ export default class Nav {
 		let obj = document.getElementById('account');
 		let account = obj[obj.selectedIndex].value;
 		return {year:year, account:account};
-	}
-
-	getUrlParams = () => {
-		return window.location.href.split('?')[1].split('&').forEach((item, idx) => { item.split('=') });
 	}
 }
