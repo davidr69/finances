@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Chart.Name }}-agent
-  namespace: {{ .Release.namespace }}
+  namespace: {{ .Release.Namespace }}
   labels:
     app: {{ .Chart.Name }}-agent
     tier: backend

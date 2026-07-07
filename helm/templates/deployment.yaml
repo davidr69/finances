@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Chart.Name }}-app
-  namespace: {{ .Values.namespace }}
+  namespace: {{ .Values.Namespace }}
   labels:
     app: {{ .Chart.Name }}
     tier: web

@@ -98,14 +98,14 @@ agentPod:
   image:
     registry: "registry:5000"
     repository: "finances-agent"
-    tag: "1.0.0"
+    tag: "1.0.1"
     pullPolicy: IfNotPresent
   resources:
     requests:
-      memory: "128Mi"
+      memory: "256Mi"
       cpu: "250m"
     limits:
-      memory: "256Mi"
+      memory: "384Mi"
       cpu: "500m"
   readinessProbe:
     httpGet:
@@ -116,7 +116,7 @@ agentPod:
     httpGet:
       path: /actuator/health/liveness
       port: 8080
-    timeoutSeconds: 3
+    timeoutSeconds: 5
     initialDelaySeconds: 120
 
 ingress:
