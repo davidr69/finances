@@ -2,6 +2,7 @@ package com.lavacro.finances.api.v1;
 
 import com.lavacro.finances.kafka.service.DecisionService;
 import com.lavacro.finances.kafka.service.NotifyAgent;
+import com.lavacro.finances.model.GenericResponse;
 import com.lavacro.finances.services.StatementsService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -68,7 +69,7 @@ public class StatementsAPI {
 	}
 
 	@PostMapping("/upload_statement")
-	public ResponseEntity<Map<String,Object>> uploadStatement(
+	public ResponseEntity<GenericResponse> uploadStatement(
 		HttpServletRequest request,
 		@RequestParam("file") MultipartFile file
 	) {
@@ -78,12 +79,17 @@ public class StatementsAPI {
 		log.info("File content: {}", file.getContentType());
 
 		int accountId;
+		int year;
 
 		try {
 			accountId = Integer.parseInt(request.getHeader("accountId"));
+			year = Integer.parseInt(request.getHeader("year"));
 		} catch (NumberFormatException e) {
-			log.error("Invalid accountId format", e);
-			return new ResponseEntity<>(Map.of("message", "Invalid accountId format", "code", "2"), HttpStatus.BAD_REQUEST);
+			log.error("Invalid accountId or year format", e);
+			GenericResponse resp = new GenericResponse();
+			resp.setMessage("Invalid accountId or year format");
+			resp.setCode(1);
+			return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
 		}
 
 		byte[] content;
@@ -92,10 +98,13 @@ public class StatementsAPI {
 			content = file.getBytes();
 		} catch (IOException e) {
 			log.error("Error occurred while reading file bytes", e);
-			return new ResponseEntity<>(Map.of("message", "Error occurred while reading file bytes", "code", "1"), HttpStatus.INTERNAL_SERVER_ERROR);
+			GenericResponse resp = new GenericResponse();
+			resp.setMessage("Error occurred while reading file bytes");
+			resp.setCode(1);
+			return new ResponseEntity<>(resp, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
-		notifyAgent.send(Objects.requireNonNull(file.getOriginalFilename()), accountId, content);
-		return new ResponseEntity<>(Map.of("message", "File uploaded successfully", "code", "0"), HttpStatus.OK);
+		GenericResponse resp = notifyAgent.send(Objects.requireNonNull(file.getOriginalFilename()), accountId, year, content);
+		return new ResponseEntity<>(resp, HttpStatus.OK);
 	}
 }
