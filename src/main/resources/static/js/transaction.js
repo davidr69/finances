@@ -80,9 +80,8 @@ export default class Transaction {
 			body: JSON.stringify(data)
 		}).then(resp => {
 			resp.json().then(data => {
-				console.log(data);
 				if(data.code === 0) {
-					document.forms[0].reset();
+					document.getElementById('new_transaction').reset();
 					document.getElementById('year').value = year;
 					document.getElementById('entity').focus();
 					document.getElementById('status').innerHTML = data.message;
