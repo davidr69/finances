@@ -1,12 +1,20 @@
 package com.lavacro.finances.api.v1;
 
 import com.lavacro.finances.kafka.service.DecisionService;
+import com.lavacro.finances.kafka.service.NotifyAgent;
+import com.lavacro.finances.model.GenericResponse;
 import com.lavacro.finances.services.StatementsService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.Map;
+import java.util.Objects;
 
 @RestController
 @RequestMapping(value = "/api/v1")
@@ -15,6 +23,7 @@ import java.util.Map;
 public class StatementsAPI {
 	private final StatementsService statementsService;
 	private final DecisionService decisionService;
+	private final NotifyAgent notifyAgent;
 
 	private static final String OK_STATUS = """
 {"status":0,"message":"OK"}
@@ -56,6 +65,54 @@ public class StatementsAPI {
 		} catch(Exception e) {
 			log.error("Error during 'refreshVectors': {}", e.getMessage());
 			return ERROR_STATUS;
+		}
+	}
+
+	@PostMapping("/upload_statement")
+	public ResponseEntity<GenericResponse> uploadStatement(
+		HttpServletRequest request,
+		@RequestParam("file") MultipartFile file
+	) {
+		log.info("Uploading statement ...");
+		log.info("File name: {}", file.getOriginalFilename());
+		log.info("File size: {}", file.getSize());
+		log.info("File content: {}", file.getContentType());
+
+		int accountId;
+		int year;
+
+		try {
+			accountId = Integer.parseInt(request.getHeader("accountId"));
+			year = Integer.parseInt(request.getHeader("year"));
+		} catch (NumberFormatException e) {
+			log.error("Invalid accountId or year format", e);
+			GenericResponse resp = new GenericResponse();
+			resp.setMessage("Invalid accountId or year format");
+			resp.setCode(1);
+			return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+		}
+
+		byte[] content;
+
+		try {
+			content = file.getBytes();
+		} catch (IOException e) {
+			log.error("Error occurred while reading file bytes", e);
+			GenericResponse resp = new GenericResponse();
+			resp.setMessage("Error occurred while reading file bytes");
+			resp.setCode(1);
+			return new ResponseEntity<>(resp, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
+		try {
+		GenericResponse resp = notifyAgent.send(Objects.requireNonNull(file.getOriginalFilename()), accountId, year, content).get();
+			return new ResponseEntity<>(resp, HttpStatus.OK);
+		} catch (Exception e) {
+			log.error("Error occurred while sending message", e);
+			GenericResponse resp = new GenericResponse();
+			resp.setMessage("Error occurred while sending message");
+			resp.setCode(1);
+			return new ResponseEntity<>(resp, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 }
