@@ -104,7 +104,15 @@ public class StatementsAPI {
 			return new ResponseEntity<>(resp, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
-		GenericResponse resp = notifyAgent.send(Objects.requireNonNull(file.getOriginalFilename()), accountId, year, content);
-		return new ResponseEntity<>(resp, HttpStatus.OK);
+		try {
+		GenericResponse resp = notifyAgent.send(Objects.requireNonNull(file.getOriginalFilename()), accountId, year, content).get();
+			return new ResponseEntity<>(resp, HttpStatus.OK);
+		} catch (Exception e) {
+			log.error("Error occurred while sending message", e);
+			GenericResponse resp = new GenericResponse();
+			resp.setMessage("Error occurred while sending message");
+			resp.setCode(1);
+			return new ResponseEntity<>(resp, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 }
