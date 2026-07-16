@@ -29,6 +29,8 @@
 			}).then(response => {
 				response.json().then(data => {
 					console.log(data);
+					document.getElementById("status").innerText = data.message;
+					fadeOut("status");
 				})
 			});
 		};
@@ -44,6 +46,8 @@
 	<div style="padding: 30px">
 		<input type="file" id="file" name="file"/><br/><br/>
 		<button type="submit"> Upload Statement </button>
+		<br/><br/>
+		<span id="status"></span>
 	</div>
 </form>
 
