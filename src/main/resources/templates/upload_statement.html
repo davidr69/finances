@@ -15,16 +15,22 @@
 			const formData = new FormData();
 			formData.append('file', document.getElementById('file').files[0]);
 
-			let obj = document.getElementById('account');
-			let account = obj[obj.selectedIndex].value;
+			let year = document.getElementById('year').value;
+			let accountDropDown = document.getElementById('account');
+			let account = accountDropDown[accountDropDown.selectedIndex].value;
 
 			fetch('api/v1/upload_statement', {
 				method: 'POST',
 				body: formData,
-				headers: {'accountId': account}
+				headers: {
+					'accountId': account,
+					'year': year
+				}
 			}).then(response => {
 				response.json().then(data => {
 					console.log(data);
+					document.getElementById("status").innerText = data.message;
+					fadeOut("status");
 				})
 			});
 		};
@@ -40,6 +46,8 @@
 	<div style="padding: 30px">
 		<input type="file" id="file" name="file"/><br/><br/>
 		<button type="submit"> Upload Statement </button>
+		<br/><br/>
+		<span id="status"></span>
 	</div>
 </form>
 
