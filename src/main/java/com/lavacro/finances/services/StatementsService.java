@@ -55,21 +55,20 @@ public class StatementsService {
 
 	@Language(value = "SQL")
 	private static final String GET_STAGING_RECORD = """
-		SELECT a.mydate, a.entity, a.llm_entity, a.amount,
-			CASE
-				WHEN a.llm_entity IS NOT NULL
-					THEN e.embedding IS NULL
-				END
-			AS new_entity
+		SELECT a.mydate, a.entity, a.llm_entity, a.amount, e.default_type AS type1, llm.default_type AS type2,
+	       CASE
+    	       WHEN a.llm_entity IS NOT NULL THEN e.embedding IS NULL
+	       END AS new_entity
 		FROM staging.action a
-		LEFT JOIN entities e ON a.llm_entity = e.id
+		LEFT JOIN entities e ON a.entity = e.id
+		LEFT JOIN entities llm ON a.llm_entity = llm.id
 		WHERE action_id = ?
 	""";
 
 	@Language(value = "SQL")
 	private static final String MERGE_RECORDS = """
 		INSERT INTO action (sequence, entity, account, amount, mydate, method, category)
-		VALUES (NEXTVAL('action_seq'), ?, ?, ?, ?, 11, 0)
+		VALUES (NEXTVAL('action_seq'), ?, ?, ?, ?, ?, 0)
 	""";
 
 	@Language(value = "SQL")
@@ -114,6 +113,7 @@ public class StatementsService {
 				insertions.add(new Insert(
 					(Date) row.get("mydate"),
 					USE_VECTOR.equals(selection) ? (Integer) row.get("entity") : (Integer) row.get("llm_entity"),
+					USE_VECTOR.equals(selection) ? (Integer) row.get("type1") : (Integer) row.get("type2"),
 					(BigDecimal) row.get("amount")
 				));
 
@@ -142,6 +142,7 @@ public class StatementsService {
 					ps.setInt(2, account);
 					ps.setBigDecimal(3, item.amount());
 					ps.setDate(4, item.date());
+					ps.setInt(5, item.transType());
 				}
 			);
 		}
@@ -161,4 +162,4 @@ public class StatementsService {
 	}
 }
 
-record Insert (Date date, Integer entity, BigDecimal amount) { }
+record Insert (Date date, Integer entity, Integer transType, BigDecimal amount) { }
