@@ -28,7 +28,7 @@ public class UrlFilter {
 		urls.add("/api/*");
 		filterBean.setFilter(new SessionFilter());
 		filterBean.setUrlPatterns(urls);
-		filterBean.setEnabled(Boolean.TRUE);
+		filterBean.setEnabled(Boolean.FALSE); // Disabled - Spring Security now handles authentication
 		filterBean.setName("Session filter");
 		filterBean.setOrder(1);
 		filterBean.setAsyncSupported(Boolean.TRUE);
