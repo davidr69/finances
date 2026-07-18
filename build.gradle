@@ -25,7 +25,7 @@ repositories {
 }
 
 group = 'com.lavacro'
-version = '4.1.2'
+version = '5.0.1'
 description = 'finances'
 
 dependencies {
