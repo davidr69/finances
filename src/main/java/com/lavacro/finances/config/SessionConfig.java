@@ -6,6 +6,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
@@ -20,6 +21,14 @@ public class SessionConfig {
     @Bean
     public SessionValidationFilter sessionValidationFilter() {
         return new SessionValidationFilter();
+    }
+
+    @Bean
+    public FilterRegistrationBean<SessionValidationFilter> sessionValidationFilterRegistration(
+            SessionValidationFilter filter) {
+        FilterRegistrationBean<SessionValidationFilter> registration = new FilterRegistrationBean<>(filter);
+        registration.setEnabled(false);
+        return registration;
     }
 
     public static class SessionValidationFilter extends OncePerRequestFilter {
@@ -38,7 +47,11 @@ public class SessionConfig {
                 HttpSession session = request.getSession(false);
                 if (session == null) {
                     invalidateSessionCookie(response);
-                    response.sendRedirect("/login.html");
+                    if (request.getRequestURI().startsWith("/api/")) {
+                        response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+                    } else {
+                        response.sendRedirect("/login.html");
+                    }
                     return;
                 }
             }
@@ -73,8 +86,7 @@ public class SessionConfig {
                    path.startsWith("/css/") ||
                    path.startsWith("/js/") ||
                    path.startsWith("/font-awesome-4.7.0/") ||
-                   path.equals("/favicon.ico") ||
-                   path.equals("/");
+                   path.equals("/favicon.ico");
         }
     }
 }
