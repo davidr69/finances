@@ -17,6 +17,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -25,13 +26,14 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 public class SecurityConfig {
 
     private final CustomUserDetailsService customUserDetailsService;
+    private final SessionConfig.SessionValidationFilter sessionValidationFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/login.html", "/authenticate", "/css/**", "/js/**", "/font-awesome-4.7.0/**", "/favicon.ico").permitAll()
+                .requestMatchers("/", "/login.html", "/authenticate", "/css/**", "/js/**", "/font-awesome-4.7.0/**", "/favicon.ico").permitAll()
                 .requestMatchers("/upload", "/api/v1/upload_statement").hasAuthority("PERMISSION_UPLOAD_STATEMENT")
                 .requestMatchers("/merge_statement", "/api/v1/statement_merge").hasAuthority("PERMISSION_MERGE_STATEMENT")
                 .requestMatchers("/api/v1/refresh_vectors").hasAuthority("PERMISSION_REFRESH_VECTORS")
@@ -46,7 +48,8 @@ public class SecurityConfig {
                 .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 .sessionFixation().migrateSession()
                 .maximumSessions(1)
-            );
+            )
+            .addFilterBefore(sessionValidationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
