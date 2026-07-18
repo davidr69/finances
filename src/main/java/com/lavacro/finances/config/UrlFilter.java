@@ -7,9 +7,9 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-@Configuration
+//@Configuration
 public class UrlFilter {
-	@Bean
+	//@Bean
 	public FilterRegistrationBean<SessionFilter> myFilterBean() {
 		final FilterRegistrationBean<SessionFilter> filterBean = new FilterRegistrationBean<>();
 		Collection<String> urls = new ArrayList<>();
