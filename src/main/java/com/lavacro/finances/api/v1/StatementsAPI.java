@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -33,6 +34,7 @@ public class StatementsAPI {
 """;
 
 	@PostMapping(value = "/statement_merge")
+	@PreAuthorize("hasAuthority('PERMISSION_MERGE_STATEMENT')")
 	public String statementMerge(@RequestBody Map<Integer, String> selections, @RequestParam("account") Integer account) {
 		log.info("merge: {}", selections);
 		try {
@@ -57,6 +59,7 @@ public class StatementsAPI {
 	}
 
 	@PutMapping(value = "/refresh_vectors")
+	@PreAuthorize("hasAuthority('PERMISSION_REFRESH_VECTORS')")
 	public String refreshVectors() {
 		log.info("Refresh vectors ...");
 		try {
@@ -69,6 +72,7 @@ public class StatementsAPI {
 	}
 
 	@PostMapping("/upload_statement")
+	@PreAuthorize("hasAuthority('PERMISSION_UPLOAD_STATEMENT')")
 	public ResponseEntity<GenericResponse> uploadStatement(
 		HttpServletRequest request,
 		@RequestParam("file") MultipartFile file

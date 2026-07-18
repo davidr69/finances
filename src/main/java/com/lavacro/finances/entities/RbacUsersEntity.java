@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -28,4 +30,7 @@ public class RbacUsersEntity {
 
 	@Column(name = "locked_ip")
 	private String lockedIp;
+
+	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+	private Set<UserRoleEntity> userRoles = new HashSet<>();
 }
