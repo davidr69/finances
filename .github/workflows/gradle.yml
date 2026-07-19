@@ -13,10 +13,10 @@ jobs:
       contents: read
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6.0.3
 
     - name: Set up JDK 25
-      uses: actions/setup-java@v4
+      uses: actions/setup-java@v5.6.0
       with:
         java-version: '25'
         distribution: 'temurin' # Temurin provides stable LTS builds for Java 25

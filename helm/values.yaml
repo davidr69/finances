@@ -5,7 +5,7 @@ webapp:
   image:
     registry: "registry:5000"
     repository: "finances"
-    tag: "4.1.2"
+    tag: "5.0.1"
     pullPolicy: IfNotPresent
 
 vaultRetrieve:
@@ -51,7 +51,7 @@ agentVaultRetrieve:
           "path": "prod/llm/anthropic",
           "items": [{
             "key": "api_key",
-            "label": "anthropic.api.key"
+            "label": "spring.ai.anthropic.api-key"
           }]
         },{
           "mount": "lavacro",
@@ -63,6 +63,7 @@ agentVaultRetrieve:
         }],
         "file_path": "/var/tmp/vault/vault.properties"
       }
+
 app:
   env:
     profile: home
@@ -72,8 +73,8 @@ app:
       memory: "256Mi"
       cpu: "250m"
     limits:
-      memory: "384Mi"
-      cpu: "500m"
+      memory: "512Mi"
+      cpu: "750m"
   readinessProbe:
     httpGet:
       path: /actuator/health/readiness
@@ -98,14 +99,14 @@ agentPod:
   image:
     registry: "registry:5000"
     repository: "finances-agent"
-    tag: "1.0.1"
+    tag: "1.1.1"
     pullPolicy: IfNotPresent
   resources:
     requests:
       memory: "256Mi"
       cpu: "250m"
     limits:
-      memory: "384Mi"
+      memory: "512Mi"
       cpu: "500m"
   readinessProbe:
     httpGet:

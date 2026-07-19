@@ -1,4 +1,4 @@
-### Finances
+# Finances
 
 Originally a PHP application, the financial management system allows
 you to track transactions for an arbitrary number of accounts. The
@@ -10,7 +10,7 @@ Given the long history of the application, there may be some legacy
 code that needs updating to modern standards.
 
 ---
-### Requirements
+## Requirements
 
 - **Java 25**: JDK 25 or later is required
 - **Gradle**: Gradle 9
@@ -27,7 +27,7 @@ The application can run on a local system or in a container (e.g.: Docker,
 Kubernetes).
 
 ---
-### The Interface
+## The Interface
 
 The navigation bar common to all pages is:
 
@@ -48,7 +48,7 @@ Instead of selecting a single month, for accounts where there is limited acitivi
 Here we see some reconciled entries, some included, and the total at the bottom reflects only the reconciled. Anything that's been reconciled is automatically considered included, and the includes reflect a running  total regardless of what has been reconciled. If an entry is neither included nor reconciled, it is not considered in any total.
 
 ---
-### Reports
+## Reports
 
 There are currently 4 reports:
 - *Entity Totals*: displays all transactions for a given account and
@@ -71,7 +71,21 @@ An entity is defined as anything or anyone who was paid (destination)
 or who provided income (source), even via refund.
 
 ---
-### Database requirements
+## Statement Import / Merge
+
+By far, one of the most useful features of the application is the ability to import bank statements rather than
+manually entering transactions. The AI agent contains logic that understands how to parse specific bank statements,
+and the data is returned in a structured format.
+
+The vendor for each transaction attempts to be matched to the database vendors using vector embeddings. If the
+confidence score is below 75%, it is sent to the LLM for further evaluation. The LLM is provided with tools to
+consult the database. The results are persisted in a staging table, whereby human reviewers can verify and approve the
+matches. The reviewer can opt for the vector match, the LLM, or changing the LLM suggestion to an existing vendor.
+
+![statement merge](images/vector_llm.png)
+
+---
+## Database requirements
 
 The application authenticates against the database, so the following extension must be enabled:
 
@@ -84,6 +98,11 @@ The public schema contains the following tables whose names should be self-expla
 ![schema](images/schema.png)
 
 Some table and field name refactoring has already been done. Future releases will rename certain fields that are identifiers in PostGreSQL (e.g.: "sequence").
+
+### RBAC Schema
+
+![rbac](images/rbac_schema.png)
+
 
 ---
 #### Build instructions
@@ -99,7 +118,7 @@ You can also use the `gradlew` wrapper.
 To prepare a deployment image:
 
 ```shell
-podman build . -t pi4apps:5000/finances:x.y.z
+podman build . -t registry:5000/finances:x.y.z
 ```
 
 Ensure the image release name matches in `Dockerfile` and `helm/values.yaml`.
@@ -126,13 +145,3 @@ export SPRING_APPLICATION_JSON='
 version=$(grep ^version build.gradle | awk '{print $3}' | tr -d "'")
 java -Dspring.profiles.active=uat -jar build/libs/finances-${version}.jar
 ```
-
-# Future Enhancements
-
-- [ ] True RBAC
-- [x] Disable account after 3 failed login attempts (v 3.10.0)
-- [x] Import bank statements:
-  - [x] Publish Kafka message with statement data
-  - [X] New microservice to consume Kafka message and integrate with LLM
-  - [x] Consult LLM for vendor matching
-  - [x] Create transactions in staging table
