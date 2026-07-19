@@ -73,8 +73,16 @@ or who provided income (source), even via refund.
 ---
 ## Statement Import / Merge
 
-By far, one of the most useful features of the application is the ability to import
-bank statements rather than manually entering transactions.1
+By far, one of the most useful features of the application is the ability to import bank statements rather than
+manually entering transactions. The AI agent contains logic that understands how to parse specific bank statements,
+and the data is returned in a structured format.
+
+The vendor for each transaction attempts to be matched to the database vendors using vector embeddings. If the
+confidence score is below 75%, it is sent to the LLM for further evaluation. The LLM is provided with tools to
+consult the database. The results are persisted in a staging table, whereby human reviewers can verify and approve the
+matches. The reviewer can opt for the vector match, the LLM, or changing the LLM suggestion to an existing vendor.
+
+![statement merge](images/vector_llm.png)
 
 ---
 ## Database requirements
