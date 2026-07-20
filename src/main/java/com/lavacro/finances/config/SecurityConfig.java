@@ -45,7 +45,7 @@ public class SecurityConfig {
             )
             .exceptionHandling(ex -> ex
                 .authenticationEntryPoint((request, response, authException) -> {
-                    if (request.getRequestURI().startsWith("/api/")) {
+                    if (request.getServletPath().startsWith("/api/")) {
                         response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
                     } else {
                         String contextPath = request.getContextPath();
@@ -53,7 +53,7 @@ public class SecurityConfig {
                     }
                 })
                 .accessDeniedHandler((request, response, accessDeniedException) -> {
-                    if (request.getRequestURI().startsWith("/api/")) {
+                    if (request.getServletPath().startsWith("/api/")) {
                         response.sendError(HttpServletResponse.SC_FORBIDDEN);
                     } else {
                         String contextPath = request.getContextPath();
