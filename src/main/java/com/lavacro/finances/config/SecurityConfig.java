@@ -48,20 +48,25 @@ public class SecurityConfig {
                     if (request.getRequestURI().startsWith("/api/")) {
                         response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
                     } else {
-                        response.sendRedirect("/login.html");
+                        String contextPath = request.getContextPath();
+                        response.sendRedirect(contextPath + "/login.html");
                     }
                 })
                 .accessDeniedHandler((request, response, accessDeniedException) -> {
                     if (request.getRequestURI().startsWith("/api/")) {
                         response.sendError(HttpServletResponse.SC_FORBIDDEN);
                     } else {
-                        response.sendRedirect("/login.html");
+                        String contextPath = request.getContextPath();
+                        response.sendRedirect(contextPath + "/login.html");
                     }
                 })
             )
             .logout(logout -> logout
                 .logoutUrl("/logout")
-                .logoutSuccessUrl("/login.html")
+                .logoutSuccessHandler((request, response, authentication) -> {
+                    String contextPath = request.getContextPath();
+                    response.sendRedirect(contextPath + "/login.html");
+                })
                 .addLogoutHandler((request, response, authentication) -> {
                     request.getSession().invalidate();
                 })
@@ -69,7 +74,10 @@ public class SecurityConfig {
             )
             .sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.NEVER)
-                .invalidSessionUrl("/login.html")
+                .invalidSessionStrategy((request, response) -> {
+                    String contextPath = request.getContextPath();
+                    response.sendRedirect(contextPath + "/login.html");
+                })
                 .sessionFixation().migrateSession()
                 .maximumSessions(1)
             )
