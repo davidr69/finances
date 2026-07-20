@@ -17,6 +17,7 @@ import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -138,9 +139,10 @@ public class TransactionService {
 			endDate = startDate.plusMonths(1).minusDays(1);
 		}
 
-		BigDecimal bal = jdbcClient.sql(SUM_UP_TO_DATE).params(account, startDate).query(BigDecimal.class).single();
+		Optional<BigDecimal> bal = jdbcClient.sql(SUM_UP_TO_DATE).params(account,startDate).query(BigDecimal.class).optional();
+		BigDecimal balance = bal.orElse(BigDecimal.ZERO);
 
-		return getEntries(bal, account, startDate, endDate);
+		return getEntries(balance, account, startDate, endDate);
 	}
 
 	public List<TransactionDTO> getEntries(final BigDecimal tempBal, final Integer account, final LocalDate startDate, final LocalDate endDate) {
@@ -176,7 +178,8 @@ public class TransactionService {
 	}
 
 	public BigDecimal getBalance(final Integer account) {
-		return jdbcClient.sql(SUM_FOR_ACCOUNT).params(account).query(BigDecimal.class).single();
+		Optional<BigDecimal> bal = jdbcClient.sql(SUM_FOR_ACCOUNT).params(account).query(BigDecimal.class).optional();
+		return bal.orElse(BigDecimal.ZERO);
 	}
 
 	public void updateIncludes(final IncludesModifyRequest req) {
