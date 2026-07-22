@@ -76,6 +76,7 @@ public class SessionConfig {
             cookie.setPath("/");
             cookie.setHttpOnly(true);
             cookie.setMaxAge(0);
+			cookie.setSecure(true);
             response.addCookie(cookie);
         }
 

@@ -58,7 +58,7 @@ agentVaultRetrieve:
           "path": "prod/llm/gemini",
           "items": [{
             "key": "api_key",
-            "label": "gemini.api.key"
+            "label": "spring.ai.google.genai.api-key"
           }]
         }],
         "file_path": "/var/tmp/vault/vault.properties"
