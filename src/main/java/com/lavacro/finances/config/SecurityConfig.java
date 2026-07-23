@@ -82,7 +82,6 @@ public class SecurityConfig {
 				.sessionCreationPolicy(SessionCreationPolicy.NEVER)
 				.invalidSessionStrategy((request, response) -> {
 					log.info("Invalid session detected");
-					// TODO: fix looping
 					response.sendRedirect(loginRedirectUrl(request));
 				})
 				.sessionFixation().migrateSession()

@@ -82,7 +82,7 @@ public class SessionConfig {
         }
 
         private boolean isPublicEndpoint(HttpServletRequest request) {
-            String path = request.getRequestURI();
+            String path = request.getServletPath();
             return path.equals("/login.html") ||
                    path.equals("/authenticate") ||
                    path.startsWith("/css/") ||
