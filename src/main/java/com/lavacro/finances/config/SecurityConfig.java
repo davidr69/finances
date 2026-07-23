@@ -3,6 +3,7 @@ package com.lavacro.finances.config;
 import com.lavacro.finances.security.CustomUserDetailsService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -19,11 +20,13 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.context.SecurityContextHolderFilter;
 import org.springframework.security.web.context.SecurityContextRepository;
+import jakarta.servlet.http.HttpServletRequest;
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true)
 @RequiredArgsConstructor
+@Slf4j
 public class SecurityConfig {
 
 	private final CustomUserDetailsService customUserDetailsService;
@@ -50,35 +53,37 @@ public class SecurityConfig {
 					if (request.getServletPath().startsWith("/api/")) {
 						response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
 					} else {
-						String contextPath = request.getContextPath();
-						response.sendRedirect(contextPath + LOGIN);
+						log.info("Redirecting to login page");
+						response.sendRedirect(loginRedirectUrl(request));
 					}
 				})
 				.accessDeniedHandler((request, response, accessDeniedException) -> {
 					if (request.getServletPath().startsWith("/api/")) {
 						response.sendError(HttpServletResponse.SC_FORBIDDEN);
 					} else {
-						String contextPath = request.getContextPath();
-						response.sendRedirect(contextPath + LOGIN);
+						log.info("Access denied");
+						response.sendRedirect(loginRedirectUrl(request));
 					}
 				})
 			)
 			.logout(logout -> logout
 				.logoutUrl("/logout")
 				.logoutSuccessHandler((request, response, authentication) -> {
-					String contextPath = request.getContextPath();
-					response.sendRedirect(contextPath + LOGIN);
+					log.info("Logging out");
+					response.sendRedirect(loginRedirectUrl(request));
 				})
-				.addLogoutHandler((request, response, authentication) ->
-					request.getSession().invalidate()
-				)
+				.addLogoutHandler((request, response, authentication) -> {
+					log.info("Invalidating session");
+					request.getSession().invalidate();
+				})
 				.permitAll()
 			)
 			.sessionManagement(session -> session
 				.sessionCreationPolicy(SessionCreationPolicy.NEVER)
 				.invalidSessionStrategy((request, response) -> {
-					String contextPath = request.getContextPath();
-					response.sendRedirect(contextPath + LOGIN);
+					log.info("Invalid session detected");
+					// TODO: fix looping
+					response.sendRedirect(loginRedirectUrl(request));
 				})
 				.sessionFixation().migrateSession()
 				.maximumSessions(1)
@@ -108,5 +113,11 @@ public class SecurityConfig {
 	@Bean
 	public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) {
 		return authConfig.getAuthenticationManager();
+	}
+
+	private String loginRedirectUrl(HttpServletRequest request) {
+		IO.println("login redirect: " + request.getRequestURI());
+		IO.println("context: " + request.getContextPath());
+		return request.getContextPath() + LOGIN;
 	}
 }
