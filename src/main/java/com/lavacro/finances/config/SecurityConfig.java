@@ -116,8 +116,8 @@ public class SecurityConfig {
 	}
 
 	private String loginRedirectUrl(HttpServletRequest request) {
-		IO.println("login redirect: " + request.getRequestURI());
-		IO.println("context: " + request.getContextPath());
+		log.info("login redirect: {}", request.getRequestURI());
+		log.info("context: {}", request.getContextPath());
 		return request.getContextPath() + LOGIN;
 	}
 }
