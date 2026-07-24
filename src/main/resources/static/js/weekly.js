@@ -66,7 +66,7 @@ export default class Weekly {
 		let accountDD = parent.document.getElementById('account');
 		let account = accountDD[accountDD.selectedIndex].value;
 
-		fetch(`../api/v1/transaction/list?account=${account}&beginDate=${this.firstSunday.toJSON().substring(0,10)}&endDate=${lastSaturday.toJSON().substring(0,10)}`).then(resp => {
+		fetch(`./api/v1/transaction/list?account=${account}&beginDate=${this.firstSunday.toJSON().substring(0,10)}&endDate=${lastSaturday.toJSON().substring(0,10)}`).then(resp => {
 			resp.json().then(data => {
 				if(data.code === 0) {
 					this.initCalendar(now, last, padFirst);

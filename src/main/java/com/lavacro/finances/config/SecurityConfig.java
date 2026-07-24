@@ -42,7 +42,7 @@ public class SecurityConfig {
 				.securityContextRepository(securityContextRepository())
 			)
 			.authorizeHttpRequests(auth -> auth
-				.requestMatchers(LOGIN, "/authenticate", "/css/**", "/js/**", "/font-awesome-4.7.0/**", "/favicon.ico").permitAll()
+				.requestMatchers(LOGIN, "/actuator/**", "/authenticate", "/css/**", "/js/**", "/font-awesome-4.7.0/**", "/favicon.ico").permitAll()
 				.requestMatchers("/upload", "/api/v1/upload_statement").hasAuthority("PERMISSION_UPLOAD_STATEMENT")
 				.requestMatchers("/merge_statement", "/api/v1/statement_merge").hasAuthority("PERMISSION_MERGE_STATEMENT")
 				.requestMatchers("/api/v1/refresh_vectors").hasAuthority("PERMISSION_REFRESH_VECTORS")
@@ -79,11 +79,7 @@ public class SecurityConfig {
 				.permitAll()
 			)
 			.sessionManagement(session -> session
-				.sessionCreationPolicy(SessionCreationPolicy.NEVER)
-				.invalidSessionStrategy((request, response) -> {
-					log.info("Invalid session detected");
-					response.sendRedirect(loginRedirectUrl(request));
-				})
+				.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
 				.sessionFixation().migrateSession()
 				.maximumSessions(1)
 			)
