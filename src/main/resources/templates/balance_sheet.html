@@ -19,7 +19,7 @@
 	<script th:insert="~{nav :: required}" th:remove="tag"></script>
 
     <script type="module">
-		const balanceSheetJS = '../js/balance_sheet.js';
+		const balanceSheetJS = './js/balance_sheet.js';
 		const { default: BalanceSheet } = await import(balanceSheetJS);
 
 		let params = getUrlParams();
