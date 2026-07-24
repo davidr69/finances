@@ -51,7 +51,7 @@ public class SessionConfig {
                     if (request.getRequestURI().startsWith("/api/")) {
                         response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
                     } else {
-                        response.sendRedirect("/login.html");
+                        response.sendRedirect(request.getContextPath() + "/login.html");
                     }
                     return;
                 }
@@ -88,7 +88,8 @@ public class SessionConfig {
                    path.startsWith("/css/") ||
                    path.startsWith("/js/") ||
                    path.startsWith("/font-awesome-4.7.0/") ||
-                   path.equals("/favicon.ico");
+                   path.equals("/favicon.ico") ||
+                   path.equals("/");
         }
     }
 }

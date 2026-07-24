@@ -79,11 +79,7 @@ public class SecurityConfig {
 				.permitAll()
 			)
 			.sessionManagement(session -> session
-				.sessionCreationPolicy(SessionCreationPolicy.NEVER)
-				.invalidSessionStrategy((request, response) -> {
-					log.info("Invalid session detected");
-					response.sendRedirect(loginRedirectUrl(request));
-				})
+				.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
 				.sessionFixation().migrateSession()
 				.maximumSessions(1)
 			)
