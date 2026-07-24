@@ -14,6 +14,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -21,6 +22,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -33,6 +35,9 @@ class AuthenticateTest {
 
 	@Mock
 	private Authentication authentication;
+
+	@Mock
+	private SecurityContextRepository securityContextRepository;
 
 	@InjectMocks
 	private Authenticate authenticate;
@@ -55,6 +60,7 @@ class AuthenticateTest {
 
 		when(userRepository.findByName("user")).thenReturn(Optional.of(rbacUsersEntity));
 		when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class))).thenReturn(authentication);
+		doNothing().when(securityContextRepository).saveContext(any(), any(), any());
 
 		// Act & Assert
 		MockHttpServletResponse resp = mockMvc.perform(
