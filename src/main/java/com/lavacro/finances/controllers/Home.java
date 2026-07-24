@@ -1,7 +1,7 @@
 package com.lavacro.finances.controllers;
 
 import com.lavacro.finances.services.AccountsService;
-import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 
@@ -28,9 +28,10 @@ public class Home {
 	}
 
 	@GetMapping(value = "/logout")
-	public String logout(HttpServletResponse httpResp) {
+	public String logout(HttpServletRequest request) {
 		session.invalidate();
 		log.info("Destroyed session");
-		return "redirect:/login.html";
+		String contextPath = request.getContextPath();
+		return "redirect:" + contextPath + "/login.html";
 	}
 }

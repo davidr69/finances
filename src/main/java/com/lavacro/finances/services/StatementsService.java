@@ -26,7 +26,7 @@ public class StatementsService {
 
 	private static final String USE_VECTOR = "vector";
 	private static final String USE_LLM = "llm";
-	private static final String REJECT = "reject";
+	//private static final String REJECT = "reject";
 
 	@Language(value = "SQL")
 	private static final String GET_STATEMENT_QUERY = """

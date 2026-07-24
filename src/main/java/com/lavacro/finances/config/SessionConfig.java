@@ -6,6 +6,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import org.jspecify.annotations.NonNull;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -34,7 +35,7 @@ public class SessionConfig {
     public static class SessionValidationFilter extends OncePerRequestFilter {
 
         @Override
-        protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+        protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain)
                 throws ServletException, IOException {
 
             if (isPublicEndpoint(request)) {
@@ -50,7 +51,7 @@ public class SessionConfig {
                     if (request.getRequestURI().startsWith("/api/")) {
                         response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
                     } else {
-                        response.sendRedirect("/login.html");
+                        response.sendRedirect(request.getContextPath() + "/login.html");
                     }
                     return;
                 }
@@ -76,17 +77,19 @@ public class SessionConfig {
             cookie.setPath("/");
             cookie.setHttpOnly(true);
             cookie.setMaxAge(0);
+			cookie.setSecure(true);
             response.addCookie(cookie);
         }
 
         private boolean isPublicEndpoint(HttpServletRequest request) {
-            String path = request.getRequestURI();
+            String path = request.getServletPath();
             return path.equals("/login.html") ||
                    path.equals("/authenticate") ||
                    path.startsWith("/css/") ||
                    path.startsWith("/js/") ||
                    path.startsWith("/font-awesome-4.7.0/") ||
-                   path.equals("/favicon.ico");
+                   path.equals("/favicon.ico") ||
+                   path.equals("/");
         }
     }
 }
