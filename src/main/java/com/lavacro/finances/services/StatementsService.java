@@ -50,7 +50,7 @@ public class StatementsService {
 		JOIN entities e ON a.entity = e.id
 		LEFT JOIN entities l ON a.llm_entity = l.id
 		WHERE account = :account
-		ORDER BY a.statement_order;
+		ORDER BY a.statement_group, a.statement_order
 	""";
 
 	@Language(value = "SQL")
