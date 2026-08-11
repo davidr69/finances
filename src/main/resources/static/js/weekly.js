@@ -165,14 +165,31 @@ export default class Weekly {
 
 	showTotals = (radio) => {
 		let idx = Number(radio.value);
-		let html = '';
+		let el = document.getElementById('totals');
+		let num = el.childNodes.length;
+		console.log(`Remove ${num} nodes`);
+		for(let idx = 0; idx < num; idx++) {
+			el.removeChild(el.childNodes[0]);
+		}
 		this.sum = 0;
 		Object.keys(this.totals[idx]).sort().forEach((key) => {
 			let val = this.totals[idx][key];
-			html += `<input type="checkbox" value="${val}" onclick='weeklyApi.modSum(this)'> ${key}: ${val}<br/>`;
+			let input = document.createElement('input');
+			input.setAttribute('type', 'checkbox');
+			input.setAttribute('value', val);
+			input.setAttribute('onclick', 'weeklyApi.modSum(this)');
+
+			let text = document.createTextNode(`${key}: ${val}`);
+			let br = document.createElement('br');
+			el.appendChild(input);
+			el.appendChild(text);
+			el.appendChild(br);
 		});
-		html += 'Total: <span style="font-weight: 700" id="sum"></span>'
-		document.getElementById('totals').innerHTML = html;
+		el.appendChild(document.createTextNode('Total: '));
+		let span = document.createElement('span');
+		span.setAttribute('style', 'font-weight: 700');
+		span.setAttribute('id', 'sum');
+		el.appendChild(span);
 	}
 
 	modSum = (obj) => {
