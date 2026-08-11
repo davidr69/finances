@@ -119,7 +119,10 @@ export default class Weekly {
 
 		let theId = `row${weekOffset + 1}col${dayOffset + 1}`;
 		let el = document.getElementById(theId);
-		el.innerHTML += `${item.entityName}: ${item.amount}<br/>`;
+		let entityName = document.createTextNode(`${item.entityName}: ${item.amount}`);
+		let br = document.createElement('br');
+		el.appendChild(entityName);
+		el.appendChild(br);
 		/*
             amount: "-35.62"
             method: "Debit card"
@@ -162,14 +165,33 @@ export default class Weekly {
 
 	showTotals = (radio) => {
 		let idx = Number(radio.value);
-		let html = '';
+		let el = document.getElementById('totals');
+		let num = el.childNodes.length;
+		console.log(`Remove ${num} nodes`);
+		for(let idx = 0; idx < num; idx++) {
+			el.removeChild(el.childNodes[0]);
+		}
 		this.sum = 0;
 		Object.keys(this.totals[idx]).sort().forEach((key) => {
 			let val = this.totals[idx][key];
-			html += `<input type="checkbox" value="${val}" onclick='weeklyApi.modSum(this)'> ${key}: ${val}<br/>`;
+			let input = document.createElement('input');
+			input.setAttribute('type', 'checkbox');
+			input.setAttribute('value', val);
+			input.addEventListener('click', () => {
+				weeklyApi.modSum(input);
+			});
+
+			let text = document.createTextNode(`${key}: ${val}`);
+			let br = document.createElement('br');
+			el.appendChild(input);
+			el.appendChild(text);
+			el.appendChild(br);
 		});
-		html += 'Total: <span style="font-weight: 700" id="sum"></span>'
-		document.getElementById('totals').innerHTML = html;
+		el.appendChild(document.createTextNode('Total: '));
+		let span = document.createElement('span');
+		span.setAttribute('style', 'font-weight: 700');
+		span.setAttribute('id', 'sum');
+		el.appendChild(span);
 	}
 
 	modSum = (obj) => {

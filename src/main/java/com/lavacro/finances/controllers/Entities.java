@@ -9,6 +9,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import java.text.Normalizer;
 
 @Controller
 public class Entities {
@@ -32,7 +33,16 @@ public class Entities {
 		@RequestParam(value = "address", required = false) String address
 	) {
 		EntityEntity merchant = new EntityEntity();
-		merchant.setDescription(description);
+		// Sanitize description to reduce XSS risk while allowing non-English characters.
+		String sanitized = description == null ? null : description.trim();
+		if (sanitized != null && !sanitized.isEmpty()) {
+			// Normalize to a canonical form so visually-equivalent characters are consistent
+			sanitized = Normalizer.normalize(sanitized, Normalizer.Form.NFKC);
+			// Remove control characters (except common whitespace), keeping format
+			// characters such as ZWNJ/ZWJ that are meaningful in some scripts
+			sanitized = sanitized.replaceAll("[\\p{Cc}&&[^\\t\\n\\r]]|\\p{Cn}", "");
+		}
+		merchant.setDescription(sanitized);
 		merchant.setAccount(account);
 		merchant.setAddress(address);
 		merchantRepository.save(merchant);
