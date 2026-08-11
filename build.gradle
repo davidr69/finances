@@ -48,7 +48,7 @@ dependencies {
 	testImplementation 'org.springframework.kafka:spring-kafka-test'
 
 	compileOnly 'org.projectlombok:lombok:1.18.42'
-	compileOnly 'org.jetbrains:annotations:24.1.0'
+	compileOnly 'org.jetbrains:annotations:26.1.0'
 
 	annotationProcessor 'org.projectlombok:lombok:1.18.42'
 
