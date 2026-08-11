@@ -119,7 +119,10 @@ export default class Weekly {
 
 		let theId = `row${weekOffset + 1}col${dayOffset + 1}`;
 		let el = document.getElementById(theId);
-		el.innerHTML += `${item.entityName}: ${item.amount}<br/>`;
+		let entityName = document.createTextNode(`${item.entityName}: ${item.amount}`);
+		let br = document.createElement('br');
+		el.appendChild(entityName);
+		el.appendChild(br);
 		/*
             amount: "-35.62"
             method: "Debit card"
