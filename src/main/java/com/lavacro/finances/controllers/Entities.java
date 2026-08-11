@@ -9,6 +9,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.util.HtmlUtils;
+import java.text.Normalizer;
 
 @Controller
 public class Entities {
@@ -32,7 +34,19 @@ public class Entities {
 		@RequestParam(value = "address", required = false) String address
 	) {
 		EntityEntity merchant = new EntityEntity();
-		merchant.setDescription(description);
+		// Sanitize description to reduce XSS risk while allowing non-English characters.
+		// Approach: normalize unicode, remove invisible/control characters, trim,
+		// then HTML-escape characters that would be interpreted as markup.
+		String sanitized = description == null ? null : description.trim();
+		if (sanitized != null && !sanitized.isEmpty()) {
+			// Normalize to a canonical form so visually-equivalent characters are consistent
+			sanitized = Normalizer.normalize(sanitized, Normalizer.Form.NFKC);
+			// Remove control characters (except common whitespace)
+			sanitized = sanitized.replaceAll("\\p{C}", "");
+			// Escape HTML special characters to prevent injection when rendered
+			sanitized = HtmlUtils.htmlEscape(sanitized);
+		}
+		merchant.setDescription(sanitized);
 		merchant.setAccount(account);
 		merchant.setAddress(address);
 		merchantRepository.save(merchant);
