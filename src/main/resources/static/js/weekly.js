@@ -177,7 +177,9 @@ export default class Weekly {
 			let input = document.createElement('input');
 			input.setAttribute('type', 'checkbox');
 			input.setAttribute('value', val);
-			input.setAttribute('onclick', 'weeklyApi.modSum(this)');
+			input.addEventListener('click', () => {
+				weeklyApi.modSum(input);
+			});
 
 			let text = document.createTextNode(`${key}: ${val}`);
 			let br = document.createElement('br');
