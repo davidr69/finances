@@ -40,8 +40,9 @@ public class Entities {
 		if (sanitized != null && !sanitized.isEmpty()) {
 			// Normalize to a canonical form so visually-equivalent characters are consistent
 			sanitized = Normalizer.normalize(sanitized, Normalizer.Form.NFKC);
-			// Remove control characters (except common whitespace)
-			sanitized = sanitized.replaceAll("\\p{C}", "");
+			// Remove control characters (except common whitespace), keeping format
+			// characters such as ZWNJ/ZWJ that are meaningful in some scripts
+			sanitized = sanitized.replaceAll("[\\p{Cc}&&[^\\t\\n\\r]]|\\p{Cn}", "");
 		}
 		merchant.setDescription(sanitized);
 		merchant.setAccount(account);
