@@ -34,8 +34,6 @@ public class Entities {
 	) {
 		EntityEntity merchant = new EntityEntity();
 		// Sanitize description to reduce XSS risk while allowing non-English characters.
-		// Approach: normalize unicode, remove invisible/control characters, trim,
-		// then HTML-escape characters that would be interpreted as markup.
 		String sanitized = description == null ? null : description.trim();
 		if (sanitized != null && !sanitized.isEmpty()) {
 			// Normalize to a canonical form so visually-equivalent characters are consistent
