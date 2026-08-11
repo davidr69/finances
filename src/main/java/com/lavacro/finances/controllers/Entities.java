@@ -43,8 +43,6 @@ public class Entities {
 			sanitized = Normalizer.normalize(sanitized, Normalizer.Form.NFKC);
 			// Remove control characters (except common whitespace)
 			sanitized = sanitized.replaceAll("\\p{C}", "");
-			// Escape HTML special characters to prevent injection when rendered
-			sanitized = HtmlUtils.htmlEscape(sanitized);
 		}
 		merchant.setDescription(sanitized);
 		merchant.setAccount(account);
