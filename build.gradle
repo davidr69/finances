@@ -2,7 +2,7 @@ plugins {
 	id 'org.springframework.boot' version "${springBootVersion}"
 	id 'java'
 	id 'io.spring.dependency-management' version '1.1.7'
-	id 'com.google.protobuf' version '0.9.5'
+	id 'com.google.protobuf' version '0.10.0'
 }
 
 def javaVersion = System.getProperty('os.arch') == 'aarch64' ? 26 : 25
@@ -15,7 +15,7 @@ java {
 
 protobuf {
 	protoc {
-		artifact = 'com.google.protobuf:protoc:4.28.2'
+		artifact = 'com.google.protobuf:protoc:4.35.1'
 	}
 }
 
@@ -41,16 +41,16 @@ dependencies {
 
 	implementation 'jakarta.validation:jakarta.validation-api'
 	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
-	implementation 'org.postgresql:postgresql:42.7.7'
+	implementation 'org.postgresql:postgresql:42.7.13'
 
-	implementation 'com.google.protobuf:protobuf-java:4.28.2'
+	implementation 'com.google.protobuf:protobuf-java:4.35.1'
 
 	testImplementation 'org.springframework.kafka:spring-kafka-test'
 
-	compileOnly 'org.projectlombok:lombok:1.18.42'
-	compileOnly 'org.jetbrains:annotations:24.1.0'
+	compileOnly 'org.projectlombok:lombok:1.18.46'
+	compileOnly 'org.jetbrains:annotations:26.1.0'
 
-	annotationProcessor 'org.projectlombok:lombok:1.18.42'
+	annotationProcessor 'org.projectlombok:lombok:1.18.46'
 
 	testImplementation 'junit:junit:4.13.2'
 	testImplementation 'org.mockito:mockito-inline:5.2.0'
