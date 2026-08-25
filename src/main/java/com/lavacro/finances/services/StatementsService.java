@@ -56,7 +56,7 @@ public class StatementsService {
 	private static final String GET_STAGING_RECORD = """
 		SELECT a.mydate, a.entity, a.llm_entity, a.amount, e.default_type AS type1, COALESCE(llm.default_type, 0) AS type2,
 			CASE
-				WHEN a.llm_entity IS NOT NULL THEN e.embedding IS NULL
+				WHEN a.llm_entity IS NOT NULL THEN llm.embedding IS NULL
 			END AS new_entity
 		FROM staging.action a
 		LEFT JOIN entities e ON a.entity = e.id
