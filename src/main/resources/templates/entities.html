@@ -23,10 +23,47 @@
 		deleteEntity = (eId) => {
 			fetch(`/api/v1/entities/${eId}`, {
 				method: 'DELETE'
-			}).then(() => {
-				window.location = window.location.href;
+			}).then(resp => {
+				resp.json().then(data => {
+					if(data.code === 0) {
+						window.location = window.location.href;
+					}
+					alert(data.message);
+				});
 			});
 		}
+
+		validateEntity = (id, el) => {
+			if(globalThis.validate === false) {
+				globalThis.validate = true;
+				let klass = el.getAttribute('class');
+				el.setAttribute('class', 'fa fa-spinner fa-pulse small-glyph fa-fw');
+				setInterval(() => {
+					el.setAttribute('class', klass);
+					clearInterval(this);
+					globalThis.validate = false;
+				}, 5000);
+			} else {
+				console.log('validation in progress...');
+			}
+		}
+
+		document.addEventListener('DOMContentLoaded', (event) => {
+			globalThis.validate = false;
+
+			// add "onclick" to glyphs
+			document.querySelectorAll('span[data-id]').forEach((el) => {
+				let buttons = el.querySelectorAll('i');
+
+				buttons[0].addEventListener('click', () => {
+					deleteEntity(el.getAttribute('data-id'));
+				});
+
+				buttons[1].addEventListener('click', () => {
+					validateEntity(el.getAttribute('data-id'), buttons[1]);
+				});
+			});
+		});
 	</script>
 </head>
 <body>
@@ -49,9 +86,13 @@
 		<td th:switch="${entity.validated}">
 			<span th:case="true" th:text="${entity.description}" th:remove="tag"></span>
 			<span
+				style="color: #a00000"
 				th:case="false"
-				style="color: #a04040"
-				th:utext="${entity.description} + ' <i class=\'fa fa-trash small-glyph\' onclick=\'deleteEntity(' + ${entity.id} + ')\'></i>'">
+				th:data-id="${entity.id}"
+				th:with=
+					"deleteIcon=${'&nbsp;&nbsp;&nbsp;<i class=''fa fa-trash small-glyph''></i>'},
+					  checkIcon=${'&nbsp;&nbsp;&nbsp;<i class=''fa fa-check small-glyph''></i>'}"
+				th:utext="${entity.description + deleteIcon + checkIcon}">
 			</span>
 		</td>
 		<td th:text="${entity.account}"></td>

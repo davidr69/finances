@@ -29,9 +29,9 @@ public class EntityService {
 			resp.setCode(0);
 			log.info("Entity deleted successfully");
 		} catch (Exception e) {
-			log.error("Error occurred while deleting entity", e);
+			log.error("Error occurred while deleting entity: {}", e.getMessage());
 			resp.setCode(1);
-			resp.setMessage("Error occurred while deleting entity: " + e.getMessage());
+			resp.setMessage("Unable to delete entity");
 		}
 		return resp;
 	}
