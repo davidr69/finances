@@ -18,6 +18,16 @@
 		border-spacing: 0;
 	}
 	</style>
+
+	<script>
+		deleteEntity = (eId) => {
+			fetch(`/api/v1/entities/${eId}`, {
+				method: 'DELETE'
+			}).then(() => {
+				window.location = window.location.href;
+			});
+		}
+	</script>
 </head>
 <body>
 
@@ -36,7 +46,14 @@
 	</thead>
 	<tbody>
 	<tr th:each="entity:${entityList}">
-		<td th:text="${entity.description}"></td>
+		<td th:switch="${entity.validated}">
+			<span th:case="true" th:text="${entity.description}" th:remove="tag"></span>
+			<span
+				th:case="false"
+				style="color: #a04040"
+				th:utext="${entity.description} + ' <i class=\'fa fa-trash small-glyph\' onclick=\'deleteEntity(' + ${entity.id} + ')\'></i>'">
+			</span>
+		</td>
 		<td th:text="${entity.account}"></td>
 		<td th:text="${entity.address}"></td>
 		<td>&nbsp;</td>

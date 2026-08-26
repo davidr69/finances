@@ -3,6 +3,9 @@ package com.lavacro.finances.controllers;
 import com.lavacro.finances.entities.EntityEntity;
 import com.lavacro.finances.repositories.MerchantRepository;
 
+import com.lavacro.finances.services.EntityService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -10,18 +13,23 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import java.text.Normalizer;
+import java.util.List;
 
 @Controller
+@RequiredArgsConstructor
+@Slf4j
 public class Entities {
 	private final MerchantRepository merchantRepository;
-
-	public Entities(MerchantRepository merchantRepository) {
-		this.merchantRepository = merchantRepository;
-	}
+	private final EntityService entityService;
 
 	@GetMapping(value = "/entities")
 	public String getEntities(Model model) {
-		model.addAttribute("entityList", merchantRepository.findAllOrderByDescriptionAsc());
+		List<EntityEntity> entities = merchantRepository.findAllOrderByDescriptionAsc();
+		for (EntityEntity entity : entities) {
+			entity.setValidated(entity.getEmbedding() != null);
+			entity.setEmbedding(null);
+		}
+		model.addAttribute("entityList", entities);
 		return "entities";
 	}
 
@@ -32,7 +40,6 @@ public class Entities {
 		@RequestParam(value = "account", required = false) String account,
 		@RequestParam(value = "address", required = false) String address
 	) {
-		EntityEntity merchant = new EntityEntity();
 		// Sanitize description to reduce XSS risk while allowing non-English characters.
 		String sanitized = description == null ? null : description.trim();
 		if (sanitized != null && !sanitized.isEmpty()) {
@@ -42,11 +49,12 @@ public class Entities {
 			// characters such as ZWNJ/ZWJ that are meaningful in some scripts
 			sanitized = sanitized.replaceAll("[\\p{Cc}&&[^\\t\\n\\r]]|\\p{Cn}", "");
 		}
-		merchant.setDescription(sanitized);
-		merchant.setAccount(account);
-		merchant.setAddress(address);
-		merchantRepository.save(merchant);
-		model.addAttribute("entityList", merchantRepository.findAllOrderByDescriptionAsc());
-		return "entities";
+
+		try {
+			entityService.createEntity(sanitized, account, address);
+		} catch(Exception e) {
+			log.error("Error creating entity: {}", e.getMessage());
+		}
+		return getEntities(model);
 	}
 }
