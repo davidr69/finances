@@ -21,4 +21,12 @@ public class EntityEntity {
 	private String description;
 
 	private String address;
+
+	@Column(name = "bank_alias")
+	private String aliases;
+
+	private String embedding;
+
+	@Transient
+	private Boolean validated;
 }

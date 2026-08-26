@@ -10,7 +10,7 @@ import java.util.List;
 @Repository
 public interface MerchantRepository extends JpaRepository<EntityEntity, Integer> {
 	@Query(value = """
-			SELECT id, acct, description, address
+			SELECT id, acct, description, address, bank_alias, embedding
 			FROM entities
 			ORDER BY LOWER(description)
 	""", nativeQuery = true)
