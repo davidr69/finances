@@ -26,7 +26,6 @@ public class StatementsService {
 
 	private static final String USE_VECTOR = "vector";
 	private static final String USE_LLM = "llm";
-	//private static final String REJECT = "reject";
 
 	@Language(value = "SQL")
 	private static final String GET_STATEMENT_QUERY = """
@@ -55,10 +54,10 @@ public class StatementsService {
 
 	@Language(value = "SQL")
 	private static final String GET_STAGING_RECORD = """
-		SELECT a.mydate, a.entity, a.llm_entity, a.amount, e.default_type AS type1, llm.default_type AS type2,
-	       CASE
-    	       WHEN a.llm_entity IS NOT NULL THEN e.embedding IS NULL
-	       END AS new_entity
+		SELECT a.mydate, a.entity, a.llm_entity, a.amount, e.default_type AS type1, COALESCE(llm.default_type, 0) AS type2,
+			CASE
+				WHEN a.llm_entity IS NOT NULL THEN llm.embedding IS NULL
+			END AS new_entity
 		FROM staging.action a
 		LEFT JOIN entities e ON a.entity = e.id
 		LEFT JOIN entities llm ON a.llm_entity = llm.id
@@ -149,9 +148,8 @@ public class StatementsService {
 
 		if(!idsToDelete.isEmpty()) {
 			jdbcTemplate.batchUpdate(DELETE_FROM_STAGING, idsToDelete, idsToDelete.size(),
-				(ps, item) -> {
-					ps.setInt(1, item);
-				}
+				(ps, item) ->
+					ps.setInt(1, item)
 			);
 		}
 		log.info("Merged transactions");
