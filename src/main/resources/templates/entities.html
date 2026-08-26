@@ -24,7 +24,7 @@
 			fetch(`/api/v1/entities/${eId}`, {
 				method: 'DELETE'
 			}).then(() => {
-				location.reload();
+				window.location = window.location.href;
 			});
 		}
 	</script>
