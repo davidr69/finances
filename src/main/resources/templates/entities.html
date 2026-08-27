@@ -58,6 +58,9 @@
 						if(resp != null) {
 							resp.json().then(data => {
 								console.log(data.validated);
+								if(data.validated) {
+									window.location = window.location.href;
+								}
 							});
 						}
 					});

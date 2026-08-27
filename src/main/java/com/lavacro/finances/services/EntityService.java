@@ -48,8 +48,8 @@ public class EntityService {
 			log.error("Entity not found with id: {}", id);
 			return null;
 		}
-		entity.setEmbedding(null);
 		entity.setValidated(entity.getEmbedding() != null);
+		entity.setEmbedding(null);
 		log.info("Returning: {}", entity);
 		return entity;
 	}
