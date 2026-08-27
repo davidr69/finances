@@ -19,86 +19,10 @@
 	}
 	</style>
 
-	<script>
-		deleteEntity = (eId) => {
-			fetch(`/api/v1/entities/${eId}`, {
-				method: 'DELETE'
-			}).then(resp => {
-				resp.json().then(data => {
-					if(data.code === 0) {
-						window.location = window.location.href;
-					}
-					alert(data.message);
-				});
-			});
-		}
-
-		validateEntity = (id, el) => {
-			if(globalThis.validate === false) {
-				globalThis.validate = true;
-
-				// publishing a Kafka message is asynchronous, so don't need a promise or any type of synchronous "workflow"
-				fetch(`/api/v1/entities/accept/${id}`, {
-					method: 'PUT'
-				});
-
-				let klass = el.getAttribute('class');
-				el.setAttribute('class', 'fa fa-spinner fa-pulse small-glyph fa-fw');
-				let retries = 3;
-				let interval = setInterval(() => {
-					console.log(`Polling ${retries} for validation...`);
-					retries--;
-					if(retries === 0) {
-						el.setAttribute('class', klass);
-						clearInterval(interval);
-						globalThis.validate = false;
-					}
-
-					fetch(`api/v1/entities/${id}`).then(resp => {
-						if(resp != null) {
-							resp.json().then(data => {
-								console.log(data.validated);
-								if(data.validated) {
-									window.location = window.location.href;
-								}
-							});
-						}
-					});
-				}, 3000);
-			} else {
-				console.log('validation in progress...');
-			}
-		}
-
-		document.addEventListener('DOMContentLoaded', (event) => {
-			globalThis.validate = false;
-			globalThis.changedSet = new Set();
-
-			// add "onclick" to glyphs
-			document.querySelectorAll('span[data-id]').forEach((el) => {
-				let buttons = el.querySelectorAll('i');
-
-				buttons[0].addEventListener('click', () => {
-					deleteEntity(el.getAttribute('data-id'));
-				});
-
-				buttons[1].addEventListener('click', () => {
-					validateEntity(el.getAttribute('data-id'), buttons[1]);
-				});
-			});
-
-			document.querySelectorAll('input[data-rag]').forEach((el) => {
-				el.addEventListener('keyup', (e) => {
-					let num = el.getAttribute('data-rag');
-					if(!globalThis.changedSet.has(num)) {
-						let i = document.getElementById('rag' + num);
-						i.setAttribute('class', 'fa fa-save small-glyph');
-					} else {
-						globalThis.changedSet.add(num);
-					}
-				})
-			});
-		});
+	<script type="module">
+		const entitiesJS = './js/entities.js';
+		const { default: Entities } = await import(entitiesJS);
+		globalThis.entities = new Entities();
 	</script>
 </head>
 <body>
