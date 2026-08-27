@@ -72,6 +72,7 @@
 
 		document.addEventListener('DOMContentLoaded', (event) => {
 			globalThis.validate = false;
+			globalThis.changedSet = new Set();
 
 			// add "onclick" to glyphs
 			document.querySelectorAll('span[data-id]').forEach((el) => {
@@ -84,6 +85,18 @@
 				buttons[1].addEventListener('click', () => {
 					validateEntity(el.getAttribute('data-id'), buttons[1]);
 				});
+			});
+
+			document.querySelectorAll('input[data-rag]').forEach((el) => {
+				el.addEventListener('keyup', (e) => {
+					let num = el.getAttribute('data-rag');
+					if(!globalThis.changedSet.has(num)) {
+						let i = document.getElementById('rag' + num);
+						i.setAttribute('class', 'fa fa-save small-glyph');
+					} else {
+						globalThis.changedSet.add(num);
+					}
+				})
 			});
 		});
 	</script>
@@ -98,33 +111,38 @@
 	<thead>
 		<tr>
 			<th scope="col">Entity</th>
+			<th scope="col">RAG</th>
 			<th scope="col">Account number</th>
 			<th scope="col">Address</th>
 			<th scope="col">&nbsp;</th>
 		</tr>
 	</thead>
 	<tbody>
-	<tr th:each="entity:${entityList}">
-		<td th:switch="${entity.validated}">
-			<span th:case="true" th:text="${entity.description}" th:remove="tag"></span>
-			<span
-				style="color: #a00000"
-				th:case="false"
-				th:data-id="${entity.id}"
-				th:with=
-					"deleteIcon=${'&nbsp;&nbsp;&nbsp;<i class=''fa fa-trash small-glyph''></i>'},
-					  checkIcon=${'&nbsp;&nbsp;&nbsp;<i class=''fa fa-check small-glyph''></i>'}"
-				th:utext="${entity.description + deleteIcon + checkIcon}">
-			</span>
-		</td>
-		<td th:text="${entity.account}"></td>
-		<td th:text="${entity.address}"></td>
-		<td>&nbsp;</td>
-	</tr>
+		<tr th:each="entity:${entityList}">
+			<td th:switch="${entity.validated}">
+				<span th:case="true" th:text="${entity.description}" th:remove="tag"></span>
+				<span
+					style="color: #a00000"
+					th:case="false"
+					th:data-id="${entity.id}"
+					th:with=
+						"deleteIcon=${'&nbsp;&nbsp;&nbsp;<i class=''fa fa-trash small-glyph''></i>'},
+						  checkIcon=${'&nbsp;&nbsp;&nbsp;<i class=''fa fa-check small-glyph''></i>'}"
+					th:utext="${entity.description + deleteIcon + checkIcon}">
+				</span>
+			</td>
+			<td><label>
+				<input type="text" size="32" maxlength="32" th:data-rag="${entity.id}" th:id="'input' + ${entity.id}" th:value="${entity.aliases}"/>
+			</label>&nbsp;&nbsp;<i th:id="'rag' + ${entity.id}"></i>&nbsp;&nbsp;&nbsp;</td>
+			<td th:text="${entity.account}"></td>
+			<td th:text="${entity.address}"></td>
+			<td>&nbsp;</td>
+		</tr>
 		<tr>
 			<td><label>
 				<input type="text" size="32" maxlength="64" name="description" required="required"/>
 			</label></td>
+			<td>&nbsp;</td>
 			<td><label>
 				<input type="text" size="25" maxlength="25" name="account"/>
 			</label></td>
