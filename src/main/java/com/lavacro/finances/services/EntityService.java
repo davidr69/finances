@@ -1,5 +1,6 @@
 package com.lavacro.finances.services;
 
+import com.lavacro.finances.entities.EntityEntity;
 import com.lavacro.finances.model.GenericResponse;
 import com.lavacro.finances.repositories.MerchantRepository;
 import lombok.RequiredArgsConstructor;
@@ -7,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.intellij.lang.annotations.Language;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
 
 @Service
 @Slf4j
@@ -22,7 +22,7 @@ public class EntityService {
 		VALUES (?, ?, ?)
 	""";
 
-	public GenericResponse deleteEntity(@PathVariable Integer id) {
+	public GenericResponse deleteEntity(Integer id) {
 		GenericResponse resp = new GenericResponse();
 		try {
 			merchantRepository.deleteById(id);
@@ -40,5 +40,17 @@ public class EntityService {
 		jdbcClient.sql(INSERT_ENTITY_SQL)
 			.params(account, description, address)
 			.update();
+	}
+
+	public EntityEntity getEntity(Integer id) {
+		EntityEntity entity = merchantRepository.findById(id).orElse(null);
+		if(entity == null) {
+			log.error("Entity not found with id: {}", id);
+			return null;
+		}
+		entity.setEmbedding(null);
+		entity.setValidated(entity.getEmbedding() != null);
+		log.info("Returning: {}", entity);
+		return entity;
 	}
 }

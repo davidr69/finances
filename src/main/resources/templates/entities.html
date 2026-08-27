@@ -36,13 +36,32 @@
 		validateEntity = (id, el) => {
 			if(globalThis.validate === false) {
 				globalThis.validate = true;
+
+				// publishing a Kafka message is asynchronous, so don't need a promise or any type of synchronous "workflow"
+				fetch(`/api/v1/entities/accept/${id}`, {
+					method: 'PUT'
+				});
+
 				let klass = el.getAttribute('class');
 				el.setAttribute('class', 'fa fa-spinner fa-pulse small-glyph fa-fw');
-				setInterval(() => {
-					el.setAttribute('class', klass);
-					clearInterval(this);
-					globalThis.validate = false;
-				}, 5000);
+				let retries = 3;
+				let interval = setInterval(() => {
+					console.log(`Polling ${retries} for validation...`);
+					retries--;
+					if(retries === 0) {
+						el.setAttribute('class', klass);
+						clearInterval(interval);
+						globalThis.validate = false;
+					}
+
+					fetch(`api/v1/entities/${id}`).then(resp => {
+						if(resp != null) {
+							resp.json().then(data => {
+								console.log(data.validated);
+							});
+						}
+					});
+				}, 3000);
 			} else {
 				console.log('validation in progress...');
 			}
