@@ -37,4 +37,14 @@ public class DecisionService {
 			.build();
 		send(message);
 	}
+
+	public void generateVector(Integer entityId) {
+		log.info("Generating vector for entity: {}", entityId);
+		DecisionProto.DecisionMessage message = DecisionProto.DecisionMessage.newBuilder()
+			.setDecision(DecisionProto.DecisionMessage.Decision.ACCEPT_VENDOR)
+			.setOriginalVendorId(entityId)
+			.setNewVendorId(entityId)	// just for good measure
+			.build();
+		send(message);
+	}
 }
