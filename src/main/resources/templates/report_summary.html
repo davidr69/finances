@@ -17,7 +17,10 @@
 			let year = node[node.selectedIndex].value;
 			let accountDD = parent.document.getElementById('account');
 			let account = accountDD[accountDD.selectedIndex].value;
-			window.location = `./reportSummaryByYear?startYear=${year}&account=${account}`;
+			const url = new URL('./reportSummaryByYear', window.location.href);
+			url.searchParams.set('startYear', year);
+			url.searchParams.set('account', account);
+			window.location = url.toString();
 		}
 	</script>
 
