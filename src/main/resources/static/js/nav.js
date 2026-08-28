@@ -71,39 +71,46 @@ export default class Nav {
 	updateAccount = () => {
 		let values = this.#getValues();
 		this.pathParams['account'] = values.account;
-		window.location.href = window.location.href.split('?')[0] + '?' + Object.entries(this.pathParams).map(([k, v]) => `${k}=${v}`).join('&');
+		const query = new URLSearchParams(this.pathParams).toString();
+		window.location.href = window.location.href.split('?')[0] + '?' + query;
 	};
 
 	updateYear = () => {
 		let values = this.#getValues();
 		this.pathParams['year'] = values.year;
-		window.location.href = window.location.href.split('?')[0] + '?' + Object.entries(this.pathParams).map(([k, v]) => `${k}=${v}`).join('&');
+		const query = new URLSearchParams(this.pathParams).toString();
+		window.location.href = window.location.href.split('?')[0] + '?' + query;
 	};
 
 	entityReport = () => {
 		let values = this.#getValues();
-		window.location.href = `reportByEntity?year=${values.year}&account=${values.account}`;
+		const query = new URLSearchParams({ year: values.year, account: values.account }).toString();
+		window.location.href = `reportByEntity?${query}`;
 	};
 
 	entityByAmount = () => {
 		let values = this.#getValues();
-		window.location.href = `reportSummaryByYear?startYear=${values.year}&account=${values.account}`;
+		const query = new URLSearchParams({ startYear: values.year, account: values.account }).toString();
+		window.location.href = `reportSummaryByYear?${query}`;
 	};
 
 	budget = () => {
 		let values = this.#getValues();
 		const month = (typeof(values.month) === 'undefined') ? new Date().getMonth() + 1 : values.month;
-		window.location.href = `reportWeekly?year=${values.year}&account=${values.account}&month=${month}`;
+		const query = new URLSearchParams({ year: values.year, account: values.account, month: month }).toString();
+		window.location.href = `reportWeekly?${query}`;
 	};
 
 	uploadStatement = () => {
 		let values = this.#getValues();
-		window.location.href = `upload?year=${values.year}&account=${values.account}`;
+		const query = new URLSearchParams({ year: values.year, account: values.account }).toString();
+		window.location.href = `upload?${query}`;
 	};
 
 	mergeStatement = () => {
 		let values = this.#getValues();
-		window.location.href = `merge_statement?year=${values.year}&account=${values.account}`;
+		const query = new URLSearchParams({ year: values.year, account: values.account }).toString();
+		window.location.href = `merge_statement?${query}`;
 	};
 
 	refreshVectors = () => {
