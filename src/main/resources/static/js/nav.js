@@ -64,7 +64,8 @@ export default class Nav {
 
 	balanceSheet = () => {
 		let values = this.#getValues();
-		window.location.href = `reportBalanceSheet?account=${values.account}`;
+		const query = new URLSearchParams({ account: values.account }).toString();
+		window.location.href = `reportBalanceSheet?${query}`;
 	};
 
 	updateAccount = () => {
