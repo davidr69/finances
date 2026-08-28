@@ -47,16 +47,19 @@ export default class Nav {
 
 	newTransaction = () => {
 		let values = this.#getValues();
-		window.location.href = `transaction?account=${values.account}&year=${values.year}`;
+		const query = new URLSearchParams({ account: values.account, year: values.year }).toString();
+		window.location.href = `transaction?${query}`;
 	};
 
 	cashbook = () => {
 		let values = this.#getValues();
-		window.location.href = `cashbook?account=${values.account}&year=${values.year}`;
+		const query = new URLSearchParams({ account: values.account, year: values.year }).toString();
+		window.location.href = `cashbook?${query}`;
 	};
 
 	entities = () => {
-		window.location.href = "./entities?" + Object.entries(this.pathParams).map(([k, v]) => `${k}=${v}`).join('&');
+		const query = new URLSearchParams(this.pathParams).toString();
+		window.location.href = `./entities?${query}`;
 	};
 
 	balanceSheet = () => {
