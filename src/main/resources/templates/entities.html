@@ -22,7 +22,7 @@
 	<script type="module">
 		const entitiesJS = './js/entities.js';
 		const { default: Entities } = await import(entitiesJS);
-		globalThis.entities = new Entities();
+		new Entities();
 	</script>
 </head>
 <body>

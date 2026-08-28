@@ -1,10 +1,8 @@
 export default class Entities {
-	validate;
-	changedSet;
+	validate = false;
+	changedSet = new Set();
 
 	constructor() {
-		this.validate = false;
-		this.changedSet = new Set();
 		this.#init();
 	}
 
@@ -65,31 +63,29 @@ export default class Entities {
 	}
 
 	#init = () => {
-		document.addEventListener('DOMContentLoaded', () => {
-			// add "onclick" to "delete" and "validate" glyphs
-			document.querySelectorAll('span[data-id]').forEach((el) => {
-				let buttons = el.querySelectorAll('i');
+		// add "onclick" to "delete" and "validate" glyphs
+		document.querySelectorAll('span[data-id]').forEach((el) => {
+			let buttons = el.querySelectorAll('i');
 
-				buttons[0].addEventListener('click', () => {
-					this.deleteEntity(el.getAttribute('data-id'));
-				});
-
-				buttons[1].addEventListener('click', () => {
-					this.validateEntity(el.getAttribute('data-id'), buttons[1]);
-				});
+			buttons[0].addEventListener('click', () => {
+				this.deleteEntity(el.getAttribute('data-id'));
 			});
 
-			// don't show a "save" icon until the RAG has changed
-			document.querySelectorAll('input[data-rag]').forEach((el) => {
-				el.addEventListener('keyup', () => {
-					let num = el.getAttribute('data-rag');
-					if (!this.changedSet.has(num)) {
-						let i = document.getElementById('rag' + num);
-						i.setAttribute('class', 'fa fa-save small-glyph');
-						this.changedSet.add(num);
-					}
-				})
+			buttons[1].addEventListener('click', () => {
+				this.validateEntity(el.getAttribute('data-id'), buttons[1]);
 			});
+		});
+
+		// don't show a "save" icon until the RAG field has changed
+		document.querySelectorAll('input[data-rag]').forEach((el) => {
+			el.addEventListener('keyup', () => {
+				let num = el.getAttribute('data-rag');
+				if (!this.changedSet.has(num)) {
+					let i = document.getElementById(`rag${num}`);
+					i.setAttribute('class', 'fa fa-save small-glyph');
+					this.changedSet.add(num);
+				}
+			})
 		});
 	}
 }

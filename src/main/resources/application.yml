@@ -47,3 +47,6 @@ spring:
         spring.json.trusted.packages: com.lavacro.finances.kafka.model
     template:
       default-topic: finances-topic
+  threads:
+    virtual:
+      enabled: true
