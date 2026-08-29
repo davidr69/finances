@@ -3,6 +3,8 @@ package com.lavacro.finances.entities;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -26,6 +28,12 @@ public class EntityEntity {
 	private String aliases;
 
 	private String embedding;
+
+	@Column(name = "rag_updated", nullable = true)
+	private LocalDateTime ragUpdated;
+
+	@Column(name = "vector_sync", nullable = true)
+	private LocalDateTime vectorSynced;
 
 	@Transient
 	private Boolean validated;

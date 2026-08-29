@@ -83,6 +83,35 @@ export default class Entities {
 				if (!this.changedSet.has(num)) {
 					let i = document.getElementById(`rag${num}`);
 					i.setAttribute('class', 'fa fa-save small-glyph');
+					i.addEventListener('click', () => {
+						let rag = document.getElementById(`rag${num}`);
+						i.setAttribute('class', 'fa fa-spinner fa-pulse small-glyph fa-fw');
+						/*
+							Two things need to happen here:
+							1. the updated RAG values have to be saved
+							2. the vectors have to be recalculated
+
+							We need a transaction with a rollback. If #1 works and #2 doesn't, we need
+							to rollback #1 and hope that rollback succeeds. Detecting that #2 succeeded
+							requires polling since the mechanism to trigger it is via a Kafka message.
+						*/
+
+						let value = document.getElementById(`input${num}`).value;
+						fetch(`api/v1/entities/${num}`, {
+							method: 'PATCH',
+							headers: {'Content-Type': 'application/json'},
+							body: JSON.stringify({rag: value})
+						}).then((resp) => {
+							resp.json().then(data => {
+								if(data.code === 0) {
+									console.log('RAG updated successfully');
+									i.removeAttribute('class');
+								} else {
+									console.error('Error occurred while updating RAG');
+								}
+							})
+						});
+					});
 					this.changedSet.add(num);
 				}
 			})

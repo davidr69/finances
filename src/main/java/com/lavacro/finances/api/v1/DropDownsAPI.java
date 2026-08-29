@@ -6,9 +6,10 @@ import com.lavacro.finances.entities.CategoryEntity;
 
 import com.lavacro.finances.entities.TransactionTypeEntity;
 import com.lavacro.finances.repositories.CategoryRepository;
-import com.lavacro.finances.repositories.MerchantRepository;
 import com.lavacro.finances.services.AccountsService;
+import com.lavacro.finances.services.EntityService;
 import com.lavacro.finances.services.TransactionService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,27 +19,16 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value = "/api/v1/select")
+@RequiredArgsConstructor
 public class DropDownsAPI {
-	private final MerchantRepository merchantRepository;
+	private final EntityService entityService;
 	private final CategoryRepository categoryRepository;
 	private final TransactionService transactionService;
 	private final AccountsService accountsService;
 
-	public DropDownsAPI(
-			MerchantRepository merchantRepository,
-			CategoryRepository categoryRepository,
-			TransactionService transactionService,
-			AccountsService accountsService
-	) {
-		this.merchantRepository = merchantRepository;
-		this.categoryRepository = categoryRepository;
-		this.transactionService = transactionService;
-		this.accountsService = accountsService;
-	}
-
 	@GetMapping(value = "/merchants")
 	public List<EntityEntity> getMerchants() {
-		return merchantRepository.findAllOrderByDescriptionAsc();
+		return entityService.getAllEntities();
 	}
 
 	@GetMapping(value = "/transaction_types")

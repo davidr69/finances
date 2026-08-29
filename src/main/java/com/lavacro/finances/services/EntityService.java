@@ -9,6 +9,11 @@ import org.intellij.lang.annotations.Language;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Optional;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -20,6 +25,20 @@ public class EntityService {
 	private static final String INSERT_ENTITY_SQL = """
 		INSERT INTO entities (acct, description, address)
 		VALUES (?, ?, ?)
+	""";
+
+	@Language("SQL")
+	private static final String GET_ALL_ENTITIES = """
+		SELECT id, acct, description, address, bank_alias, embedding
+		FROM entities
+		ORDER BY LOWER(description)
+	""";
+
+	@Language("SQL")
+	private static final String UPDATE_RAG_SQL = """
+		UPDATE entities
+		SET bank_alias = ?
+		WHERE id = ?
 	""";
 
 	public GenericResponse deleteEntity(Integer id) {
@@ -52,5 +71,31 @@ public class EntityService {
 		entity.setEmbedding(null);
 		log.info("Returning: {}", entity);
 		return entity;
+	}
+
+	public List<EntityEntity> getAllEntities() {
+		List<EntityEntity> entities = new ArrayList<>();
+		jdbcClient.sql(GET_ALL_ENTITIES).query(row -> {
+			EntityEntity entity = new EntityEntity();
+			entity.setId(row.getInt("id"));
+			entity.setAccount(row.getString("acct"));
+			entity.setDescription(row.getString("description"));
+			entity.setAddress(row.getString("address"));
+			entity.setAliases(row.getString("bank_alias"));
+			String embedding = row.getString("embedding");
+			entity.setValidated(embedding != null);
+			entities.add(entity);
+		});
+		return entities;
+	}
+
+	public boolean updateRag(Integer id, String rag) {
+		try {
+			jdbcClient.sql(UPDATE_RAG_SQL).params(rag, id).update();
+			return true;
+		} catch(Exception e) {
+			log.error("Error occurred while updating entity: {}", e.getMessage());
+			return false;
+		}
 	}
 }
