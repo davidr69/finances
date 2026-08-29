@@ -9,10 +9,8 @@ import org.intellij.lang.annotations.Language;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Optional;
 
 @Service
 @Slf4j
@@ -90,8 +88,9 @@ public class EntityService {
 	}
 
 	public boolean updateRag(Integer id, String rag) {
+		String cleanRag = rag.trim();
 		try {
-			jdbcClient.sql(UPDATE_RAG_SQL).params(rag, id).update();
+			jdbcClient.sql(UPDATE_RAG_SQL).params(cleanRag.length() == 0 ? null : cleanRag, id).update();
 			return true;
 		} catch(Exception e) {
 			log.error("Error occurred while updating entity: {}", e.getMessage());

@@ -55,6 +55,7 @@ public class EntityAPI {
 			return resp;
 		}
 		entityService.updateRag(id, rag);
+		decisionService.generateVector(id);
 		resp.setCode(0);
 		resp.setMessage("Entity updated successfully");
 		return resp;
