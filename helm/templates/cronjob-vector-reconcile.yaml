@@ -1,0 +1,61 @@
+{{- if .Values.vectorReconcile.enabled }}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ .Chart.Name }}-vector-reconcile
+  namespace: {{ .Values.Namespace }}
+  labels:
+    app: {{ .Chart.Name }}
+    tier: batch
+spec:
+  schedule: {{ .Values.vectorReconcile.schedule | quote }}
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: {{ .Values.vectorReconcile.successfulJobsHistoryLimit }}
+  failedJobsHistoryLimit: {{ .Values.vectorReconcile.failedJobsHistoryLimit }}
+  jobTemplate:
+    spec:
+      backoffLimit: {{ .Values.vectorReconcile.backoffLimit }}
+      template:
+        metadata:
+          labels:
+            app: {{ .Chart.Name }}
+            tier: batch
+        spec:
+          restartPolicy: Never
+          volumes:
+          - name: vault-token
+            emptyDir:
+              sizeLimit: 1Mi
+              medium: Memory
+          initContainers:
+          - name: vault-retrieve
+            image: "{{ .Values.vaultRetrieve.image.repository }}:{{ .Values.vaultRetrieve.image.tag }}"
+            imagePullPolicy: {{ .Values.vaultRetrieve.image.pullPolicy }}
+            envFrom:
+            - configMapRef:
+                name: {{ .Chart.Name }}-config-init
+            - secretRef:
+                name: {{ .Chart.Name }}-secrets
+            volumeMounts:
+            - name: vault-token
+              mountPath: "{{ .Values.vaultRetrieve.env.mountPath }}"
+          containers:
+          - name: {{ .Chart.Name }}-vector-reconcile
+            image: "{{ .Values.webapp.image.registry }}/{{ .Values.webapp.image.repository }}:{{ .Values.webapp.image.tag }}"
+            imagePullPolicy: {{ .Values.webapp.image.pullPolicy }}
+            args:
+            - --spring.profiles.include=reconcile
+            envFrom:
+            - configMapRef:
+                name: {{ .Chart.Name }}-config-app
+            volumeMounts:
+            - name: vault-token
+              mountPath: "{{ .Values.vaultRetrieve.env.mountPath }}"
+            resources:
+              requests:
+                memory: {{ .Values.vectorReconcile.resources.requests.memory }}
+                cpu: {{ .Values.vectorReconcile.resources.requests.cpu }}
+              limits:
+                memory: {{ .Values.vectorReconcile.resources.limits.memory }}
+                cpu: {{ .Values.vectorReconcile.resources.limits.cpu }}
+{{- end }}
