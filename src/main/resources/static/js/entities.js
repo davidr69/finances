@@ -34,15 +34,8 @@ export default class Entities {
 
 			let klass = el.getAttribute('class');
 			el.setAttribute('class', 'fa fa-spinner fa-pulse small-glyph fa-fw');
-			let retries = 3;
-			let interval = setInterval(() => {
-				console.log(`Polling ${retries} for validation...`);
-				retries--;
-				if(retries === 0) {
-					el.setAttribute('class', klass);
-					clearInterval(interval);
-					this.validate = false;
-				}
+			setInterval(() => {
+				console.log('Polling for validation...');
 
 				fetch(`api/v1/entities/${id}`).then(resp => {
 					if(resp != null) {
@@ -55,8 +48,9 @@ export default class Entities {
 					}
 				}).catch((error) => {
 					console.error('Error occurred while polling entity validation:', error);
+					el.setAttribute('class', 'fa fa-exclamation-triangle small-glyph');
 				});
-			}, 3000);
+			}, 5000);
 		} else {
 			console.log('validation in progress...');
 		}
@@ -86,15 +80,6 @@ export default class Entities {
 					i.addEventListener('click', () => {
 						let rag = document.getElementById(`rag${num}`);
 						i.setAttribute('class', 'fa fa-spinner fa-pulse small-glyph fa-fw');
-						/*
-							Two things need to happen here:
-							1. the updated RAG values have to be saved
-							2. the vectors have to be recalculated
-
-							We need a transaction with a rollback. If #1 works and #2 doesn't, we need
-							to rollback #1 and hope that rollback succeeds. Detecting that #2 succeeded
-							requires polling since the mechanism to trigger it is via a Kafka message.
-						*/
 
 						let value = document.getElementById(`input${num}`).value;
 						fetch(`api/v1/entities/${num}`, {
@@ -106,10 +91,15 @@ export default class Entities {
 								if(data.code === 0) {
 									console.log('RAG updated successfully');
 									i.removeAttribute('class');
+									this.changedSet.delete(num);
 								} else {
 									console.error('Error occurred while updating RAG');
+									i.setAttribute('class', 'fa fa-save small-glyph');
 								}
 							})
+						}).catch(e => {
+							console.error('Error occurred while updating RAG', e);
+							i.setAttribute('class', 'fa fa-exclamation-triangle small-glyph');
 						});
 					});
 					this.changedSet.add(num);

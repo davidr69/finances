@@ -6,6 +6,7 @@ import com.lavacro.finances.repositories.MerchantRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.intellij.lang.annotations.Language;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +19,9 @@ import java.util.ArrayList;
 public class EntityService {
 	private final MerchantRepository merchantRepository;
 	private final JdbcClient jdbcClient;
+
+	@Value("${finances.vector-reconcile.grace-seconds:60}")
+	private int vectorReconcileGraceSeconds;
 
 	@Language("SQL")
 	private static final String INSERT_ENTITY_SQL = """
@@ -37,6 +41,15 @@ public class EntityService {
 		UPDATE entities
 		SET bank_alias = ?
 		WHERE id = ?
+	""";
+
+	@Language("SQL")
+	private static final String STALE_VECTOR_IDS_SQL = """
+		SELECT id
+		FROM entities
+		WHERE rag_updated IS NOT NULL
+		  AND (vector_sync IS NULL OR vector_sync < rag_updated)
+		  AND rag_updated < NOW() - MAKE_INTERVAL(secs => ?)
 	""";
 
 	public GenericResponse deleteEntity(Integer id) {
@@ -85,6 +98,13 @@ public class EntityService {
 			entities.add(entity);
 		});
 		return entities;
+	}
+
+	public List<Integer> findEntitiesNeedingVectorSync() {
+		return jdbcClient.sql(STALE_VECTOR_IDS_SQL)
+			.param(vectorReconcileGraceSeconds)
+			.query(Integer.class)
+			.list();
 	}
 
 	public boolean updateRag(Integer id, String rag) {

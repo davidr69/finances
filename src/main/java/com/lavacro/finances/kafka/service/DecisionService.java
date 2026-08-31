@@ -47,4 +47,8 @@ public class DecisionService {
 			.build();
 		send(message);
 	}
+
+	public void flush() {
+		kafkaTemplate.flush();
+	}
 }
