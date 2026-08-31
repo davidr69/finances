@@ -10,12 +10,14 @@ import org.jspecify.annotations.NonNull;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
 @Configuration
+@Profile("!reconcile")
 @EnableRedisHttpSession(maxInactiveIntervalInSeconds = 600, redisNamespace = "finances")
 public class SessionConfig {
 

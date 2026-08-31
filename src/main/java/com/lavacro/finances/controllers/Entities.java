@@ -1,7 +1,6 @@
 package com.lavacro.finances.controllers;
 
 import com.lavacro.finances.entities.EntityEntity;
-import com.lavacro.finances.repositories.MerchantRepository;
 
 import com.lavacro.finances.services.EntityService;
 import lombok.RequiredArgsConstructor;
@@ -19,16 +18,11 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class Entities {
-	private final MerchantRepository merchantRepository;
 	private final EntityService entityService;
 
 	@GetMapping(value = "/entities")
 	public String getEntities(Model model) {
-		List<EntityEntity> entities = merchantRepository.findAllOrderByDescriptionAsc();
-		for (EntityEntity entity : entities) {
-			entity.setValidated(entity.getEmbedding() != null);
-			entity.setEmbedding(null);
-		}
+		List<EntityEntity> entities = entityService.getAllEntities();
 		model.addAttribute("entityList", entities);
 		return "entities";
 	}

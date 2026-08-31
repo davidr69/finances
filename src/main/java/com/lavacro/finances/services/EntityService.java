@@ -6,8 +6,12 @@ import com.lavacro.finances.repositories.MerchantRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.intellij.lang.annotations.Language;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.ArrayList;
 
 @Service
 @Slf4j
@@ -16,10 +20,36 @@ public class EntityService {
 	private final MerchantRepository merchantRepository;
 	private final JdbcClient jdbcClient;
 
+	@Value("${finances.vector-reconcile.grace-seconds:60}")
+	private int vectorReconcileGraceSeconds;
+
 	@Language("SQL")
 	private static final String INSERT_ENTITY_SQL = """
 		INSERT INTO entities (acct, description, address)
 		VALUES (?, ?, ?)
+	""";
+
+	@Language("SQL")
+	private static final String GET_ALL_ENTITIES = """
+		SELECT id, acct, description, address, bank_alias, embedding
+		FROM entities
+		ORDER BY LOWER(description)
+	""";
+
+	@Language("SQL")
+	private static final String UPDATE_RAG_SQL = """
+		UPDATE entities
+		SET bank_alias = ?
+		WHERE id = ?
+	""";
+
+	@Language("SQL")
+	private static final String STALE_VECTOR_IDS_SQL = """
+		SELECT id
+		FROM entities
+		WHERE rag_updated IS NOT NULL
+		  AND (vector_sync IS NULL OR vector_sync < rag_updated)
+		  AND rag_updated < NOW() - MAKE_INTERVAL(secs => ?)
 	""";
 
 	public GenericResponse deleteEntity(Integer id) {
@@ -52,5 +82,39 @@ public class EntityService {
 		entity.setEmbedding(null);
 		log.info("Returning: {}", entity);
 		return entity;
+	}
+
+	public List<EntityEntity> getAllEntities() {
+		List<EntityEntity> entities = new ArrayList<>();
+		jdbcClient.sql(GET_ALL_ENTITIES).query(row -> {
+			EntityEntity entity = new EntityEntity();
+			entity.setId(row.getInt("id"));
+			entity.setAccount(row.getString("acct"));
+			entity.setDescription(row.getString("description"));
+			entity.setAddress(row.getString("address"));
+			entity.setAliases(row.getString("bank_alias"));
+			String embedding = row.getString("embedding");
+			entity.setValidated(embedding != null);
+			entities.add(entity);
+		});
+		return entities;
+	}
+
+	public List<Integer> findEntitiesNeedingVectorSync() {
+		return jdbcClient.sql(STALE_VECTOR_IDS_SQL)
+			.param(vectorReconcileGraceSeconds)
+			.query(Integer.class)
+			.list();
+	}
+
+	public boolean updateRag(Integer id, String rag) {
+		String cleanRag = rag.trim();
+		try {
+			jdbcClient.sql(UPDATE_RAG_SQL).params(cleanRag.length() == 0 ? null : cleanRag, id).update();
+			return true;
+		} catch(Exception e) {
+			log.error("Error occurred while updating entity: {}", e.getMessage());
+			return false;
+		}
 	}
 }

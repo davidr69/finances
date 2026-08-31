@@ -5,7 +5,7 @@ webapp:
   image:
     registry: "registry:5000"
     repository: "finances"
-    tag: "5.1.6"
+    tag: "5.2.0"
     pullPolicy: IfNotPresent
 
 vaultRetrieve:
@@ -151,3 +151,17 @@ configMap:
   dbUrl: "jdbc:postgresql://prod-db.lavacro.net:5432/finances"
   profile: "home"
   propertiesFile: "/var/tmp/vault/vault.properties"
+
+vectorReconcile:
+  enabled: true
+  schedule: "0 1 * * *"
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  backoffLimit: 1
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "250m"
+    limits:
+      memory: "512Mi"
+      cpu: "500m"
