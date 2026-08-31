@@ -15,7 +15,7 @@ java {
 
 protobuf {
 	protoc {
-		artifact = 'com.google.protobuf:protoc:4.35.1'
+		artifact = 'com.google.protobuf:protoc:4.36.0'
 	}
 }
 
@@ -43,7 +43,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
 	implementation 'org.postgresql:postgresql:42.7.13'
 
-	implementation 'com.google.protobuf:protobuf-java:4.35.1'
+	implementation 'com.google.protobuf:protobuf-java:4.36.0'
 
 	testImplementation 'org.springframework.kafka:spring-kafka-test'
 
