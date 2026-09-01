@@ -84,6 +84,22 @@ matches. The reviewer can opt for the vector match, the LLM, or changing the LLM
 
 ![statement merge](images/vector_llm.png)
 
+### Vector Calculations
+
+An entity is considered “valid” when it has a corresponding vector list. Entities which the LLM creates that are accepted by the user via the Statement Merge UI do not automatically have their vectors generated; the user must manually generate the vectors for the entity. Two icons are presented for unvalidated entities in the Entities UI: Delete and Validate. Delete immediately deletes from the entities table, which Validate publishes a message so that the agent calculates the vector. This app does not have dependencies to manage vectors; only the agent does.
+
+![rag edit](images/rag_edit.png)
+
+### RAG maintenance
+
+Entities can appear on statements as very cryptic strings. Take the example of Planet Fitness: on a Chase statement, it can appear as “Abc*Pf”. This means that neither the embedded vectors for Planet Fitness nor the LLM will perform a reliable match. A RAG field has been provided that contains any other additional text that can lead to high confidence scores.
+
+The UI allows for establishing and editing these RAG values. They are concatenated with the entity name, and the vector is then calculated.
+
+There is a require for atomicity of this operation: we must save the data and then publish a message to have the vector calculated, and there is no guarantee the message will be delivered. The solution is a reconciliation process. The entities table has timestamp fields and triggers to that automatically reflect when data is saved and can be compared to determine if a save was done without a complementary recalculate.
+
+![reconcile](images/reconcile.jpg)
+
 ---
 ## Database requirements
 

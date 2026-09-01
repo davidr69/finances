@@ -22,13 +22,6 @@ public class AuthorizationAPI {
 
     private final AuthorizationService authorizationService;
 
-    private static final String OK_STATUS = """
-{"status":0,"message":"OK"}
-""";
-    private static final String ERROR_STATUS = """
-{"status":1,"message":"ERROR"}
-""";
-
     @GetMapping("/roles")
     public List<RoleEntity> getAllRoles() {
         return authorizationService.getAllRoles();

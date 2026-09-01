@@ -16,3 +16,4 @@ target
 /out/
 /.env
 /run.sh
+/reconcile.sh
