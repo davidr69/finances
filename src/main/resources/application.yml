@@ -50,3 +50,9 @@ spring:
   threads:
     virtual:
       enabled: true
+  modulith:
+#    republish-outstanding-events-on-restart: true
+    events:
+      jdbc:
+        schema-initialization:
+          enabled: true
