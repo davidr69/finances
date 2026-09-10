@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.context.event.EventListener;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.modulith.events.ApplicationModuleListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -18,9 +19,9 @@ public class DecisionService {
 		this.kafkaTemplate = kafkaTemplate;
 	}
 
-//	@ApplicationModuleListener
-	@EventListener
-	@Async
+	@ApplicationModuleListener
+//	@EventListener
+//	@Async
 	void handleDecisionEvent(DecisionEvent event) {
 		send(event.message());
 	}
