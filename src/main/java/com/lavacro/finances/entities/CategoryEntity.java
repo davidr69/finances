@@ -1,21 +1,17 @@
 package com.lavacro.finances.entities;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Table;
 
-import jakarta.persistence.*;
 
-@ToString
-@jakarta.persistence.Entity
-@Getter
-@Setter
+
 @Table(name = "categories")
-public class CategoryEntity {
+public record CategoryEntity(
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer id;
+	Integer id,
 
-	@Column(nullable = false)
-	private String description;
-}
+	String description
+) {}

@@ -5,7 +5,7 @@ import com.lavacro.finances.entities.AccountEntity;
 import com.lavacro.finances.entities.CategoryEntity;
 
 import com.lavacro.finances.entities.TransactionTypeEntity;
-import com.lavacro.finances.repositories.CategoryRepository;
+import com.lavacro.finances.repositories.jdbc.CategoryRepository;
 import com.lavacro.finances.services.AccountsService;
 import com.lavacro.finances.services.EntityService;
 import com.lavacro.finances.services.TransactionService;

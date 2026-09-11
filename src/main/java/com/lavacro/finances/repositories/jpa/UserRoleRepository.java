@@ -1,4 +1,4 @@
-package com.lavacro.finances.repositories;
+package com.lavacro.finances.repositories.jpa;
 
 import com.lavacro.finances.entities.UserRoleEntity;
 import com.lavacro.finances.entities.UserRoleEntity.UserRoleId;

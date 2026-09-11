@@ -2,7 +2,7 @@ package com.lavacro.finances.services;
 
 import com.lavacro.finances.entities.EntityEntity;
 import com.lavacro.finances.model.GenericResponse;
-import com.lavacro.finances.repositories.MerchantRepository;
+import com.lavacro.finances.repositories.jpa.MerchantRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.intellij.lang.annotations.Language;

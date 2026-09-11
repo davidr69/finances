@@ -2,7 +2,7 @@ package com.lavacro.finances.services;
 
 import com.lavacro.finances.dto.AuthenticatedDTO;
 import com.lavacro.finances.entities.RbacUsersEntity;
-import com.lavacro.finances.repositories.RbacUserRepository;
+import com.lavacro.finances.repositories.jpa.RbacUserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.intellij.lang.annotations.Language;
 import org.springframework.jdbc.core.simple.JdbcClient;

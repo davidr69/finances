@@ -4,8 +4,12 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.Profiles;
+import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication
+@EnableJdbcRepositories(basePackages = "com.lavacro.finances.repositories.jdbc")
+@EnableJpaRepositories(basePackages = "com.lavacro.finances.repositories.jpa")
 public class MainApp {
 	public static void main(String[] args) {
 		ConfigurableApplicationContext ctx = SpringApplication.run(MainApp.class, args);

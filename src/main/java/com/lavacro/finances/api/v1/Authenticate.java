@@ -2,7 +2,7 @@ package com.lavacro.finances.api.v1;
 
 import com.lavacro.finances.entities.RbacUsersEntity;
 import com.lavacro.finances.model.ActionResponse;
-import com.lavacro.finances.repositories.RbacUserRepository;
+import com.lavacro.finances.repositories.jpa.RbacUserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;

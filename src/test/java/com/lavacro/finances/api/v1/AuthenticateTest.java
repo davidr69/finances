@@ -1,7 +1,7 @@
 package com.lavacro.finances.api.v1;
 
 import com.lavacro.finances.entities.RbacUsersEntity;
-import com.lavacro.finances.repositories.RbacUserRepository;
+import com.lavacro.finances.repositories.jpa.RbacUserRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

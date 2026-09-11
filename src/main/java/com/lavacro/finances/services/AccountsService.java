@@ -1,7 +1,7 @@
 package com.lavacro.finances.services;
 
 import com.lavacro.finances.entities.AccountEntity;
-import com.lavacro.finances.repositories.AccountsRepository;
+import com.lavacro.finances.repositories.jpa.AccountsRepository;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 

@@ -45,9 +45,9 @@ public class ActionJoinEntity {
 	@Column
 	private Boolean reconciled;
 
-	@JoinColumn(name = "category")
-	@ManyToOne(targetEntity = CategoryEntity.class)
-	private CategoryEntity categoryEntity;
+//	@JoinColumn(name = "category")
+//	@ManyToOne(targetEntity = CategoryEntity.class)
+//	private CategoryEntity categoryEntity;
 
 	@Column
 	private LocalDateTime inserted;
