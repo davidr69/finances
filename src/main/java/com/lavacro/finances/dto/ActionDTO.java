@@ -1,18 +1,20 @@
-package com.lavacro.finances.entities;
+package com.lavacro.finances.dto;
 
-import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.SequenceGenerator;
+import lombok.Data;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
+import org.springframework.data.relational.core.mapping.Table;
 
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.time.LocalDate;
 
-@Getter
-@Setter
-@Entity
+@Data
 @Table(name = "action")
-public class ActionEntity {
+public class ActionDTO {
 	private static NumberFormat nf;
 
 	static {

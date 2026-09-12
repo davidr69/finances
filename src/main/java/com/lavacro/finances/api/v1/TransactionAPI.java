@@ -1,7 +1,7 @@
 package com.lavacro.finances.api.v1;
 
 import com.lavacro.finances.domain.TransactionList;
-import com.lavacro.finances.entities.ActionEntity;
+import com.lavacro.finances.dto.ActionDTO;
 import com.lavacro.finances.model.*;
 
 import com.lavacro.finances.services.TransactionService;
@@ -54,13 +54,13 @@ public class TransactionAPI {
 	}
 
 	@GetMapping(value = "/{sequence}")
-	public ActionEntity getOneTransaction(@PathVariable("sequence") final Integer sequence) {
+	public ActionDTO getOneTransaction(@PathVariable("sequence") final Integer sequence) {
 		log.info("getOneTransaction: {}", sequence);
 		return transactionService.findOne(sequence);
 	}
 
 	@PutMapping
-	public ActionResponse updateTransaction(@RequestBody final ActionEntity req) {
+	public ActionResponse updateTransaction(@RequestBody final ActionDTO req) {
 		transactionService.updateTransaction(req);
 		ActionResponse resp = new ActionResponse();
 		resp.setCode(0);

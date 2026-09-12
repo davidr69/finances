@@ -1,8 +1,8 @@
 package com.lavacro.finances.services;
 
-import com.lavacro.finances.repositories.jpa.ActionRepository;
+import com.lavacro.finances.repositories.jdbc.ActionRepository;
 import com.lavacro.finances.dto.TransactionDTO;
-import com.lavacro.finances.entities.ActionEntity;
+import com.lavacro.finances.dto.ActionDTO;
 import com.lavacro.finances.dto.TransactionTypeDTO;
 import com.lavacro.finances.model.*;
 
@@ -54,6 +54,15 @@ public class TransactionService {
 		ORDER BY mydate, amount DESC, e.description
 	""";
 
+	@Language("SQL")
+	private static final String SET_VISIBLE_TRUE = "UPDATE action SET visible = 't' WHERE sequence IN (:ids)";
+
+	@Language("SQL")
+	private static final String REMOVE_VISIBLE_TRUE = "UPDATE action SET visible = 'f' WHERE sequence IN (:ids)";
+
+	@Language("SQL")
+	private static final String RECONCILE = "UPDATE action SET reconciled = 't', visible = 't' WHERE sequence IN (:ids)";
+
 	TransactionService(
 			TransactionTypeRepository transactionTypeRepository,
 			ActionRepository actionRepository,
@@ -82,19 +91,19 @@ public class TransactionService {
 		}
 		BigDecimal amount = BigDecimal.valueOf(plusOrMinus.equals("-") ? -howMuch : howMuch);
 
-		ActionEntity actionEntity = new ActionEntity();
-		actionEntity.setEntity(req.getEntity());
-		actionEntity.setAccount(req.getAccount());
-		actionEntity.setAmount(amount);
-		actionEntity.setMydate(LocalDate.of(req.getYear(), req.getMonth(), req.getDay()));
-		actionEntity.setMethod(req.getMethod());
+		ActionDTO actionDTO = new ActionDTO();
+		actionDTO.setEntity(req.getEntity());
+		actionDTO.setAccount(req.getAccount());
+		actionDTO.setAmount(amount);
+		actionDTO.setMydate(LocalDate.of(req.getYear(), req.getMonth(), req.getDay()));
+		actionDTO.setMethod(req.getMethod());
 		if(!req.getReference().isEmpty()) {
-			actionEntity.setReference(req.getReference());
+			actionDTO.setReference(req.getReference());
 		}
 		if(req.getCategory() != null) {
-			actionEntity.setCategory(req.getCategory());
+			actionDTO.setCategory(req.getCategory());
 		}
-		actionRepository.save(actionEntity);
+		actionRepository.save(actionDTO);
 		resp.setCode(0);
 		resp.setMessage("Successfully added");
 		return resp;
@@ -104,15 +113,15 @@ public class TransactionService {
 		actionRepository.deleteById(id);
 	}
 
-	public ActionEntity findOne(final Integer id) {
+	public ActionDTO findOne(final Integer id) {
 		return actionRepository.findById(id).orElse(null);
 	}
 
-	public void updateTransaction(final ActionEntity actionEntity) {
-		if(actionEntity.getReference().isBlank()) {
-			actionEntity.setReference(null);
+	public void updateTransaction(final ActionDTO actionDTO) {
+		if(actionDTO.getReference().isBlank()) {
+			actionDTO.setReference(null);
 		}
-		actionRepository.save(actionEntity);
+		actionRepository.save(actionDTO);
 	}
 
 	public void newTransaction(final NewTransaction newTransaction) {
@@ -185,15 +194,21 @@ public class TransactionService {
 	public void updateIncludes(final IncludesModifyRequest req) {
 		log.info("updateIncludes");
 
-		actionRepository.setVisibleTrue(req.getAdd());
-		actionRepository.removeVisibleTrue(req.getRemove());
+		if(req.getAdd() != null && !req.getAdd().isEmpty()) {
+			log.info("Adding {}", req.getAdd());
+			jdbcClient.sql(SET_VISIBLE_TRUE).param("ids", req.getAdd()).update();
+		}
+		if(req.getRemove() != null && !req.getRemove().isEmpty()) {
+			log.info("Removing {}", req.getRemove());
+			jdbcClient.sql(REMOVE_VISIBLE_TRUE).param("ids", req.getRemove()).update();
+		}
 	}
 
 	public void reconcile(final ReconcileRequest req) {
 		log.info("reconcile");
 
 		if (!req.getEntries().isEmpty()) {
-			actionRepository.reconcile(req.getEntries());
+			jdbcClient.sql(RECONCILE).param("ids", req.getEntries()).update();
 		}
 	}
 }
