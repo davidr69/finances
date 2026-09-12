@@ -1,16 +1,15 @@
 package com.lavacro.finances.api.v1;
 
+import com.lavacro.finances.dto.AccountDTO;
 import com.lavacro.finances.dto.CategoryDTO;
 import com.lavacro.finances.dto.EntityDTO;
-import com.lavacro.finances.entities.AccountEntity;
 
 import com.lavacro.finances.dto.TransactionTypeDTO;
-import com.lavacro.finances.repositories.jdbc.CategoryRepository;
 import com.lavacro.finances.services.AccountsService;
+import com.lavacro.finances.services.CategoryService;
 import com.lavacro.finances.services.EntityService;
 import com.lavacro.finances.services.TransactionService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,7 +21,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class DropDownsAPI {
 	private final EntityService entityService;
-	private final CategoryRepository categoryRepository;
+	private final CategoryService categoryService;
 	private final TransactionService transactionService;
 	private final AccountsService accountsService;
 
@@ -37,12 +36,12 @@ public class DropDownsAPI {
 	}
 
 	@GetMapping(value = "/accounts")
-	public List<AccountEntity> getAccounts() {
+	public List<AccountDTO> getAccounts() {
 		return accountsService.findAllOrderByDescriptionAsc();
 	}
 
 	@GetMapping(value = "/categories")
 	public List<CategoryDTO> getCategories() {
-		return categoryRepository.findAll(Sort.by(Sort.Direction.ASC, "description"));
+		return categoryService.findAllOrderByDescriptionAsc();
 	}
 }

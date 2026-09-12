@@ -2,7 +2,10 @@ package com.lavacro.finances.dto;
 
 import org.springframework.data.annotation.Id;
 
-public record CategoryDTO(
+public record AccountDTO(
 	@Id Integer id,
-	String description
-) {}
+	String account,
+	String description,
+	String action
+) {
+}
