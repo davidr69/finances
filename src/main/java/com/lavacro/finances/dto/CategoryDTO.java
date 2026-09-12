@@ -1,14 +1,12 @@
-package com.lavacro.finances.entities;
+package com.lavacro.finances.dto;
 
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
 
-
-
 @Table(name = "categories")
-public record CategoryEntity(
+public record CategoryDTO(
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	Integer id,

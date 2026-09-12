@@ -1,7 +1,7 @@
 package com.lavacro.finances.services;
 
 import com.lavacro.finances.dto.BalanceDTO;
-import com.lavacro.finances.dto.EntityDTO;
+import com.lavacro.finances.dto.EntityAnnualDTO;
 import com.lavacro.finances.dto.EntityTotalsDTO;
 import com.lavacro.finances.dto.EntitySummaryDTO;
 import com.lavacro.finances.model.reports.BalanceSheet;
@@ -97,7 +97,7 @@ public class ReportsService {
 	 */
 	public List<EntityTotalsDTO> byEntity(final Integer account, final Integer year) {
 		log.info("byEntity: {}, {}", account, year);
-		List<EntityDTO> tuples = new ArrayList<>();
+		List<EntityAnnualDTO> tuples = new ArrayList<>();
 		List<EntityTotalsDTO> totals = new ArrayList<>();
 
 		// make these arrays as a hack to get around being unable to update them within the lambda
@@ -105,7 +105,7 @@ public class ReportsService {
 		BigDecimal[] oldTotal = {new BigDecimal(0)};
 
 		jdbcClient.sql(ENTITY_BY_YEAR).params(year, account).query(row -> {
-			EntityDTO tuple = new EntityDTO(
+			EntityAnnualDTO tuple = new EntityAnnualDTO(
 					row.getBigDecimal("amount"),
 					row.getDate("mydate").toLocalDate(),
 					row.getString("description"),

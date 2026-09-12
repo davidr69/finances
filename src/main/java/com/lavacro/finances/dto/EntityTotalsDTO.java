@@ -6,6 +6,6 @@ import java.util.List;
 public record EntityTotalsDTO(
 	String entityName,
 	BigDecimal total,
-	List<EntityDTO> entities
+	List<EntityAnnualDTO> entities
 ) {
 }

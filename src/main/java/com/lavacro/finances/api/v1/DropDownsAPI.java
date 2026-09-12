@@ -1,10 +1,10 @@
 package com.lavacro.finances.api.v1;
 
-import com.lavacro.finances.entities.EntityEntity;
+import com.lavacro.finances.dto.CategoryDTO;
+import com.lavacro.finances.dto.EntityDTO;
 import com.lavacro.finances.entities.AccountEntity;
-import com.lavacro.finances.entities.CategoryEntity;
 
-import com.lavacro.finances.entities.TransactionTypeEntity;
+import com.lavacro.finances.dto.TransactionTypeDTO;
 import com.lavacro.finances.repositories.jdbc.CategoryRepository;
 import com.lavacro.finances.services.AccountsService;
 import com.lavacro.finances.services.EntityService;
@@ -27,12 +27,12 @@ public class DropDownsAPI {
 	private final AccountsService accountsService;
 
 	@GetMapping(value = "/merchants")
-	public List<EntityEntity> getMerchants() {
+	public List<EntityDTO> getMerchants() {
 		return entityService.getAllEntities();
 	}
 
 	@GetMapping(value = "/transaction_types")
-	public List<TransactionTypeEntity> getTransactionTypes() {
+	public List<TransactionTypeDTO> getTransactionTypes() {
 		return transactionService.findAllOrderByDescriptionAsc();
 	}
 
@@ -42,7 +42,7 @@ public class DropDownsAPI {
 	}
 
 	@GetMapping(value = "/categories")
-	public List<CategoryEntity> getCategories() {
+	public List<CategoryDTO> getCategories() {
 		return categoryRepository.findAll(Sort.by(Sort.Direction.ASC, "description"));
 	}
 }

@@ -3,10 +3,10 @@ package com.lavacro.finances.services;
 import com.lavacro.finances.repositories.jpa.ActionRepository;
 import com.lavacro.finances.dto.TransactionDTO;
 import com.lavacro.finances.entities.ActionEntity;
-import com.lavacro.finances.entities.TransactionTypeEntity;
+import com.lavacro.finances.dto.TransactionTypeDTO;
 import com.lavacro.finances.model.*;
 
-import com.lavacro.finances.repositories.jpa.TransactionTypeRepository;
+import com.lavacro.finances.repositories.jdbc.TransactionTypeRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.intellij.lang.annotations.Language;
 import org.springframework.data.domain.Sort;
@@ -65,7 +65,7 @@ public class TransactionService {
 		nf.setMinimumFractionDigits(2);
 	}
 
-	public List<TransactionTypeEntity> findAllOrderByDescriptionAsc() {
+	public List<TransactionTypeDTO> findAllOrderByDescriptionAsc() {
 		return transactionTypeRepository.findAll(Sort.by(Sort.Direction.ASC, "description"));
 	}
 
@@ -116,9 +116,9 @@ public class TransactionService {
 	}
 
 	public void newTransaction(final NewTransaction newTransaction) {
-		TransactionTypeEntity ttype =  transactionTypeRepository.findById(newTransaction.getMethod()).orElse(null);
+		TransactionTypeDTO ttype =  transactionTypeRepository.findById(newTransaction.getMethod()).orElse(null);
 		if(ttype != null) {
-			ActionResponse resp = persistTransaction(newTransaction, ttype.getCreditDebit());
+			ActionResponse resp = persistTransaction(newTransaction, ttype.creditDebit());
 			if(resp.getCode() != 0) {
 				log.error("Could not add transaction");
 			}
