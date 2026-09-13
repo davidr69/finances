@@ -1,12 +1,12 @@
-package com.lavacro.finances.services;
+package com.lavacro.finances.domain.action;
 
-import com.lavacro.finances.repositories.jdbc.ActionRepository;
 import com.lavacro.finances.dto.TransactionDTO;
 import com.lavacro.finances.dto.ActionDTO;
 import com.lavacro.finances.dto.TransactionTypeDTO;
 import com.lavacro.finances.model.*;
 
 import com.lavacro.finances.repositories.jdbc.TransactionTypeRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.intellij.lang.annotations.Language;
 import org.springframework.data.domain.Sort;
@@ -21,13 +21,17 @@ import java.util.Optional;
 
 @Service
 @Slf4j
-public class TransactionService {
+@RequiredArgsConstructor
+public class ActionService {
 	private final TransactionTypeRepository transactionTypeRepository;
 	private final ActionRepository actionRepository;
-
 	private final JdbcClient jdbcClient;
 
 	private static final NumberFormat nf = NumberFormat.getInstance();
+
+	static {
+		nf.setMinimumFractionDigits(2);
+	}
 
 	@Language("SQL")
 	private static final String SUM_UP_TO_DATE = """
@@ -63,22 +67,11 @@ public class TransactionService {
 	@Language("SQL")
 	private static final String RECONCILE = "UPDATE action SET reconciled = 't', visible = 't' WHERE sequence IN (:ids)";
 
-	TransactionService(
-			TransactionTypeRepository transactionTypeRepository,
-			ActionRepository actionRepository,
-			JdbcClient jdbcClient
-	) {
-		this.transactionTypeRepository = transactionTypeRepository;
-		this.actionRepository = actionRepository;
-		this.jdbcClient = jdbcClient;
-		nf.setMinimumFractionDigits(2);
-	}
-
-	public List<TransactionTypeDTO> findAllOrderByDescriptionAsc() {
+	List<TransactionTypeDTO> findAllOrderByDescriptionAsc() {
 		return transactionTypeRepository.findAll(Sort.by(Sort.Direction.ASC, "description"));
 	}
 
-	public ActionResponse persistTransaction(NewTransaction req, String plusOrMinus) {
+	ActionResponse persistTransaction(NewTransaction req, String plusOrMinus) {
 		ActionResponse resp = new ActionResponse();
 		float howMuch;
 		try {
@@ -109,22 +102,22 @@ public class TransactionService {
 		return resp;
 	}
 
-	public void deleteTransaction(final Integer id) {
+	void deleteTransaction(final Integer id) {
 		actionRepository.deleteById(id);
 	}
 
-	public ActionDTO findOne(final Integer id) {
+	ActionDTO findOne(final Integer id) {
 		return actionRepository.findById(id).orElse(null);
 	}
 
-	public void updateTransaction(final ActionDTO actionDTO) {
+	void updateTransaction(final ActionDTO actionDTO) {
 		if(actionDTO.getReference().isBlank()) {
 			actionDTO.setReference(null);
 		}
 		actionRepository.save(actionDTO);
 	}
 
-	public void newTransaction(final NewTransaction newTransaction) {
+	void newTransaction(final NewTransaction newTransaction) {
 		TransactionTypeDTO ttype =  transactionTypeRepository.findById(newTransaction.getMethod()).orElse(null);
 		if(ttype != null) {
 			ActionResponse resp = persistTransaction(newTransaction, ttype.creditDebit());
@@ -154,7 +147,7 @@ public class TransactionService {
 		return getEntries(balance, account, startDate, endDate);
 	}
 
-	public List<TransactionDTO> getEntries(final BigDecimal tempBal, final Integer account, final LocalDate startDate, final LocalDate endDate) {
+	List<TransactionDTO> getEntries(final BigDecimal tempBal, final Integer account, final LocalDate startDate, final LocalDate endDate) {
 		log.info("getEntries: tempBal = {}, account = {}, dates: {} - {}", tempBal, account, startDate, endDate);
 
 		// Using an array or an AtomicReference if you were in a true stream,
@@ -191,7 +184,7 @@ public class TransactionService {
 		return bal.orElse(BigDecimal.ZERO);
 	}
 
-	public void updateIncludes(final IncludesModifyRequest req) {
+	void updateIncludes(final IncludesModifyRequest req) {
 		log.info("updateIncludes");
 
 		if(req.getAdd() != null && !req.getAdd().isEmpty()) {
@@ -204,7 +197,7 @@ public class TransactionService {
 		}
 	}
 
-	public void reconcile(final ReconcileRequest req) {
+	void reconcile(final ReconcileRequest req) {
 		log.info("reconcile");
 
 		if (!req.getEntries().isEmpty()) {

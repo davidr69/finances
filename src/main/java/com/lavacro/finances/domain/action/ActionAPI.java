@@ -1,10 +1,10 @@
-package com.lavacro.finances.api.v1;
+package com.lavacro.finances.domain.action;
 
 import com.lavacro.finances.domain.TransactionList;
 import com.lavacro.finances.dto.ActionDTO;
 import com.lavacro.finances.model.*;
 
-import com.lavacro.finances.services.TransactionService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.web.bind.annotation.*;
@@ -17,18 +17,15 @@ import java.time.LocalDate;
 @RestController
 @RequestMapping(value = "/api/v1/transaction")
 @Slf4j
-public class TransactionAPI {
+@RequiredArgsConstructor
+public class ActionAPI {
 	private static final String SUCCESS = "success";
 
-	private final TransactionService transactionService;
-
-	public TransactionAPI(TransactionService transactionService) {
-		this.transactionService = transactionService;
-	}
+	private final ActionService actionService;
 
 	@PostMapping
 	public ActionResponse addTransaction(@Valid @RequestBody NewTransaction newTransaction) {
-		transactionService.newTransaction(newTransaction);
+		actionService.newTransaction(newTransaction);
 		ActionResponse resp = new ActionResponse();
 		resp.setCode(0);
 		resp.setMessage(SUCCESS);
@@ -38,7 +35,7 @@ public class TransactionAPI {
 	@PutMapping(value = "/include")
 	public ActionResponse updateIncludes(@RequestBody final IncludesModifyRequest req) {
 		ActionResponse resp = new ActionResponse();
-		transactionService.updateIncludes(req);
+		actionService.updateIncludes(req);
 		resp.setCode(0);
 		resp.setMessage(SUCCESS);
 		return resp;
@@ -47,7 +44,7 @@ public class TransactionAPI {
 	@PutMapping(value = "/reconcile")
 	public ActionResponse reconcile(@RequestBody final ReconcileRequest req) {
 		ActionResponse resp = new ActionResponse();
-		transactionService.reconcile(req);
+		actionService.reconcile(req);
 		resp.setCode(0);
 		resp.setMessage(SUCCESS);
 		return resp;
@@ -56,12 +53,12 @@ public class TransactionAPI {
 	@GetMapping(value = "/{sequence}")
 	public ActionDTO getOneTransaction(@PathVariable("sequence") final Integer sequence) {
 		log.info("getOneTransaction: {}", sequence);
-		return transactionService.findOne(sequence);
+		return actionService.findOne(sequence);
 	}
 
 	@PutMapping
 	public ActionResponse updateTransaction(@RequestBody final ActionDTO req) {
-		transactionService.updateTransaction(req);
+		actionService.updateTransaction(req);
 		ActionResponse resp = new ActionResponse();
 		resp.setCode(0);
 		resp.setMessage(SUCCESS);
@@ -70,7 +67,7 @@ public class TransactionAPI {
 
 	@DeleteMapping(value = "/{sequence}")
 	public ActionResponse deleteTransaction(@PathVariable("sequence") final Integer sequence) {
-		transactionService.deleteTransaction(sequence);
+		actionService.deleteTransaction(sequence);
 		ActionResponse resp = new ActionResponse();
 		resp.setCode(0);
 		resp.setMessage(SUCCESS);
@@ -92,7 +89,7 @@ public class TransactionAPI {
 
 			log.info("First date: {}", firstDate);
 			log.info("Last date: {}", lastDate);
-			transactionList.setTransactions(transactionService.getEntries(new BigDecimal(0), account, firstDate, lastDate));
+			transactionList.setTransactions(actionService.getEntries(new BigDecimal(0), account, firstDate, lastDate));
 			transactionList.setCode(0);
 			transactionList.setMessage(SUCCESS);
 		} catch(Exception e) {

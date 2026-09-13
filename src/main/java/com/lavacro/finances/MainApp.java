@@ -8,7 +8,7 @@ import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication
-@EnableJdbcRepositories(basePackages = "com.lavacro.finances.repositories.jdbc")
+@EnableJdbcRepositories(basePackages = {"com.lavacro.finances.repositories.jdbc", "com.lavacro.finances.domain"})
 @EnableJpaRepositories(basePackages = "com.lavacro.finances.repositories.jpa")
 public class MainApp {
 	public static void main(String[] args) {

@@ -1,6 +1,6 @@
 package com.lavacro.finances.controllers;
 
-import com.lavacro.finances.services.TransactionService;
+import com.lavacro.finances.domain.action.ActionService;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.stereotype.Controller;
@@ -13,10 +13,10 @@ import java.util.Calendar;
 @Controller
 @Slf4j
 public class Cashbook {
-	private final TransactionService transactionService;
+	private final ActionService actionService;
 
-	public Cashbook(TransactionService transactionService) {
-		this.transactionService = transactionService;
+	public Cashbook(ActionService actionService) {
+		this.actionService = actionService;
 	}
 
 	@GetMapping(value = "/cashbook")
@@ -36,8 +36,8 @@ public class Cashbook {
 				"July", "August", "September", "October", "November", "December"
 		};
 
-		model.addAttribute("transactions", transactionService.showItems(account, year, month));
-		model.addAttribute("total", transactionService.getBalance(account));
+		model.addAttribute("transactions", actionService.showItems(account, year, month));
+		model.addAttribute("total", actionService.getBalance(account));
 		model.addAttribute("month", month);
 		model.addAttribute("months", months);
 		return "cashbook";
