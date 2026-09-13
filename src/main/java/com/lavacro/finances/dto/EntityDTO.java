@@ -15,26 +15,28 @@ import java.time.LocalDateTime;
 public class EntityDTO {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	Integer id;
+	private Integer id;
 
 	@Column(value = "acct")
-	String account;
+	private String account;
 
-	String description;
+	private String description;
 
-	String address;
+	private String address;
 
 	@Column(value = "bank_alias")
-	String aliases;
+	private String aliases;
 
-	String embedding;
+	private String embedding;
 
 	@Column(value = "rag_updated")
-	LocalDateTime ragUpdated;
+	private LocalDateTime ragUpdated;
 
 	@Column(value = "vector_sync")
-	LocalDateTime vectorSynced;
+	private LocalDateTime vectorSynced;
 
 	@Transient
-	private boolean validated;
+	public boolean isValidated() {
+		return embedding != null;
+	}
 }

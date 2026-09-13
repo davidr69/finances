@@ -43,7 +43,7 @@
 	</thead>
 	<tbody>
 		<tr th:each="entity:${entityList}">
-			<td th:switch="${entity.validated}">
+			<td th:switch="${entity.isValidated}">
 				<span th:case="true" th:text="${entity.description}" th:remove="tag"></span>
 				<span
 					style="color: #a00000"

@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.time.LocalDate;
+import java.time.Month;
 import java.util.List;
 import java.util.Optional;
 
@@ -134,7 +135,7 @@ public class ActionService {
 		LocalDate startDate;
 		LocalDate endDate;
 		if(month == 0) { // get everything for the year
-			startDate = LocalDate.of(year, 1, 1);
+			startDate = LocalDate.of(year, Month.JANUARY, 1);
 			endDate = startDate.plusYears(1).minusDays(1);
 		} else {
 			startDate = LocalDate.of(year, month, 1);
