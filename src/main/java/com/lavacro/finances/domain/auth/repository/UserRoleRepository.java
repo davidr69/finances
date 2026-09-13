@@ -1,7 +1,7 @@
-package com.lavacro.finances.repositories.jpa;
+package com.lavacro.finances.domain.auth.repository;
 
-import com.lavacro.finances.entities.UserRoleEntity;
-import com.lavacro.finances.entities.UserRoleEntity.UserRoleId;
+import com.lavacro.finances.domain.auth.entity.UserRoleEntity;
+import com.lavacro.finances.domain.auth.entity.UserRoleEntity.UserRoleId;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

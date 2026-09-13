@@ -1,8 +1,8 @@
-package com.lavacro.finances.api.v1;
+package com.lavacro.finances.domain.auth.service;
 
-import com.lavacro.finances.entities.RbacUsersEntity;
+import com.lavacro.finances.domain.auth.repository.RbacUserRepository;
+import com.lavacro.finances.domain.auth.entity.RbacUsersEntity;
 import com.lavacro.finances.model.ActionResponse;
-import com.lavacro.finances.repositories.jpa.RbacUserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;

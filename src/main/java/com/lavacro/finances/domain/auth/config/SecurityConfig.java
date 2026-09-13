@@ -1,4 +1,4 @@
-package com.lavacro.finances.config;
+package com.lavacro.finances.domain.auth.config;
 
 import com.lavacro.finances.security.CustomUserDetailsService;
 import jakarta.servlet.http.HttpServletResponse;

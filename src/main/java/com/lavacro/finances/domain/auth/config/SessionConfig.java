@@ -1,4 +1,4 @@
-package com.lavacro.finances.config;
+package com.lavacro.finances.domain.auth.config;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

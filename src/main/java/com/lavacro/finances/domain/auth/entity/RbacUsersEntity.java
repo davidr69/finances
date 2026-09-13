@@ -1,4 +1,4 @@
-package com.lavacro.finances.entities;
+package com.lavacro.finances.domain.auth.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;

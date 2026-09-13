@@ -51,8 +51,9 @@ spring:
     virtual:
       enabled: true
   modulith:
-#    republish-outstanding-events-on-restart: true
     events:
+      republish-outstanding-events-on-restart: true
       jdbc:
+        schema: modulith_events
         schema-initialization:
-          enabled: true
+          enabled: false

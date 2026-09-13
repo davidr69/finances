@@ -1,10 +1,9 @@
-package com.lavacro.finances.api.v1;
+package com.lavacro.finances.domain.auth;
 
-import com.lavacro.finances.entities.PermissionEntity;
-import com.lavacro.finances.entities.RoleEntity;
-import com.lavacro.finances.entities.UserRoleEntity;
+import com.lavacro.finances.domain.auth.entity.PermissionEntity;
+import com.lavacro.finances.domain.auth.entity.RoleEntity;
+import com.lavacro.finances.domain.auth.entity.UserRoleEntity;
 import com.lavacro.finances.model.ActionResponse;
-import com.lavacro.finances.services.AuthorizationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;

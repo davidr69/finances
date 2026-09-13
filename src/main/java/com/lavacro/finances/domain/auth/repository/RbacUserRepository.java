@@ -1,6 +1,6 @@
-package com.lavacro.finances.repositories.jpa;
+package com.lavacro.finances.domain.auth.repository;
 
-import com.lavacro.finances.entities.RbacUsersEntity;
+import com.lavacro.finances.domain.auth.entity.RbacUsersEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

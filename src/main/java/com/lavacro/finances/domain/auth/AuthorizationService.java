@@ -1,13 +1,13 @@
-package com.lavacro.finances.services;
+package com.lavacro.finances.domain.auth;
 
-import com.lavacro.finances.entities.PermissionEntity;
-import com.lavacro.finances.entities.RoleEntity;
-import com.lavacro.finances.entities.RbacUsersEntity;
-import com.lavacro.finances.entities.UserRoleEntity;
-import com.lavacro.finances.repositories.jpa.PermissionRepository;
-import com.lavacro.finances.repositories.jpa.RoleRepository;
-import com.lavacro.finances.repositories.jpa.RbacUserRepository;
-import com.lavacro.finances.repositories.jpa.UserRoleRepository;
+import com.lavacro.finances.domain.auth.repository.PermissionRepository;
+import com.lavacro.finances.domain.auth.repository.RbacUserRepository;
+import com.lavacro.finances.domain.auth.repository.RoleRepository;
+import com.lavacro.finances.domain.auth.repository.UserRoleRepository;
+import com.lavacro.finances.domain.auth.entity.PermissionEntity;
+import com.lavacro.finances.domain.auth.entity.RoleEntity;
+import com.lavacro.finances.domain.auth.entity.RbacUsersEntity;
+import com.lavacro.finances.domain.auth.entity.UserRoleEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -26,20 +26,20 @@ public class AuthorizationService {
     private final PermissionRepository permissionRepository;
     private final UserRoleRepository userRoleRepository;
 
-    public List<RoleEntity> getAllRoles() {
+    List<RoleEntity> getAllRoles() {
         return roleRepository.findAll();
     }
 
-    public List<PermissionEntity> getAllPermissions() {
+    List<PermissionEntity> getAllPermissions() {
         return permissionRepository.findAll();
     }
 
-    public List<UserRoleEntity> getUserRoles(Integer userId) {
+	List<UserRoleEntity> getUserRoles(Integer userId) {
         return userRoleRepository.findByUser_Id(userId);
     }
 
     @Transactional
-    public void assignRoleToUser(Integer userId, String roleName) {
+    void assignRoleToUser(Integer userId, String roleName) {
         RoleEntity role = roleRepository.findByName(roleName)
                 .orElseThrow(() -> new IllegalArgumentException("Role not found: " + roleName));
 
@@ -61,7 +61,7 @@ public class AuthorizationService {
     }
 
     @Transactional
-    public void removeRoleFromUser(Integer userId, String roleName) {
+    void removeRoleFromUser(Integer userId, String roleName) {
         RoleEntity role = roleRepository.findByName(roleName)
                 .orElseThrow(() -> new IllegalArgumentException("Role not found: " + roleName));
 
@@ -73,12 +73,12 @@ public class AuthorizationService {
     }
 
     @Transactional
-    public void removeAllRolesFromUser(Integer userId) {
+    void removeAllRolesFromUser(Integer userId) {
         userRoleRepository.deleteByUser_Id(userId);
         log.info("Removed all roles from user {}", userId);
     }
 
-    public Set<PermissionEntity> getUserPermissions(Integer userId) {
+    Set<PermissionEntity> getUserPermissions(Integer userId) {
         RbacUsersEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found: " + userId));
 

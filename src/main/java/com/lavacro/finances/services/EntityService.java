@@ -96,7 +96,7 @@ public class EntityService {
 	public boolean updateRag(Integer id, String rag) {
 		String cleanRag = rag.trim();
 		try {
-			jdbcClient.sql(UPDATE_RAG_SQL).params(cleanRag.length() == 0 ? null : cleanRag, id).update();
+			jdbcClient.sql(UPDATE_RAG_SQL).params(cleanRag.isEmpty() ? null : cleanRag, id).update();
 			return true;
 		} catch(Exception e) {
 			log.error("Error occurred while updating entity: {}", e.getMessage());

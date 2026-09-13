@@ -1,7 +1,8 @@
 package com.lavacro.finances.api.v1;
 
-import com.lavacro.finances.entities.RbacUsersEntity;
-import com.lavacro.finances.repositories.jpa.RbacUserRepository;
+import com.lavacro.finances.domain.auth.service.Authenticate;
+import com.lavacro.finances.domain.auth.entity.RbacUsersEntity;
+import com.lavacro.finances.domain.auth.repository.RbacUserRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
