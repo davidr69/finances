@@ -1,6 +1,6 @@
 package com.lavacro.finances.controllers;
 
-import com.lavacro.finances.services.AccountsService;
+import com.lavacro.finances.domain.accounts.AccountsService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;

@@ -1,10 +1,10 @@
 package com.lavacro.finances.security;
 
-import com.lavacro.finances.entities.PermissionEntity;
-import com.lavacro.finances.entities.RoleEntity;
-import com.lavacro.finances.entities.RbacUsersEntity;
-import com.lavacro.finances.entities.UserRoleEntity;
-import com.lavacro.finances.repositories.RbacUserRepository;
+import com.lavacro.finances.domain.auth.permission.PermissionEntity;
+import com.lavacro.finances.domain.auth.entity.RoleEntity;
+import com.lavacro.finances.domain.auth.entity.RbacUsersEntity;
+import com.lavacro.finances.domain.auth.entity.UserRoleEntity;
+import com.lavacro.finances.domain.auth.repository.RbacUserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

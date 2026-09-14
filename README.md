@@ -100,6 +100,8 @@ There is a require for atomicity of this operation: we must save the data and th
 
 ![reconcile](images/reconcile.jpg)
 
+A Kubernetes cron job runs periodically to check for saved transactions that were unable to have their vectors calculated. The job iterates over them and publishes messages so they get calculated.
+
 ---
 ## Database requirements
 
