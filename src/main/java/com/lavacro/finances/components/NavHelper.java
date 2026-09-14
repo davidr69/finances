@@ -1,7 +1,7 @@
 package com.lavacro.finances.components;
 
-import com.lavacro.finances.dto.AccountDTO;
-import com.lavacro.finances.services.AccountsService;
+import com.lavacro.finances.domain.accounts.AccountDTO;
+import com.lavacro.finances.domain.accounts.AccountsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

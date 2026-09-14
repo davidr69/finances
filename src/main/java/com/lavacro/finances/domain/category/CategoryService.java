@@ -1,6 +1,5 @@
-package com.lavacro.finances.services;
+package com.lavacro.finances.domain.category;
 
-import com.lavacro.finances.dto.CategoryDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Service;

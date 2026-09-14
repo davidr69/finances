@@ -1,4 +1,4 @@
-package com.lavacro.finances.dto;
+package com.lavacro.finances.domain.accounts;
 
 import org.springframework.data.annotation.Id;
 

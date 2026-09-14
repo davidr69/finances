@@ -1,6 +1,5 @@
-package com.lavacro.finances.domain.auth.repository;
+package com.lavacro.finances.domain.auth.permission;
 
-import com.lavacro.finances.domain.auth.entity.PermissionEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

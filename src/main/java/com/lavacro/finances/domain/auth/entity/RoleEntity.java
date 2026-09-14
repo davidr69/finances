@@ -1,5 +1,6 @@
 package com.lavacro.finances.domain.auth.entity;
 
+import com.lavacro.finances.domain.auth.permission.PermissionEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

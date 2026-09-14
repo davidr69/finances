@@ -1,6 +1,6 @@
 package com.lavacro.finances.security;
 
-import com.lavacro.finances.domain.auth.entity.PermissionEntity;
+import com.lavacro.finances.domain.auth.permission.PermissionEntity;
 import com.lavacro.finances.domain.auth.entity.RoleEntity;
 import com.lavacro.finances.domain.auth.entity.RbacUsersEntity;
 import com.lavacro.finances.domain.auth.entity.UserRoleEntity;

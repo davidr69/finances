@@ -1,6 +1,5 @@
-package com.lavacro.finances.services;
+package com.lavacro.finances.domain.accounts;
 
-import com.lavacro.finances.dto.AccountDTO;
 import lombok.RequiredArgsConstructor;
 import org.intellij.lang.annotations.Language;
 import org.springframework.jdbc.core.simple.JdbcClient;
