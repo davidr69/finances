@@ -119,8 +119,10 @@ Some table and field name refactoring has already been done. Future releases wil
 
 ### RBAC Schema
 
-![rbac](images/rbac_schema.png)
+There are 3 tables of interest: users, roles, and permissions.
+Mapping tables establish the relationships between them:
 
+![rbac](images/rbac_schema.png)
 
 ---
 #### Build instructions
@@ -128,7 +130,7 @@ Some table and field name refactoring has already been done. Future releases wil
 The standard gradle commands are used to build the app:
 
 ```shell
-gradle clean build
+./gradlew clean build
 ```
 
 You can also use the `gradlew` wrapper.

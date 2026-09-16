@@ -1,6 +1,6 @@
 package com.lavacro.finances.domain.auth.config;
 
-import com.lavacro.finances.security.CustomUserDetailsService;
+import com.lavacro.finances.domain.auth.service.CustomUserDetailsService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
