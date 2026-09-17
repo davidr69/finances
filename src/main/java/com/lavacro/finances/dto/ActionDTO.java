@@ -3,6 +3,7 @@ package com.lavacro.finances.dto;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
+import org.springframework.data.relational.core.mapping.Sequence;
 import org.springframework.data.relational.core.mapping.Table;
 
 import java.math.BigDecimal;
@@ -20,6 +21,7 @@ public class ActionDTO {
 	}
 
 	@Id
+	@Sequence(value = "action_seq")
 	private Integer sequence;
 
 	private Integer entity;
