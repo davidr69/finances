@@ -1,12 +1,13 @@
 package com.lavacro.finances.domain.auth.service;
 
-import com.lavacro.finances.domain.auth.repository.RbacUserRepository;
-import com.lavacro.finances.domain.auth.entity.RbacUsersEntity;
+import com.lavacro.finances.domain.auth.permission.PermissionService;
+import com.lavacro.finances.domain.auth.permission.UserDTO;
 import com.lavacro.finances.model.ActionResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -25,7 +26,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class Authenticate {
 	private final AuthenticationManager authenticationManager;
-	private final RbacUserRepository userRepository;
+	private final PermissionService permissionService;
+	private final JdbcClient jdbcClient;
 	private final SecurityContextRepository securityContextRepository;
 
 	@PostMapping(value = "/authenticate")
@@ -38,16 +40,15 @@ public class Authenticate {
 		log.info("user: {}", user);
 		ActionResponse response = new ActionResponse();
 
-		RbacUsersEntity userEntity = userRepository.findByName(user)
-				.orElse(null);
+		UserDTO userDTO = permissionService.getUserPermissions(user);
 
-		if (userEntity == null) {
+		if (userDTO == null) {
 			response.setCode(1);
 			response.setMessage("Authentication error");
 			return response;
 		}
 
-		if (userEntity.getLocked() != null && userEntity.getLocked()) {
+		if (userDTO.locked() != null && userDTO.locked()) {
 			response.setCode(1);
 			response.setMessage("User is locked");
 			log.error("Attempted login for {} while user is locked", user);
@@ -61,29 +62,33 @@ public class Authenticate {
 			SecurityContextHolder.getContext().setAuthentication(authentication);
 			securityContextRepository.saveContext(SecurityContextHolder.getContext(), req, resp);
 
-			userEntity.setLastLogin(LocalDateTime.now());
-			userEntity.setLoginAttempts(null);
-			userRepository.save(userEntity);
-
+			jdbcClient.sql("UPDATE rbac.users SET last_login = ?, login_attempts = NULL WHERE id = ?")
+					.param(LocalDateTime.now())
+					.param(userDTO.id())
+					.update();
 			response.setCode(0);
 			response.setMessage("success");
 			log.info("Authenticated successfully for user: {}", user);
 		} catch (AuthenticationException e) {
 			log.error("Authentication failed for {}", user);
-			int attempts = Optional.ofNullable(userEntity.getLoginAttempts()).orElse(0);
+			int attempts = Optional.ofNullable(userDTO.loginAttempts()).orElse(0);
 			attempts++;
-			userEntity.setLoginAttempts(attempts);
+			jdbcClient.sql("UPDATE rbac.users SET login_attempts = ? WHERE id = ?")
+					.param(attempts)
+					.param(userDTO.id())
+					.update();
 			response.setCode(1);
 
 			if (attempts >= 3) {
-				userEntity.setLocked(true);
-				userEntity.setLockedIp(req.getRemoteAddr());
+				jdbcClient.sql("UPDATE rbac.users SET locked = true, locked_ip = ? WHERE id = ?")
+						.param(req.getRemoteAddr())
+						.param(userDTO.id())
+						.update();
 				response.setMessage("Too many failed attempts");
 				log.error("Too many failed attempts for {}", user);
 			} else {
 				response.setMessage("Authentication failed");
 			}
-			userRepository.save(userEntity);
 		}
 
 		return response;

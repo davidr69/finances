@@ -1,8 +1,5 @@
 package com.lavacro.finances.dto;
 
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.SequenceGenerator;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
@@ -23,8 +20,6 @@ public class ActionDTO {
 	}
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequence_generator")
-	@SequenceGenerator(name = "sequence_generator", sequenceName = "action_seq", allocationSize = 1)
 	private Integer sequence;
 
 	private Integer entity;

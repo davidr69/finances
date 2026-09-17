@@ -1,7 +1,5 @@
 package com.lavacro.finances.domain.auth.permission;
 
-import com.lavacro.finances.domain.auth.entity.UserRoleEntity;
-
 import java.time.LocalDateTime;
 import java.util.Set;
 

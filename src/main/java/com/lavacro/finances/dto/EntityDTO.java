@@ -1,7 +1,5 @@
 package com.lavacro.finances.dto;
 
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
@@ -14,7 +12,6 @@ import java.time.LocalDateTime;
 @Data
 public class EntityDTO {
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 
 	@Column(value = "acct")

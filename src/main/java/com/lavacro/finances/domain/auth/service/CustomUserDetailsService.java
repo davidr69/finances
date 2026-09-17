@@ -1,7 +1,6 @@
 package com.lavacro.finances.domain.auth.service;
 
 import com.lavacro.finances.domain.auth.permission.*;
-import com.lavacro.finances.domain.auth.repository.RbacUserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -20,7 +19,6 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
 
-    private final RbacUserRepository userRepository;
 	private final PermissionService permissionService;
 
     @Override

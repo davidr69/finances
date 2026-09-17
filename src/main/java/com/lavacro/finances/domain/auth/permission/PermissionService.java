@@ -30,15 +30,12 @@ public class PermissionService {
 	public UserDTO getUserPermissions(String user) {
 		var rows = jdbcClient.sql(GET_ALL_PERMISSIONS).param(user).query(UserPermissionsDTO.class).list();
 		if (rows.isEmpty()) {
-//			return new UserDTO(null, user, null, null, null, null, null, new HashSet<>());
 			return null;
 		}
 
 		Set<PermissionDTO> permissions = new HashSet<>();
 		Set<RoleDTO> roles = new HashSet<>();
-		boolean first = true;
 
-		UserPermissionsDTO model = null;
 		UserPermissionsDTO lastRow = null;
 
 		String roleName = null;
@@ -46,11 +43,6 @@ public class PermissionService {
 		for (var row : rows) {
 			PermissionDTO permission = new PermissionDTO(row.permissionId(), row.permissionName());
 			permissions.add(permission);
-
-			if(first) {
-				first = false;
-				model = row;
-			}
 
 			if(roleName == null) {
 				roleName = row.roleName();
@@ -65,13 +57,13 @@ public class PermissionService {
 		roles.add(new RoleDTO(lastRow.roleId(), lastRow.roleName(), permissions));
 
 		return new UserDTO(
-			model.userId(),
-			model.userName(),
-			model.password(),
-			model.loginAttempts(),
-			model.lastLogin(),
-			model.locked(),
-			model.lockedIp(),
+			lastRow.userId(),
+			lastRow.userName(),
+			lastRow.password(),
+			lastRow.loginAttempts(),
+			lastRow.lastLogin(),
+			lastRow.locked(),
+			lastRow.lockedIp(),
 			roles
 		);
 	}
