@@ -1,6 +1,6 @@
 package com.lavacro.finances.controllers;
 
-import com.lavacro.finances.entities.EntityEntity;
+import com.lavacro.finances.dto.EntityDTO;
 
 import com.lavacro.finances.services.EntityService;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +22,7 @@ public class Entities {
 
 	@GetMapping(value = "/entities")
 	public String getEntities(Model model) {
-		List<EntityEntity> entities = entityService.getAllEntities();
+		List<EntityDTO> entities = entityService.getAllEntities();
 		model.addAttribute("entityList", entities);
 		return "entities";
 	}

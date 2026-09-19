@@ -18,7 +18,7 @@ export default class Transaction {
 		});
 
 		// [{"id":1,"description":"Automotive"}]
-		fetch('api/v1/select/categories').then(resp => {
+		fetch('api/v1/categories').then(resp => {
 			resp.json().then(data => {
 				const el = document.getElementById('category');
 				el.options.length = 0;

@@ -1,8 +1,6 @@
-package com.lavacro.finances.api.v1;
+package com.lavacro.finances.domain.action;
 
-import com.lavacro.finances.dto.EntityDTO;
-
-import com.lavacro.finances.services.EntityService;
+import com.lavacro.finances.dto.TransactionTypeDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,11 +11,12 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/api/v1/select")
 @RequiredArgsConstructor
-public class DropDownsAPI {
-	private final EntityService entityService;
+public class ActionDropDown {
+	private final ActionService actionService;
 
-	@GetMapping(value = "/merchants")
-	public List<EntityDTO> getMerchants() {
-		return entityService.getAllEntities();
+	@GetMapping(value = "/transaction_types")
+	public List<TransactionTypeDTO> getTransactionTypes() {
+		return actionService.findAllOrderByDescriptionAsc();
 	}
+
 }

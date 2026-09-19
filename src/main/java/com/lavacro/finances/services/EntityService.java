@@ -1,8 +1,8 @@
 package com.lavacro.finances.services;
 
-import com.lavacro.finances.entities.EntityEntity;
+import com.lavacro.finances.dto.EntityDTO;
 import com.lavacro.finances.model.GenericResponse;
-import com.lavacro.finances.repositories.MerchantRepository;
+import com.lavacro.finances.repositories.jdbc.EntityRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.intellij.lang.annotations.Language;
@@ -11,13 +11,12 @@ import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.ArrayList;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class EntityService {
-	private final MerchantRepository merchantRepository;
+	private final EntityRepository entityRepository;
 	private final JdbcClient jdbcClient;
 
 	@Value("${finances.vector-reconcile.grace-seconds:60}")
@@ -55,7 +54,7 @@ public class EntityService {
 	public GenericResponse deleteEntity(Integer id) {
 		GenericResponse resp = new GenericResponse();
 		try {
-			merchantRepository.deleteById(id);
+			entityRepository.deleteById(id);
 			resp.setCode(0);
 			log.info("Entity deleted successfully");
 		} catch (Exception e) {
@@ -72,32 +71,19 @@ public class EntityService {
 			.update();
 	}
 
-	public EntityEntity getEntity(Integer id) {
-		EntityEntity entity = merchantRepository.findById(id).orElse(null);
+	public EntityDTO getEntity(Integer id) {
+		EntityDTO entity = entityRepository.findById(id).orElse(null);
 		if(entity == null) {
 			log.error("Entity not found with id: {}", id);
 			return null;
 		}
-		entity.setValidated(entity.getEmbedding() != null);
 		entity.setEmbedding(null);
 		log.info("Returning: {}", entity);
 		return entity;
 	}
 
-	public List<EntityEntity> getAllEntities() {
-		List<EntityEntity> entities = new ArrayList<>();
-		jdbcClient.sql(GET_ALL_ENTITIES).query(row -> {
-			EntityEntity entity = new EntityEntity();
-			entity.setId(row.getInt("id"));
-			entity.setAccount(row.getString("acct"));
-			entity.setDescription(row.getString("description"));
-			entity.setAddress(row.getString("address"));
-			entity.setAliases(row.getString("bank_alias"));
-			String embedding = row.getString("embedding");
-			entity.setValidated(embedding != null);
-			entities.add(entity);
-		});
-		return entities;
+	public List<EntityDTO> getAllEntities() {
+		return jdbcClient.sql(GET_ALL_ENTITIES).query(EntityDTO.class).list();
 	}
 
 	public List<Integer> findEntitiesNeedingVectorSync() {
@@ -110,7 +96,7 @@ public class EntityService {
 	public boolean updateRag(Integer id, String rag) {
 		String cleanRag = rag.trim();
 		try {
-			jdbcClient.sql(UPDATE_RAG_SQL).params(cleanRag.length() == 0 ? null : cleanRag, id).update();
+			jdbcClient.sql(UPDATE_RAG_SQL).params(cleanRag.isEmpty() ? null : cleanRag, id).update();
 			return true;
 		} catch(Exception e) {
 			log.error("Error occurred while updating entity: {}", e.getMessage());

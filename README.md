@@ -100,6 +100,8 @@ There is a require for atomicity of this operation: we must save the data and th
 
 ![reconcile](images/reconcile.jpg)
 
+A Kubernetes cron job runs periodically to check for saved transactions that were unable to have their vectors calculated. The job iterates over them and publishes messages so they get calculated.
+
 ---
 ## Database requirements
 
@@ -117,8 +119,10 @@ Some table and field name refactoring has already been done. Future releases wil
 
 ### RBAC Schema
 
-![rbac](images/rbac_schema.png)
+There are 3 tables of interest: users, roles, and permissions.
+Mapping tables establish the relationships between them:
 
+![rbac](images/rbac_schema.png)
 
 ---
 #### Build instructions
@@ -126,7 +130,7 @@ Some table and field name refactoring has already been done. Future releases wil
 The standard gradle commands are used to build the app:
 
 ```shell
-gradle clean build
+./gradlew clean build
 ```
 
 You can also use the `gradlew` wrapper.

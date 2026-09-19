@@ -1,9 +1,13 @@
 package com.lavacro.finances.kafka.service;
 
+import com.lavacro.finances.kafka.DecisionEvent;
 import com.lavacro.finances.shared.proto.DecisionProto;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.springframework.context.event.EventListener;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.modulith.events.ApplicationModuleListener;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -15,7 +19,14 @@ public class DecisionService {
 		this.kafkaTemplate = kafkaTemplate;
 	}
 
-	public void send(DecisionProto.DecisionMessage model) {
+	@ApplicationModuleListener
+//	@EventListener
+//	@Async
+	void handleDecisionEvent(DecisionEvent event) {
+		send(event.message());
+	}
+
+	private void send(DecisionProto.DecisionMessage model) {
 		ProducerRecord<String, DecisionProto.DecisionMessage> rekord = new ProducerRecord<>("finances-decision", null, model);
 
 		kafkaTemplate.send(rekord)

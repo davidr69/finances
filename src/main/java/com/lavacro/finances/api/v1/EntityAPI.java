@@ -1,6 +1,6 @@
 package com.lavacro.finances.api.v1;
 
-import com.lavacro.finances.entities.EntityEntity;
+import com.lavacro.finances.dto.EntityDTO;
 import com.lavacro.finances.kafka.service.DecisionService;
 import com.lavacro.finances.model.GenericResponse;
 import com.lavacro.finances.services.EntityService;
@@ -24,7 +24,7 @@ public class EntityAPI {
 	}
 
 	@GetMapping(value = "/{id}")
-	public EntityEntity getEntity(@PathVariable Integer id) {
+	public EntityDTO getEntity(@PathVariable Integer id) {
 		log.info("Get entity id: {}", id);
 		return entityService.getEntity(id);
 	}

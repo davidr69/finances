@@ -2,19 +2,17 @@ package com.lavacro.finances.dto;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
 
-import jakarta.persistence.*;
-
-@Entity
 @Getter
 @Setter
 public class ReportsDTO {
 	@Id
-	@Column(name = "entity_id")
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(value = "entity_id")
 	private Integer entityId;
 
-	@Column(name = "entity_name", nullable = false)
+	@Column(value = "entity_name")
 	private String entityName;
 
 }
