@@ -2,6 +2,7 @@ package com.lavacro.finances.domain.auth.service;
 
 import com.lavacro.finances.domain.auth.permission.*;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -23,7 +24,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     @Transactional(readOnly = true)
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(@NotNull String username) throws UsernameNotFoundException {
 		UserDTO userDTO = permissionService.getUserPermissions(username);
 
 		if(userDTO.locked() != null && userDTO.locked()) {

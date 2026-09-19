@@ -1,8 +1,7 @@
-package com.lavacro.finances.api.v1;
+package com.lavacro.finances.domain.auth;
 
 import com.lavacro.finances.domain.auth.permission.PermissionService;
 import com.lavacro.finances.domain.auth.permission.UserDTO;
-import com.lavacro.finances.domain.auth.service.Authenticate;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,7 +9,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -21,14 +19,12 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.util.Optional;
-
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class AuthenticateTest {
+class AuthenticateAPITest {
 	@Mock
 	private AuthenticationManager authenticationManager;
 
@@ -42,16 +38,16 @@ class AuthenticateTest {
 	private SecurityContextRepository securityContextRepository;
 
 	@Mock
-	private JdbcClient jdbcClient;
+	private AuthenticateService authenticateService;
 
 	@InjectMocks
-	private Authenticate authenticate;
+	private AuthenticateAPI authenticateAPI;
 
 	private MockMvc mockMvc;
 
 	@BeforeEach
 	void setup() {
-		this.mockMvc = MockMvcBuilders.standaloneSetup(authenticate).build();
+		this.mockMvc = MockMvcBuilders.standaloneSetup(authenticateAPI).build();
 	}
 
 	@Test
@@ -63,7 +59,7 @@ class AuthenticateTest {
 		when(permissionService.getUserPermissions("user")).thenReturn(userDTO);
 		when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class))).thenReturn(authentication);
 		doNothing().when(securityContextRepository).saveContext(any(), any(), any());
-		when(jdbcClient.sql(any())).thenReturn(null);
+		doNothing().when(authenticateService).updateLoginTime(any());
 
 		// Act & Assert
 		MockHttpServletResponse resp = mockMvc.perform(
@@ -77,14 +73,12 @@ class AuthenticateTest {
 
 	@Test
 	void testAuthFailure() throws Exception {
-/*		RbacUsersEntity rbacUsersEntity = new RbacUsersEntity();
-		rbacUsersEntity.setId(1);
-		rbacUsersEntity.setName("user");
-		rbacUsersEntity.setPassword("$2a$10$encodedPassword");
-		rbacUsersEntity.setLocked(false);
-		rbacUsersEntity.setLoginAttempts(0);
+		UserDTO userDTO = new UserDTO(
+			1, "user", "$2a$10$encodedPassword", null, null, false, null, null
+		);
 
-		when(userRepository.findByName("user")).thenReturn(Optional.of(rbacUsersEntity));
+		when(permissionService.getUserPermissions("user")).thenReturn(userDTO);
+
 		when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
 			.thenThrow(new BadCredentialsException("Bad credentials"));
 
@@ -96,11 +90,11 @@ class AuthenticateTest {
 		).andReturn().getResponse();
 
 		Assertions.assertEquals(200, resp.getStatus());
-*/	}
+	}
 
 	@Test
 	void testAuthUserNotFound() throws Exception {
-/*		when(userRepository.findByName("user")).thenReturn(Optional.empty());
+		when(permissionService.getUserPermissions("user")).thenReturn(null);
 
 		// Act & Assert
 		MockHttpServletResponse resp = mockMvc.perform(
@@ -110,5 +104,5 @@ class AuthenticateTest {
 		).andReturn().getResponse();
 
 		Assertions.assertEquals(200, resp.getStatus());
-*/	}
+	}
 }

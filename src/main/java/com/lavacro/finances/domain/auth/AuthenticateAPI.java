@@ -1,4 +1,4 @@
-package com.lavacro.finances.domain.auth.service;
+package com.lavacro.finances.domain.auth;
 
 import com.lavacro.finances.domain.auth.permission.PermissionService;
 import com.lavacro.finances.domain.auth.permission.UserDTO;
@@ -7,7 +7,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -18,17 +17,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 @RestController
 @Slf4j
 @RequiredArgsConstructor
-public class Authenticate {
+public class AuthenticateAPI {
 	private final AuthenticationManager authenticationManager;
 	private final PermissionService permissionService;
-	private final JdbcClient jdbcClient;
 	private final SecurityContextRepository securityContextRepository;
+	private final AuthenticateService authenticateService;
 
 	@PostMapping(value = "/authenticate")
 	public ActionResponse authenticate(
@@ -62,10 +60,7 @@ public class Authenticate {
 			SecurityContextHolder.getContext().setAuthentication(authentication);
 			securityContextRepository.saveContext(SecurityContextHolder.getContext(), req, resp);
 
-			jdbcClient.sql("UPDATE rbac.users SET last_login = ?, login_attempts = NULL WHERE id = ?")
-					.param(LocalDateTime.now())
-					.param(userDTO.id())
-					.update();
+			authenticateService.updateLoginTime(userDTO.id());
 			response.setCode(0);
 			response.setMessage("success");
 			log.info("Authenticated successfully for user: {}", user);
@@ -73,17 +68,12 @@ public class Authenticate {
 			log.error("Authentication failed for {}", user);
 			int attempts = Optional.ofNullable(userDTO.loginAttempts()).orElse(0);
 			attempts++;
-			jdbcClient.sql("UPDATE rbac.users SET login_attempts = ? WHERE id = ?")
-					.param(attempts)
-					.param(userDTO.id())
-					.update();
+
+			authenticateService.updateLoginAttempts(userDTO.id(), attempts);
 			response.setCode(1);
 
 			if (attempts >= 3) {
-				jdbcClient.sql("UPDATE rbac.users SET locked = true, locked_ip = ? WHERE id = ?")
-						.param(req.getRemoteAddr())
-						.param(userDTO.id())
-						.update();
+				authenticateService.lockUser(req.getRemoteAddr(), userDTO.id());
 				response.setMessage("Too many failed attempts");
 				log.error("Too many failed attempts for {}", user);
 			} else {
