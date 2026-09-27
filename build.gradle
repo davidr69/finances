@@ -15,7 +15,7 @@ java {
 
 protobuf {
 	protoc {
-		artifact = 'com.google.protobuf:protoc:4.36.1'
+		artifact = 'com.google.protobuf:protoc:4.36.2'
 	}
 }
 
@@ -45,7 +45,7 @@ dependencies {
 	implementation 'jakarta.validation:jakarta.validation-api'
 	implementation 'org.postgresql:postgresql:42.7.13'
 
-	implementation 'com.google.protobuf:protobuf-java:4.36.1'
+	implementation 'com.google.protobuf:protobuf-java:4.36.2'
 
 	testImplementation 'org.springframework.kafka:spring-kafka-test'
 
