@@ -13,10 +13,13 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.oauth2.client.oidc.authentication.OidcIdTokenDecoderFactory;
+import org.springframework.security.oauth2.client.registration.ClientRegistration;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.JwtDecoderFactory;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
-import org.springframework.security.web.context.SecurityContextHolderFilter;
 import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 
@@ -28,8 +31,6 @@ import org.springframework.session.data.redis.config.annotation.web.http.EnableR
 @EnableRedisHttpSession(maxInactiveIntervalInSeconds = 600, redisNamespace = "finances")
 @Slf4j
 public class SecurityConfig {
-
-//	private final SessionConfig.SessionValidationFilter sessionValidationFilter;
 	private final KeycloakOidcAuthoritiesMapper keycloakOidcAuthoritiesMapper;
 	private final KeycloakJwtAuthoritiesConverter keycloakJwtAuthoritiesConverter;
 
@@ -59,6 +60,10 @@ public class SecurityConfig {
 				.userInfoEndpoint(userInfo -> userInfo
 					.userAuthoritiesMapper(keycloakOidcAuthoritiesMapper)
 				)
+				.failureHandler((req, resp, exc) -> {
+					log.error("OIDC login failed: {}", exc.getMessage(), exc);
+					resp.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Login failed: " + exc.getMessage());
+				})
 			)
 			// REST API flow: caller presents Authorization: Bearer <JWT> up front
 			// (preemptive auth) - no redirect, no session. Spring validates the
@@ -102,7 +107,6 @@ public class SecurityConfig {
 				.sessionFixation().migrateSession()
 				.maximumSessions(1)
 			);
-			//.addFilterBefore(sessionValidationFilter, SecurityContextHolderFilter.class);
 
 		return http.build();
 	}
@@ -116,5 +120,20 @@ public class SecurityConfig {
 	@Bean
 	public SecurityContextRepository securityContextRepository() {
 		return new HttpSessionSecurityContextRepository();
+	}
+
+	@Bean
+	public JwtDecoderFactory<ClientRegistration> idTokenDecoderFactory() {
+		OidcIdTokenDecoderFactory delegate = new OidcIdTokenDecoderFactory();
+		return registration -> {
+			JwtDecoder decoder = delegate.createDecoder(registration);
+			return token -> {
+				String header = new String(
+					java.util.Base64.getUrlDecoder().decode(token.split("\\.")[0]),
+					java.nio.charset.StandardCharsets.UTF_8);
+				log.info("ID token header: {}", header);
+				return decoder.decode(token);
+			};
+		};
 	}
 }

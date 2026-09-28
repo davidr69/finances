@@ -65,6 +65,9 @@ spring:
       resourceserver:
         jwt:
           issuer-uri: *keycloak-issuer-uri
+          jws-algorithms:
+            - PS256
+            - RS256
   modulith:
     events:
       republish-outstanding-events-on-restart: true
