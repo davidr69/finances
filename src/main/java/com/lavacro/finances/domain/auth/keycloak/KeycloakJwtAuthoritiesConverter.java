@@ -23,6 +23,7 @@ public class KeycloakJwtAuthoritiesConverter implements Converter<Jwt, Collectio
 
     @Override
     public Collection<GrantedAuthority> convert(Jwt jwt) {
+		IO.println("********************");
         return expander.expand(expander.realmRolesFromClaims(jwt.getClaims()));
     }
 }
