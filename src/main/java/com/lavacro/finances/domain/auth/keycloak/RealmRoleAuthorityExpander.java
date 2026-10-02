@@ -4,7 +4,6 @@ import com.lavacro.finances.domain.auth.permission.PermissionDTO;
 import com.lavacro.finances.domain.auth.permission.PermissionService;
 import com.lavacro.finances.domain.auth.permission.RoleDTO;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
@@ -28,7 +27,6 @@ import java.util.Set;
  */
 @Component
 @RequiredArgsConstructor
-@Slf4j
 public class RealmRoleAuthorityExpander {
 
     private final PermissionService permissionService;
@@ -38,10 +36,8 @@ public class RealmRoleAuthorityExpander {
 
         Set<GrantedAuthority> authorities = new HashSet<>();
         for (RoleDTO role : roles) {
-			log.info("role: {}", role.roleName());
             authorities.add(new SimpleGrantedAuthority("ROLE_" + role.roleName()));
             for (PermissionDTO permission : role.permissions()) {
-				log.info("permission: {}", permission.permissionName());
                 authorities.add(new SimpleGrantedAuthority("PERMISSION_" + permission.permissionName()));
             }
         }
@@ -49,7 +45,6 @@ public class RealmRoleAuthorityExpander {
     }
 
     public List<String> realmRolesFromClaims(Map<String, Object> claims) {
-		log.info("claims: {}", claims);
         Object realmAccess = claims.get("realm_access");
         if (!(realmAccess instanceof Map<?, ?> realmAccessMap)) {
             return List.of();
