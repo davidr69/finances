@@ -2,6 +2,7 @@ package com.lavacro.finances.domain.auth.config;
 
 import com.lavacro.finances.domain.auth.keycloak.KeycloakJwtAuthoritiesConverter;
 import com.lavacro.finances.domain.auth.keycloak.KeycloakOidcAuthoritiesMapper;
+import com.lavacro.finances.domain.auth.service.LogoutService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +16,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.client.oidc.authentication.OidcIdTokenDecoderFactory;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtDecoderFactory;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
@@ -33,6 +35,8 @@ import org.springframework.session.data.redis.config.annotation.web.http.EnableR
 public class SecurityConfig {
 	private final KeycloakOidcAuthoritiesMapper keycloakOidcAuthoritiesMapper;
 	private final KeycloakJwtAuthoritiesConverter keycloakJwtAuthoritiesConverter;
+	private final LogoutService logoutService;
+	private final ClientRegistrationRepository clientRegistrationRepository;
 
 	// Spring Security auto-registers this endpoint for the "keycloak"
 	// registration configured under spring.security.oauth2.client in
@@ -40,7 +44,7 @@ public class SecurityConfig {
 	private static final String OIDC_LOGIN_INIT = "/oauth2/authorization/keycloak";
 
 	@Bean
-	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+	public SecurityFilterChain securityFilterChain(HttpSecurity http) {
 		http
 			.csrf(AbstractHttpConfigurer::disable)
 			.securityContext(securityContext -> securityContext
@@ -100,6 +104,7 @@ public class SecurityConfig {
 					log.info("Invalidating session");
 					request.getSession().invalidate();
 				})
+				.logoutSuccessHandler(logoutService.oidcLogoutSuccessHandler(clientRegistrationRepository))
 				.permitAll()
 			)
 			.sessionManagement(session -> session
