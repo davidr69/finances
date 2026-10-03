@@ -5,7 +5,7 @@ webapp:
   image:
     registry: "registry:5000"
     repository: "finances"
-    tag: "5.2.0"
+    tag: "6.0.0"
     pullPolicy: IfNotPresent
 
 vaultRetrieve:
@@ -36,7 +36,7 @@ agentVaultRetrieve:
     pullPolicy: IfNotPresent
   env:
     mountPath: "/var/tmp/vault"
-    vaultUri: 'http://vault.lavacro.net:8201'
+    vaultUri: 'http://vault:8201'
     vaultRequest: |
       {
         "vault_request": [{
