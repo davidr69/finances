@@ -15,7 +15,7 @@ java {
 
 protobuf {
 	protoc {
-		artifact = 'com.google.protobuf:protoc:4.35.1'
+		artifact = 'com.google.protobuf:protoc:4.36.2'
 	}
 }
 
@@ -25,32 +25,35 @@ repositories {
 }
 
 group = 'com.lavacro'
-version = '5.1.6'
+version = '6.0.0'
 description = 'finances'
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-kafka'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
+	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+	implementation 'org.springframework.modulith:spring-modulith-starter-jdbc:2.1.1'
 
 	implementation 'org.springframework.session:spring-session-data-redis'
-    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
 	implementation 'jakarta.validation:jakarta.validation-api'
-	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
 	implementation 'org.postgresql:postgresql:42.7.13'
 
-	implementation 'com.google.protobuf:protobuf-java:4.35.1'
+	implementation 'com.google.protobuf:protobuf-java:4.36.2'
 
 	testImplementation 'org.springframework.kafka:spring-kafka-test'
 
-	compileOnly 'org.projectlombok:lombok:1.18.46'
+	compileOnly 'org.projectlombok:lombok:1.18.48'
 	compileOnly 'org.jetbrains:annotations:26.1.0'
 
-	annotationProcessor 'org.projectlombok:lombok:1.18.46'
+	annotationProcessor 'org.projectlombok:lombok:1.18.48'
 
 	testImplementation 'junit:junit:4.13.2'
 	testImplementation 'org.mockito:mockito-inline:5.2.0'

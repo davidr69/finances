@@ -47,3 +47,31 @@ spring:
         spring.json.trusted.packages: com.lavacro.finances.kafka.model
     template:
       default-topic: finances-topic
+  threads:
+    virtual:
+      enabled: true
+  security:
+    oauth2:
+      client:
+        registration:
+          keycloak:
+            client-id: ${KEYCLOAK_CLIENT_ID:finances-client}
+            client-secret: ${KEYCLOAK_CLIENT_SECRET}
+            authorization-grant-type: authorization_code
+            scope: openid, profile, email
+        provider:
+          keycloak:
+            issuer-uri: &keycloak-issuer-uri ${KEYCLOAK_ISSUER_URI:https://www.lavacro.com/realms/lavacro}
+      resourceserver:
+        jwt:
+          issuer-uri: *keycloak-issuer-uri
+          jws-algorithms:
+            - PS256
+            - RS256
+  modulith:
+    events:
+      republish-outstanding-events-on-restart: true
+      jdbc:
+        schema: modulith_events
+        schema-initialization:
+          enabled: false

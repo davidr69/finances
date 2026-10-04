@@ -1,20 +1,18 @@
 package com.lavacro.finances.components;
 
-import com.lavacro.finances.entities.AccountEntity;
-import com.lavacro.finances.services.AccountsService;
+import com.lavacro.finances.domain.accounts.AccountDTO;
+import com.lavacro.finances.domain.accounts.AccountsService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @Component("navHelper")
+@RequiredArgsConstructor
 public class NavHelper {
 	private final AccountsService accountsService;
 
-	public NavHelper(AccountsService accountsService) {
-		this.accountsService = accountsService;
-	}
-
-	public List<AccountEntity> getAccounts() {
+	public List<AccountDTO> getAccounts() {
 		return accountsService.findAllOrderByDescriptionAsc();
 	}
 }

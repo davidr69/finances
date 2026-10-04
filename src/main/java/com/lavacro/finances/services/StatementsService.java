@@ -1,11 +1,13 @@
 package com.lavacro.finances.services;
 
 import com.lavacro.finances.dto.StatementDTO;
+import com.lavacro.finances.kafka.DecisionEvent;
 import com.lavacro.finances.kafka.service.DecisionService;
 import com.lavacro.finances.shared.proto.DecisionProto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.intellij.lang.annotations.Language;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Service;
@@ -22,7 +24,8 @@ import java.util.Map;
 public class StatementsService {
 	private final JdbcClient jdbcClient;
 	private final JdbcTemplate jdbcTemplate; // for bulk writes
-	private final DecisionService decisionService;
+//	private final DecisionService decisionService;
+	private final ApplicationEventPublisher applicationEventPublisher;
 
 	private static final String USE_VECTOR = "vector";
 	private static final String USE_LLM = "llm";
@@ -125,7 +128,8 @@ public class StatementsService {
 						.setNewVendorId((Integer) row.get("llm_entity"))
 						.build();
 					// right now, don't need the other fields in the protobuf message
-					decisionService.send(message);
+//					decisionService.send(message);
+					applicationEventPublisher.publishEvent(new DecisionEvent(message));
 				}
 			}
 			// implicitly reject

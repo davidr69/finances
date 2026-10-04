@@ -200,7 +200,7 @@ export default class Cashbook {
 			this.ajaxDone.dispatchEvent(this.done);
 		} else {
 			this.cache['accounts'] = true;
-			fetch('api/v1/select/accounts').then(resp => {
+			fetch('api/v1/accounts').then(resp => {
 				resp.json().then(data => {
 					for(let item of data) {
 						this.editAccount.options[this.editAccount.options.length++] = new Option(item.description, item.id);
@@ -219,7 +219,7 @@ export default class Cashbook {
 			this.ajaxDone.dispatchEvent(this.done);
 		} else {
 			this.cache['categories'] = true;
-			fetch('api/v1/select/categories').then(resp => {
+			fetch('api/v1/categories').then(resp => {
 				resp.json().then(data => {
 					this.editCategory.options[this.editCategory.options.length++] = new Option("", "");
 					for(let item of data) {
