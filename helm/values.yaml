@@ -25,6 +25,13 @@ vaultRetrieve:
             "key": "password",
             "label": "spring.datasource.password"
           }]
+        },{
+          "mount": "lavacro",
+          "path": "prod/sso/keycloak",
+          "items": [{
+            "key": "client_secret",
+            "label": "spring.security.oauth2.client.registration.keycloak.client-secret"
+          }]
         }],
         "file_path": "/var/tmp/vault/vault.properties"
       }
