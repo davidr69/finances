@@ -1,13 +1,14 @@
-package com.lavacro.finances.api.v1;
+package com.lavacro.finances.domain.entities;
 
 import com.lavacro.finances.dto.EntityDTO;
 import com.lavacro.finances.kafka.service.DecisionService;
 import com.lavacro.finances.model.GenericResponse;
-import com.lavacro.finances.services.EntityService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -19,18 +20,18 @@ public class EntityAPI {
 	private final DecisionService decisionService;
 
 	@DeleteMapping(value = "/{id}")
-	public GenericResponse deleteEntity(@PathVariable Integer id) {
+	GenericResponse deleteEntity(@PathVariable Integer id) {
 		return entityService.deleteEntity(id);
 	}
 
 	@GetMapping(value = "/{id}")
-	public EntityDTO getEntity(@PathVariable Integer id) {
+	EntityDTO getEntity(@PathVariable Integer id) {
 		log.info("Get entity id: {}", id);
 		return entityService.getEntity(id);
 	}
 
 	@PutMapping(value = "/accept/{id}")
-	public GenericResponse acceptEntity(@PathVariable Integer id) {
+	GenericResponse acceptEntity(@PathVariable Integer id) {
 		log.info("Accepting entity: {}", id);
 		GenericResponse resp = new GenericResponse();
 		try {
@@ -46,7 +47,7 @@ public class EntityAPI {
 	}
 
 	@PatchMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
-	public GenericResponse updateEntity(@PathVariable Integer id, @RequestBody Map<String, Object> body) {
+	GenericResponse updateEntity(@PathVariable Integer id, @RequestBody Map<String, Object> body) {
 		GenericResponse resp = new GenericResponse();
 		String rag = (String) body.get("rag");
 		if(rag == null) {
@@ -60,4 +61,12 @@ public class EntityAPI {
 		resp.setMessage("Entity updated successfully");
 		return resp;
 	}
+
+	@GetMapping()
+	List<EntityDTO> getActiveEntities() {
+		return entityService.getAllEntities().stream()
+			.filter(entity -> entity.getEmbedding() != null)
+			.toList();
+	}
+
 }

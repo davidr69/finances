@@ -1,7 +1,7 @@
 package com.lavacro.finances.jobs;
 
 import com.lavacro.finances.kafka.service.DecisionService;
-import com.lavacro.finances.services.EntityService;
+import com.lavacro.finances.domain.entities.EntityService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;

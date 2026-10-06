@@ -2,7 +2,6 @@ package com.lavacro.finances.services;
 
 import com.lavacro.finances.dto.StatementDTO;
 import com.lavacro.finances.kafka.DecisionEvent;
-import com.lavacro.finances.kafka.service.DecisionService;
 import com.lavacro.finances.shared.proto.DecisionProto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +23,6 @@ import java.util.Map;
 public class StatementsService {
 	private final JdbcClient jdbcClient;
 	private final JdbcTemplate jdbcTemplate; // for bulk writes
-//	private final DecisionService decisionService;
 	private final ApplicationEventPublisher applicationEventPublisher;
 
 	private static final String USE_VECTOR = "vector";
@@ -79,7 +77,7 @@ public class StatementsService {
 	""";
 
 	@Language(value = "SQL")
-	private static final String UPDATE_ENTITY = "UPDATE staging.action SET llm_entity = :entity WHERE action_id = :id";
+	private static final String UPDATE_ENTITY = "UPDATE staging.action SET entity = :entity WHERE action_id = :id";
 
 	public List<StatementDTO> getStatement(Integer account) {
 		List<StatementDTO> statements = new ArrayList<>();
@@ -128,7 +126,6 @@ public class StatementsService {
 						.setNewVendorId((Integer) row.get("llm_entity"))
 						.build();
 					// right now, don't need the other fields in the protobuf message
-//					decisionService.send(message);
 					applicationEventPublisher.publishEvent(new DecisionEvent(message));
 				}
 			}

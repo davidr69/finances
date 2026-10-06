@@ -5,7 +5,7 @@ export default class Transaction {
 
 	#init = () => {
 		// [{"id":808,"account":null,"description":"1234 Gas","address":null}]
-		fetch('api/v1/select/merchants').then(resp => {
+		fetch('api/v1/entities').then(resp => {
 			resp.json().then(data => {
 				const el = document.getElementById('entity');
 				el.options.length = 0;

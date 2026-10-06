@@ -1,4 +1,4 @@
-package com.lavacro.finances.services;
+package com.lavacro.finances.domain.entities;
 
 import com.lavacro.finances.dto.EntityDTO;
 import com.lavacro.finances.model.GenericResponse;
@@ -51,7 +51,7 @@ public class EntityService {
 		  AND rag_updated < NOW() - MAKE_INTERVAL(secs => ?)
 	""";
 
-	public GenericResponse deleteEntity(Integer id) {
+	GenericResponse deleteEntity(Integer id) {
 		GenericResponse resp = new GenericResponse();
 		try {
 			entityRepository.deleteById(id);
@@ -71,14 +71,14 @@ public class EntityService {
 			.update();
 	}
 
-	public EntityDTO getEntity(Integer id) {
+	EntityDTO getEntity(Integer id) {
 		EntityDTO entity = entityRepository.findById(id).orElse(null);
 		if(entity == null) {
 			log.error("Entity not found with id: {}", id);
-			return null;
+		} else {
+			entity.setEmbedding(null);
+			log.info("Returning: {}", entity);
 		}
-		entity.setEmbedding(null);
-		log.info("Returning: {}", entity);
 		return entity;
 	}
 
