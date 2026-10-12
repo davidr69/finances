@@ -2,7 +2,6 @@ package com.lavacro.finances.domain.entities;
 
 import com.lavacro.finances.dto.EntityDTO;
 import com.lavacro.finances.model.GenericResponse;
-import com.lavacro.finances.repositories.jdbc.EntityRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.intellij.lang.annotations.Language;

@@ -4,10 +4,8 @@ import com.lavacro.finances.kafka.DecisionEvent;
 import com.lavacro.finances.shared.proto.DecisionProto;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.ProducerRecord;
-import org.springframework.context.event.EventListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.modulith.events.ApplicationModuleListener;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -20,10 +18,13 @@ public class DecisionService {
 	}
 
 	@ApplicationModuleListener
-//	@EventListener
-//	@Async
 	void handleDecisionEvent(DecisionEvent event) {
-		send(event.message());
+		try {
+			DecisionProto.DecisionMessage message = DecisionProto.DecisionMessage.parseFrom(event.payload());
+			send(message);
+		} catch (Exception ex) {
+			log.error("Failed to decode decision event payload", ex);
+		}
 	}
 
 	private void send(DecisionProto.DecisionMessage model) {

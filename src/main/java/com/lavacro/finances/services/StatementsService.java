@@ -126,7 +126,7 @@ public class StatementsService {
 						.setNewVendorId((Integer) row.get("llm_entity"))
 						.build();
 					// right now, don't need the other fields in the protobuf message
-					applicationEventPublisher.publishEvent(new DecisionEvent(message));
+					applicationEventPublisher.publishEvent(DecisionEvent.of(message));
 				}
 			}
 			// implicitly reject
