@@ -23,8 +23,8 @@ public class EntityService {
 
 	@Language("SQL")
 	private static final String INSERT_ENTITY_SQL = """
-		INSERT INTO entities (acct, description, address)
-		VALUES (?, ?, ?)
+		INSERT INTO entities (acct, description, address, default_type)
+		VALUES (?, ?, ?, 0)
 	""";
 
 	@Language("SQL")
@@ -64,7 +64,7 @@ public class EntityService {
 		return resp;
 	}
 
-	public void createEntity(String description, String account, String address) {
+	void createEntity(String description, String account, String address) {
 		jdbcClient.sql(INSERT_ENTITY_SQL)
 			.params(account, description, address)
 			.update();
@@ -81,7 +81,7 @@ public class EntityService {
 		return entity;
 	}
 
-	public List<EntityDTO> getAllEntities() {
+	List<EntityDTO> getAllEntities() {
 		return jdbcClient.sql(GET_ALL_ENTITIES).query(EntityDTO.class).list();
 	}
 

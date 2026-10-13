@@ -7,7 +7,7 @@ export default class Entities {
 	}
 
 	deleteEntity = (eId) => {
-		fetch(`/api/v1/entities/${eId}`, {
+		fetch(`api/v1/entities/${eId}`, {
 			method: 'DELETE'
 		}).then(resp => {
 			resp.json().then(data => {
@@ -26,7 +26,7 @@ export default class Entities {
 			this.validate = true;
 
 			// publishing a Kafka message is asynchronous, so don't need a promise or any type of synchronous "workflow"
-			fetch(`/api/v1/entities/accept/${id}`, {
+			fetch(`api/v1/entities/accept/${id}`, {
 				method: 'PUT'
 			}).catch((error) => {
 				console.error('Error occurred while validating entity:', error);
