@@ -29,7 +29,7 @@ public class EntityService {
 
 	@Language("SQL")
 	private static final String GET_ALL_ENTITIES = """
-		SELECT id, acct, description, address, bank_alias, embedding
+		SELECT id, acct AS account, description, address, bank_alias AS aliases, embedding
 		FROM entities
 		ORDER BY LOWER(description)
 	""";
