@@ -65,7 +65,7 @@ public class EntityAPI {
 	@GetMapping()
 	List<EntityDTO> getActiveEntities() {
 		return entityService.getAllEntities().stream()
-			.filter(entity -> entity.getEmbedding() != null)
+			.filter(EntityDTO::isValidated)
 			.toList();
 	}
 

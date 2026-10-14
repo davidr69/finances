@@ -29,9 +29,18 @@ public class EntityService {
 
 	@Language("SQL")
 	private static final String GET_ALL_ENTITIES = """
-		SELECT id, acct AS account, description, address, bank_alias AS aliases, embedding
+		SELECT id, acct AS account, description, address, bank_alias AS aliases,
+			(embedding IS NOT NULL) AS validated
 		FROM entities
 		ORDER BY LOWER(description)
+	""";
+
+	@Language("SQL")
+	private static final String GET_ENTITY_SQL = """
+		SELECT id, acct AS account, description, address, bank_alias AS aliases,
+			(embedding IS NOT NULL) AS validated
+		FROM entities
+		WHERE id = ?
 	""";
 
 	@Language("SQL")
@@ -71,11 +80,14 @@ public class EntityService {
 	}
 
 	EntityDTO getEntity(Integer id) {
-		EntityDTO entity = entityRepository.findById(id).orElse(null);
+		EntityDTO entity = jdbcClient.sql(GET_ENTITY_SQL)
+			.param(id)
+			.query(EntityDTO.class)
+			.optional()
+			.orElse(null);
 		if(entity == null) {
 			log.error("Entity not found with id: {}", id);
 		} else {
-			entity.setEmbedding(null);
 			log.info("Returning: {}", entity);
 		}
 		return entity;

@@ -24,8 +24,6 @@ public class EntityDTO {
 	@Column(value = "bank_alias")
 	private String aliases;
 
-	private String embedding;
-
 	@Column(value = "rag_updated")
 	private LocalDateTime ragUpdated;
 
@@ -33,7 +31,5 @@ public class EntityDTO {
 	private LocalDateTime vectorSynced;
 
 	@Transient
-	public boolean isValidated() {
-		return embedding != null;
-	}
+	private boolean validated;
 }
