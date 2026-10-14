@@ -1,8 +1,7 @@
-package com.lavacro.finances.services;
+package com.lavacro.finances.domain.entities;
 
 import com.lavacro.finances.dto.EntityDTO;
 import com.lavacro.finances.model.GenericResponse;
-import com.lavacro.finances.repositories.jdbc.EntityRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.intellij.lang.annotations.Language;
@@ -24,15 +23,24 @@ public class EntityService {
 
 	@Language("SQL")
 	private static final String INSERT_ENTITY_SQL = """
-		INSERT INTO entities (acct, description, address)
-		VALUES (?, ?, ?)
+		INSERT INTO entities (acct, description, address, default_type)
+		VALUES (?, ?, ?, 0)
 	""";
 
 	@Language("SQL")
 	private static final String GET_ALL_ENTITIES = """
-		SELECT id, acct, description, address, bank_alias, embedding
+		SELECT id, acct AS account, description, address, bank_alias AS aliases,
+			(embedding IS NOT NULL) AS validated
 		FROM entities
 		ORDER BY LOWER(description)
+	""";
+
+	@Language("SQL")
+	private static final String GET_ENTITY_SQL = """
+		SELECT id, acct AS account, description, address, bank_alias AS aliases,
+			(embedding IS NOT NULL) AS validated
+		FROM entities
+		WHERE id = ?
 	""";
 
 	@Language("SQL")
@@ -51,7 +59,7 @@ public class EntityService {
 		  AND rag_updated < NOW() - MAKE_INTERVAL(secs => ?)
 	""";
 
-	public GenericResponse deleteEntity(Integer id) {
+	GenericResponse deleteEntity(Integer id) {
 		GenericResponse resp = new GenericResponse();
 		try {
 			entityRepository.deleteById(id);
@@ -65,24 +73,27 @@ public class EntityService {
 		return resp;
 	}
 
-	public void createEntity(String description, String account, String address) {
+	void createEntity(String description, String account, String address) {
 		jdbcClient.sql(INSERT_ENTITY_SQL)
 			.params(account, description, address)
 			.update();
 	}
 
-	public EntityDTO getEntity(Integer id) {
-		EntityDTO entity = entityRepository.findById(id).orElse(null);
+	EntityDTO getEntity(Integer id) {
+		EntityDTO entity = jdbcClient.sql(GET_ENTITY_SQL)
+			.param(id)
+			.query(EntityDTO.class)
+			.optional()
+			.orElse(null);
 		if(entity == null) {
 			log.error("Entity not found with id: {}", id);
-			return null;
+		} else {
+			log.info("Returning: {}", entity);
 		}
-		entity.setEmbedding(null);
-		log.info("Returning: {}", entity);
 		return entity;
 	}
 
-	public List<EntityDTO> getAllEntities() {
+	List<EntityDTO> getAllEntities() {
 		return jdbcClient.sql(GET_ALL_ENTITIES).query(EntityDTO.class).list();
 	}
 

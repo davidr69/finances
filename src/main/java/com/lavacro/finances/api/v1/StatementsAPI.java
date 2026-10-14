@@ -47,6 +47,7 @@ public class StatementsAPI {
 	}
 
 	@PutMapping(value = "/update_staging_vendor")
+	@PreAuthorize("hasAuthority('PERMISSION_MERGE_STATEMENT')")
 	public String updateEntity(@RequestParam("entity") Integer entity, @RequestParam("id") Integer id) {
 		log.info("updateEntity: set vendor for id {} to {}", id, entity);
 		try {

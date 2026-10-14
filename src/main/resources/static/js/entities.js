@@ -7,14 +7,15 @@ export default class Entities {
 	}
 
 	deleteEntity = (eId) => {
-		fetch(`/api/v1/entities/${eId}`, {
+		fetch(`api/v1/entities/${eId}`, {
 			method: 'DELETE'
 		}).then(resp => {
 			resp.json().then(data => {
 				if(data.code === 0) {
 					window.location = window.location.href;
+				} else {
+					alert(data.message);
 				}
-				alert(data.message);
 			});
 		}).catch((error) => {
 			console.error('Error occurred while deleting entity:', error);
@@ -25,8 +26,11 @@ export default class Entities {
 		if(this.validate === false) {
 			this.validate = true;
 
+			const timeout = 20;
+			let elapsed = 0;
+
 			// publishing a Kafka message is asynchronous, so don't need a promise or any type of synchronous "workflow"
-			fetch(`/api/v1/entities/accept/${id}`, {
+			fetch(`api/v1/entities/accept/${id}`, {
 				method: 'PUT'
 			}).catch((error) => {
 				console.error('Error occurred while validating entity:', error);
@@ -34,7 +38,7 @@ export default class Entities {
 
 			let klass = el.getAttribute('class');
 			el.setAttribute('class', 'fa fa-spinner fa-pulse small-glyph fa-fw');
-			setInterval(() => {
+			let interval = setInterval(() => {
 				console.log('Polling for validation...');
 
 				fetch(`api/v1/entities/${id}`).then(resp => {
@@ -46,9 +50,16 @@ export default class Entities {
 							}
 						});
 					}
+					elapsed += 5000;
+					if (elapsed >= timeout * 1000) {
+						el.setAttribute('class', 'fa fa-exclamation-triangle small-glyph');
+						this.validate = false;
+					}
+					clearInterval(interval);
 				}).catch((error) => {
 					console.error('Error occurred while polling entity validation:', error);
 					el.setAttribute('class', 'fa fa-exclamation-triangle small-glyph');
+					clearInterval(interval);
 				});
 			}, 5000);
 		} else {

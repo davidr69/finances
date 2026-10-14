@@ -1,8 +1,7 @@
-package com.lavacro.finances.controllers;
+package com.lavacro.finances.domain.entities;
 
 import com.lavacro.finances.dto.EntityDTO;
 
-import com.lavacro.finances.services.EntityService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -17,18 +16,18 @@ import java.util.List;
 @Controller
 @RequiredArgsConstructor
 @Slf4j
-public class Entities {
+public class EntitiesController {
 	private final EntityService entityService;
 
 	@GetMapping(value = "/entities")
-	public String getEntities(Model model) {
+	String getEntities(Model model) {
 		List<EntityDTO> entities = entityService.getAllEntities();
 		model.addAttribute("entityList", entities);
 		return "entities";
 	}
 
 	@PostMapping(value = "/entities", consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE})
-	public String addEntity(
+	String addEntity(
 		Model model,
 		@RequestParam(value = "description") String description,
 		@RequestParam(value = "account", required = false) String account,

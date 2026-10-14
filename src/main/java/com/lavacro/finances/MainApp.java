@@ -7,7 +7,12 @@ import org.springframework.core.env.Profiles;
 import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories;
 
 @SpringBootApplication
-@EnableJdbcRepositories(basePackages = {"com.lavacro.finances.repositories.jdbc", "com.lavacro.finances.domain.action"})
+@EnableJdbcRepositories(
+	basePackages = {
+		"com.lavacro.finances.repositories.jdbc",
+		"com.lavacro.finances.domain"
+	}
+)
 public class MainApp {
 	static void main(String[] args) {
 		ConfigurableApplicationContext ctx = SpringApplication.run(MainApp.class, args);

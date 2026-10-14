@@ -50,7 +50,7 @@ export default class MergeStatement {
 		}
 
 		const sel = document.getElementById('editEntity');
-		fetch('api/v1/select/merchants').then(resp => {
+		fetch('api/v1/entities').then(resp => {
 			resp.json().then(data => {
 				for (let item of data) {
 					sel.options[sel.options.length++] = new Option(item.description, item.id);

@@ -36,12 +36,15 @@
 		<td th:text="${data.date}"></td>
 		<td th:class="${data.amount} < 0 ? 'negative': 'positive'" th:text="${#numbers.formatDecimal(data.amount,1,2)}"></td>
 		<td th:text="${data.statementVendor}"></td>
-		<td><input type="radio" th:name="'item' + ${data.actionId}" value="vector"> <span th:text="${data.vectorVendor}" th:remove="tag"></span></td>
+		<td>
+			<input type="radio" th:name="'item' + ${data.actionId}" value="vector">
+			<a href='javascript:void(0)' th:onMouseDown="'merge.edit(' + ${data.actionId} + ',' + ${data.vectorId} + ')'" th:text="${data.vectorVendor}" class="editdel"></a>
+		</td>
 		<td th:switch="${data.llmVendor} == null">
 			<div th:case="true" th:utext="'&nbsp;'" th:remove="tag"></div>
 			<div th:case="*" th:remove="tag">
 				<input type="radio" th:name="'item' + ${data.actionId}" value="llm">
-				<a href='javascript:void(0)' th:onMouseDown="'merge.edit(' + ${data.actionId} + ',' + ${data.llmId} + ')'" th:text="${data.llmVendor}" class="editdel"></a>
+				<span th:text="${data.llmVendor}" th:remove="tag"></span>
 			</div>
 		</td>
 		<td class="center"><input type="radio" value="reject" th:name="'item' + ${data.actionId()}"/></td>
