@@ -26,8 +26,7 @@ export default class Entities {
 		if(this.validate === false) {
 			this.validate = true;
 
-			const timeout = 20;
-			let elapsed = 0;
+			let retries = 3;
 
 			// publishing a Kafka message is asynchronous, so don't need a promise or any type of synchronous "workflow"
 			fetch(`api/v1/entities/accept/${id}`, {
@@ -36,7 +35,6 @@ export default class Entities {
 				console.error('Error occurred while validating entity:', error);
 			});
 
-			let klass = el.getAttribute('class');
 			el.setAttribute('class', 'fa fa-spinner fa-pulse small-glyph fa-fw');
 			let interval = setInterval(() => {
 				console.log('Polling for validation...');
@@ -50,8 +48,7 @@ export default class Entities {
 							}
 						});
 					}
-					elapsed += 5000;
-					if (elapsed >= timeout * 1000) {
+					if (retries-- === 0) {
 						el.setAttribute('class', 'fa fa-exclamation-triangle small-glyph');
 						this.validate = false;
 					}
@@ -60,6 +57,7 @@ export default class Entities {
 					console.error('Error occurred while polling entity validation:', error);
 					el.setAttribute('class', 'fa fa-exclamation-triangle small-glyph');
 					clearInterval(interval);
+					this.validate = false;
 				});
 			}, 5000);
 		} else {

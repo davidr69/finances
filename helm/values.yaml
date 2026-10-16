@@ -5,7 +5,7 @@ webapp:
   image:
     registry: "registry:5000"
     repository: "finances"
-    tag: "6.0.1"
+    tag: "6.0.2"
     pullPolicy: IfNotPresent
 
 vaultRetrieve:
