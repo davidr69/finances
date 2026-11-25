@@ -5,11 +5,11 @@ plugins {
 	id 'com.google.protobuf' version '0.10.1'
 }
 
-def javaVersion = System.getProperty('os.arch') == 'aarch64' ? 26 : 25
+//def javaVersion = System.getProperty('os.arch') == 'aarch64' ? 26 : 25
 
 java {
   toolchain {
-    languageVersion = JavaLanguageVersion.of(javaVersion)
+    languageVersion = JavaLanguageVersion.of(27)
   }
 }
 
@@ -25,7 +25,7 @@ repositories {
 }
 
 group = 'com.lavacro'
-version = '6.0.2'
+version = '6.1.0'
 description = 'finances'
 
 dependencies {
@@ -44,7 +44,7 @@ dependencies {
 	implementation 'org.springframework.session:spring-session-data-redis'
 
 	implementation 'jakarta.validation:jakarta.validation-api'
-	implementation 'org.postgresql:postgresql:42.7.14'
+	implementation 'org.postgresql:postgresql:42.7.15'
 
 	implementation 'com.google.protobuf:protobuf-java:4.36.2'
 
