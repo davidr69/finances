@@ -51,8 +51,8 @@ export default class Entities {
 					if (retries-- === 0) {
 						el.setAttribute('class', 'fa fa-exclamation-triangle small-glyph');
 						this.validate = false;
+						clearInterval(interval);
 					}
-					clearInterval(interval);
 				}).catch((error) => {
 					console.error('Error occurred while polling entity validation:', error);
 					el.setAttribute('class', 'fa fa-exclamation-triangle small-glyph');
@@ -115,5 +115,15 @@ export default class Entities {
 				}
 			})
 		});
+	}
+
+	submitForm = () => {
+		let params = getUrlParams();
+		const f = document.getElementById('entities_form');
+
+		f['year'].value = params['year'];
+		f['account'].value = params['account'];
+
+		f.submit();
 	}
 }

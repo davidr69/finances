@@ -22,14 +22,16 @@
 	<script type="module">
 		const entitiesJS = './js/entities.js';
 		const { default: Entities } = await import(entitiesJS);
-		new Entities();
+		globalThis.entities = new Entities();
 	</script>
 </head>
 <body>
 
 <div th:insert="~{nav :: menu}"></div>
 
-<form action="entities" method="POST">
+<form id="entities_form">
+	<input type="hidden" name="account" id="account"/>
+	<input type="hidden" name="year" id="year"/>
 <table class="mytable entities">
 	<caption style="display: none;">Entities</caption>
 	<thead>
@@ -73,7 +75,7 @@
 			<td><label>
 				<input type="text" size="32" maxlength="128" name="address"/>
 			</label></td>
-			<td><input type="submit" value=" add this "/></td>
+			<td><input type="button" value=" add this " onclick="entities.submitForm()"/></td>
 		</tr>
 	</tbody>
 </table>
