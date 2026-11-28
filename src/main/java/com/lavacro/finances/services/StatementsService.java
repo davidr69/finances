@@ -55,7 +55,7 @@ public class StatementsService {
 
 	@Language(value = "SQL")
 	private static final String GET_STAGING_RECORD = """
-		SELECT a.mydate, a.entity, a.llm_entity, a.amount, e.default_type AS type1, COALESCE(llm.default_type, 0) AS type2,
+		SELECT a.mydate, a.entity, a.llm_entity, a.amount, COALESCE(e.default_type, 0) AS type1, COALESCE(llm.default_type, 0) AS type2,
 			CASE
 				WHEN a.llm_entity IS NOT NULL THEN llm.embedding IS NULL
 			END AS new_entity
